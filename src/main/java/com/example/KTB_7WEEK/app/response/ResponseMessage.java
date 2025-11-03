@@ -3,6 +3,7 @@ package com.example.KTB_7WEEK.app.response;
 public enum ResponseMessage {
     // USER
     LOGIN_SUCCESS("Login Success"),
+    LOGIN_FAIL("Login Fail"),
     LOGOUT_SUCCESS("Logout Success"),
     USER_REGISTER_SUCCESS("User Register Success"),
     USERINFO_LOAD_SUCCESS("UserInfo Load Success"),

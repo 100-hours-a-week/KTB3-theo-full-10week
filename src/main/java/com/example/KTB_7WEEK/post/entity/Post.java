@@ -19,9 +19,6 @@ public class Post {
     @Column(name = "post_id", nullable = false, unique = true)
     private Long id = 0L;
 
-    @Column(name = "author_id", nullable = false)
-    private Long authorId = 0L;
-
     @Column(name = "title", length = 26, nullable = false)
     private String title = "";
 
@@ -31,15 +28,15 @@ public class Post {
     @Column(name = "article_image")
     private String articleImage = "";
 
-    @Column(name = "category", nullable = false)
     @Enumerated(EnumType.STRING)
+    @JoinColumn(name = "category", nullable = false)
     private PostCategory category = PostCategory.NONE;
 
-    @Column(name = "hit", nullable = false)
-    private long hit = 0;
+    @OneToMany
+    private List<Hit> hits = new ArrayList<>();
 
-    @Column(name = "post_like", nullable = false)
-    private long like = 0;
+    @OneToMany
+    private List<Like> likes = new ArrayList<>();
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -95,14 +92,6 @@ public class Post {
 
     public void delete() {
         this.isDeleted = true;
-    }
-
-    public long increaseHit() {
-        return ++hit;
-    }
-
-    public long increaseLike() {
-        return ++like;
     }
 
     // 연관관계 편의 메소드

@@ -2,9 +2,11 @@ package com.example.KTB_7WEEK.user.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
+import lombok.Getter;
 import org.springframework.validation.annotation.Validated;
 
 @Validated
+@Getter
 public class RegistUserRequestDto {
 
     @NotBlank(message = "이메일은 필수 입력입니다.")
@@ -28,24 +30,8 @@ public class RegistUserRequestDto {
     public RegistUserRequestDto() {
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
     public void setNickname(String nickname) {
         this.nickname = nickname;
-    }
-
-    public String getNickname() {
-        return nickname;
-    }
-
-    public String getProfileImage() {
-        return profileImage;
     }
 
 }

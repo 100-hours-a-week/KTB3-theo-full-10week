@@ -15,22 +15,29 @@ import static org.junit.jupiter.api.Assertions.*;
 class PostTest {
 
     @PersistenceContext
-    EntityManager entityManager;
+    EntityManager em;
 
-    @Test
-    @Rollback(false)
-    void tableCreateTest() {
-        User user = new User.Builder().build();
+        @Test
+        @Rollback(false)
+        void tableCreateTest() {
+            User user = new User.Builder()
+                    .email("email@email.com")
+                    .password("1q2w3e4r!Q")
+                    .nickname("lllsss")
+                    .profileImage("profile_Image")
+                    .build();
 
-        Post post = new Post.Builder()
-                .title("sample_title")
-                .article("sample_article")
-                .articleImage("sample_image_url")
-                .category(PostCategory.COMMUNITY)
+            em.persist(user);
+
+            Post post = new Post.Builder()
+                    .title("sample_title")
+                    .article("sample_article")
+                    .articleImage("sample_image_url")
+                    .category(PostCategory.COMMUNITY)
                 .build();
 
         post.postByAuthor(user);
-        entityManager.persist(post);
+        em.persist(post);
     }
 
 }

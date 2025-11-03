@@ -2,16 +2,14 @@ package com.example.KTB_7WEEK.user.dto.response;
 
 
 import com.example.KTB_7WEEK.user.entity.User;
+import lombok.Getter;
 
+@Getter
 public class RegistUserResponseDto {
     private long id;
 
     public RegistUserResponseDto() {
 
-    }
-
-    public long getId() {
-        return this.id;
     }
 
     public static RegistUserResponseDto toDto(User user) {

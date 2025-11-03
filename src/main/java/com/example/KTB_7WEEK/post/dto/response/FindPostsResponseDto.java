@@ -1,7 +1,11 @@
 package com.example.KTB_7WEEK.post.dto.response;
 
+import jakarta.persistence.GeneratedValue;
+import lombok.Getter;
+
 import java.util.List;
 
+@Getter
 public class FindPostsResponseDto {
     private long totalPages;
     private long totalElements;

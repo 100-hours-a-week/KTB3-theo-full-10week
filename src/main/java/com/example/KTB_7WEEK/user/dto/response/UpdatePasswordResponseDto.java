@@ -1,23 +1,18 @@
 package com.example.KTB_7WEEK.user.dto.response;
 
 import com.example.KTB_7WEEK.app.util.DateTimePattern;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+
+@Getter
 public class UpdatePasswordResponseDto {
     private long id;
     private String updatedAt;
 
     public UpdatePasswordResponseDto() {
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public String getUpdatedAt() {
-        return updatedAt;
     }
 
     public static UpdatePasswordResponseDto toDto(long id) {

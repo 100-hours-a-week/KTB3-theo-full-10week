@@ -29,7 +29,7 @@ public class PublicPostController implements PostApiDoc {
      * Get Mapping
      **/
     @GetMapping // 전체 게시글 목록 조회
-    public ResponseEntity<BaseResponse> findPublicPosts(@RequestParam(name = "page", defaultValue = "1")
+    public ResponseEntity<BaseResponse> findPublicPosts(@RequestParam(name = "page", defaultValue = "0")
                                                         @Positive int page) {
         BaseResponse response = publicPostService.findPosts(page);
         return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -45,7 +45,7 @@ public class PublicPostController implements PostApiDoc {
     @GetMapping("/{postId}/comment") // 게시글에 대한 댓글 조회
     public ResponseEntity<BaseResponse> findCommentByPostId(@PathVariable("postId")
                                                             @NotNull @Positive Long postId,
-                                                            @RequestParam(name = "page", defaultValue = "1")
+                                                            @RequestParam(name = "page", defaultValue = "0")
                                                             @Positive int page) {
         BaseResponse response = publicPostService.findCommentByPostId(postId, page);
         return ResponseEntity.status(HttpStatus.OK).body(response);

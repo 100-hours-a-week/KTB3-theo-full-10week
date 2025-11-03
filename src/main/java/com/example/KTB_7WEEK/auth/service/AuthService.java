@@ -23,13 +23,15 @@ public class AuthService {
         String email = req.getEmail();
         String password = req.getPassword();
         boolean isLoginSuccess = false;
+        ResponseMessage resMsg = ResponseMessage.LOGIN_FAIL;
 
-        User user =userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException());
+                User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException());
 
         if (user.getEmail().equals(email) && user.getPassword().equals(password)) {
             isLoginSuccess = true;
+            resMsg = ResponseMessage.LOGIN_SUCCESS;
         }
-        return new BaseResponse(ResponseMessage.LOGIN_SUCCESS, LoginResponseDto.toDto(user.getId(), isLoginSuccess));
+        return new BaseResponse(resMsg, LoginResponseDto.toDto(user.getId(), isLoginSuccess));
     }
 
     @Loggable

@@ -2,9 +2,12 @@ package com.example.KTB_7WEEK.user.dto.response;
 
 import com.example.KTB_7WEEK.app.util.DateTimePattern;
 import com.example.KTB_7WEEK.user.entity.User;
+import lombok.Getter;
 
 import java.time.format.DateTimeFormatter;
 
+
+@Getter
 public class FindUserResponseDto {
     private long id;
     private String email;
@@ -15,31 +18,6 @@ public class FindUserResponseDto {
 
     public FindUserResponseDto() {
     }
-
-    public long getId() {
-        return id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getNickname() {
-        return nickname;
-    }
-
-    public String getProfileImage() {
-        return profileImage;
-    }
-
-    public String getCreated_at() {
-        return created_at;
-    }
-
-    public String getUpdated_at() {
-        return updated_at;
-    }
-
     public static FindUserResponseDto toDto(User user) {
         FindUserResponseDto dto = new FindUserResponseDto();
         dto.id = user.getId();

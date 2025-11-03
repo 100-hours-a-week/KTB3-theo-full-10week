@@ -86,7 +86,7 @@ public class PostService {
                 .stream()
                 .map((p) -> FindPostResponseDto.toDto(p))
                 .collect(Collectors.toCollection(ArrayList::new));
-
+        System.out.println(contents.size());
         return new BaseResponse(ResponseMessage.POSTS_LOAD_SUCCESS,
                 FindPostsResponseDto.toDto(totalPages, totalElements, size, currentPage, hasNext, contents));
     }
@@ -130,7 +130,7 @@ public class PostService {
 //        Post toUpdate = postRepository.findPostById(id).orElseThrow(() -> new PostNotFoundException());
 
         Post toUpdate = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException());
-        toUpdate.increaseHit();
+//        toUpdate.increaseHit();
 
         return new BaseResponse(ResponseMessage.INCREASE_HIT_SUCCESS,
                 IncreaseHitResponseDto.toDto(toUpdate));
@@ -140,7 +140,7 @@ public class PostService {
     @Loggable
     public BaseResponse<IncreaseLikeResponseDto> increaseLike(long id) {
         Post toUpdate = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException());
-        toUpdate.increaseLike();
+//        toUpdate.increaseLike();
 
         return new BaseResponse(ResponseMessage.INCREASE_LIKE_SUCCESS,
                 IncreaseLikeResponseDto.toDto(toUpdate));

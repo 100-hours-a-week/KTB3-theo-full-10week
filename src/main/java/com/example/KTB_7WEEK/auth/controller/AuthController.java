@@ -1,5 +1,6 @@
 package com.example.KTB_7WEEK.auth.controller;
 
+import com.example.KTB_7WEEK.auth.dto.response.LoginResponseDto;
 import com.example.KTB_7WEEK.auth.service.AuthService;
 import com.example.KTB_7WEEK.swagger.controller.AuthApiDoc;
 import com.example.KTB_7WEEK.auth.dto.request.LoginRequestDto;
@@ -31,10 +32,14 @@ public class AuthController implements AuthApiDoc {
     public ResponseEntity<BaseResponse> login(@RequestBody
                                               @Valid LoginRequestDto request) {
         BaseResponse response = authService.login(request);
-        String token = tokenService.issue(Duration.ofMinutes(tokenExpireMin));
-
+        boolean isLoginSuccess = ((LoginResponseDto) response.getData()).isLoginSuccess();
+        if (isLoginSuccess) {
+            String token = tokenService.issue(Duration.ofMinutes(tokenExpireMin));
+            return ResponseEntity.status(HttpStatus.OK)
+                    .header("Authorization", "Bearer" + token)
+                    .body(response);
+        }
         return ResponseEntity.status(HttpStatus.OK)
-                .header("Authorization", "Bearer" + token)
                 .body(response);
     }
 
