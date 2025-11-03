@@ -51,7 +51,7 @@ public class Post {
     private boolean isDeleted = false;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "author_id")
     private User author;
 
     @OneToMany
