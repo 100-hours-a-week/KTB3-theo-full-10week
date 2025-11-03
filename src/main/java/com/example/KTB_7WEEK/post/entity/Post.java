@@ -8,7 +8,6 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Entity
 @Getter
@@ -36,7 +35,7 @@ public class Post {
     private List<Hit> hits = new ArrayList<>();
 
     @OneToMany
-    private List<Like> likes = new ArrayList<>();
+    private List<PostLike> likes = new ArrayList<>();
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -51,7 +50,7 @@ public class Post {
     @JoinColumn(name = "author_id")
     private User author;
 
-    @OneToMany
+    @OneToMany(mappedBy = "post")
     private List<Comment> comments = new ArrayList<>();
 
     public Post() {
@@ -98,6 +97,11 @@ public class Post {
     public void postByAuthor(User author) {
         this.author = author;
         author.getPosts().add(this);
+    }
+
+    public void deleteByAuthor() {
+        this.author.getPosts().remove(this);
+        this.author = null;
     }
 
     public static class Builder {

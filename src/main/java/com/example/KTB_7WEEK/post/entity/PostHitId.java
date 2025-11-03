@@ -6,7 +6,7 @@ import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 
 @Embeddable
-public class HitId implements Serializable {
+public class PostHitId implements Serializable {
 
     @Column(name = "user_id")
     private Long userId;

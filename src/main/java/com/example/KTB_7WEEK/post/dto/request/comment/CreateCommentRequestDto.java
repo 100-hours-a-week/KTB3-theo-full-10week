@@ -8,7 +8,6 @@ import org.springframework.validation.annotation.Validated;
 
 @Validated
 public class CreateCommentRequestDto {
-    @NotBlank(message = "작성자 PK는 필수 입력입니다.")
     @Positive(message = "작성자 PK는 양수입니다.")
     @Schema(description = "User PK", example = "1")
     private long userId;

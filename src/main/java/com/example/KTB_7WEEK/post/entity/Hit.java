@@ -1,15 +1,13 @@
 package com.example.KTB_7WEEK.post.entity;
 
-import com.example.KTB_7WEEK.user.entity.User;
 import jakarta.persistence.*;
-import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Entity
 public class Hit {
     @EmbeddedId
-    private HitId hitId;
+    private PostHitId hitId;
 
 //    @JoinColumn(name = "user_id", nullable = false)
 //    private User user;

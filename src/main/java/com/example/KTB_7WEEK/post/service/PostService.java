@@ -66,6 +66,8 @@ public class PostService {
                 .category(req.getCategory())
                 .build();
 
+        toSave.postByAuthor(author);
+
         Post saved = postRepository.save(toSave);
         return new BaseResponse(ResponseMessage.POST_REGISTER_SUCCESS, CreatePostResponseDto.toDto(saved.getId()));
     }
@@ -78,10 +80,13 @@ public class PostService {
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<Post> posts = postRepository.findAll(pageable);
 
+        System.out.println(posts.getContent().size());
         long totalElements = posts.getTotalElements();
         long currentPage = page;
         long totalPages = posts.getTotalPages();
         boolean hasNext = posts.hasNext();
+
+
         List<FindPostResponseDto> contents = posts.getContent()
                 .stream()
                 .map((p) -> FindPostResponseDto.toDto(p))
@@ -116,9 +121,9 @@ public class PostService {
     // 게시글 삭제 By Id
     @Loggable
     public BaseResponse deletePostById(long id) {
-        if (postRepository.existsById(id)) {
-            throw new PostNotFoundException();
-        }
+        Post post = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException());
+
+        post.deleteByAuthor();
         postRepository.deleteById(id);
 
         return new BaseResponse(ResponseMessage.POST_DELETE_SUCCESS, new Post());
@@ -149,7 +154,7 @@ public class PostService {
     // 댓글 등록
     @Loggable
     public BaseResponse<CreateCommentResponseDto> createComment(long postId, CreateCommentRequestDto req) {
-        if (postRepository.existsById(postId)) {
+        if (!postRepository.existsById(postId)) {
             throw new PostNotFoundException();
         }
 
@@ -159,6 +164,10 @@ public class PostService {
                 .post(findPost)
                 .content(req.getContent())
                 .build();
+
+        toSave.onPost(findPost);
+        toSave.writeBy(findPost.getAuthor());
+
         Comment saved = commentRepository.save(toSave);
 
         return new BaseResponse(ResponseMessage.COMMENT_CREATE_SUCCESS,
@@ -168,14 +177,14 @@ public class PostService {
     // 댓글 조회 By Post Id
     @Loggable
     public BaseResponse<FindCommentsResponseDto> findCommentByPostId(long postId, int page) {
-        if (postRepository.existsById(postId)) {
+        if (!postRepository.existsById(postId)) {
             throw new PostNotFoundException();
         }
 
         int size = CommentPaginationPolicy.DEFAULT.size();
         Sort sort = CommentPaginationPolicy.DEFAULT.sort();
         Pageable pageable = PageRequest.of(page, size, sort);
-        Page<Comment> comments = commentRepository.findAll(pageable);
+        Page<Comment> comments = commentRepository.findAllByPostId(postId, pageable);
 
         long totalElements = comments.getTotalElements();
         long currentPage = page;
@@ -201,11 +210,11 @@ public class PostService {
     // 댓글 수정 By Comment Id
     @Loggable
     public BaseResponse<UpdateCommentResponseDto> updateCommentById(long postId, long commentId, UpdateCommentRequestDto req) {
-        if (postRepository.existsById(postId)) {
+        if (!postRepository.existsById(postId)) {
             throw new PostNotFoundException();
         }
 
-        if (commentRepository.existsById(commentId)) {
+        if (!commentRepository.existsById(commentId)) {
             throw new CommentNotFoundException();
         }
 
@@ -219,9 +228,12 @@ public class PostService {
     // 댓글 삭제
     @Loggable
     public BaseResponse deleteCommentById(long postId, long commentId) {
-        if (postRepository.existsById(postId)) {
+        if (!postRepository.existsById(postId)) {
             throw new PostNotFoundException();
         }
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new CommentNotFoundException());
+        comment.removeInPost();
+        comment.deleteByAuthor();
         commentRepository.deleteById(commentId);
         return new BaseResponse(ResponseMessage.COMMENT_DELETE_SUCCESS, new Comment());
     }

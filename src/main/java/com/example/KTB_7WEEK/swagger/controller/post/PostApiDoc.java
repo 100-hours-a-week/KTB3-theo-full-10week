@@ -78,8 +78,7 @@ public interface PostApiDoc {
                             """)
             })),
     })
-    public ResponseEntity<BaseResponse> findPublicPosts(@RequestParam(name = "page", defaultValue = "1")
-                                                        @Positive int page);
+    public ResponseEntity<BaseResponse> findPublicPosts(@RequestParam(name = "page", defaultValue = "0") int page);
 
     @Operation(summary = "게시글 조회", description = "게시글 PK를 통해 특정 게시글을 조회합니다.")
     @ApiResponses({
@@ -196,8 +195,7 @@ public interface PostApiDoc {
     public ResponseEntity<BaseResponse> findCommentByPostId(@PathVariable("postId")
                                                             @NotNull
                                                             @Positive Long postId,
-                                                            @RequestParam(name = "page", defaultValue = "1")
-                                                            @Positive int page);
+                                                            @RequestParam(name = "page", defaultValue = "0") int page);
 
     @Operation(summary = "게시글 생성", description = "새로운 게시글을 등록합니다.")
     @ApiResponses({

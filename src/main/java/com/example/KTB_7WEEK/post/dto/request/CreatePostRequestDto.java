@@ -5,11 +5,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
 import org.springframework.validation.annotation.Validated;
 
 @Validated
+@Getter
 public class CreatePostRequestDto {
-    @NotBlank(message = "작성자 PK는 필수 입력입니다.")
     @Positive(message = "작성자 PK는 양수입니다.")
     @Schema(description = "게시글 작성 유저 PK", example = "1")
     private long authorId;
@@ -30,25 +31,5 @@ public class CreatePostRequestDto {
     private PostCategory category;
 
     public CreatePostRequestDto() {};
-
-    public long getAuthorId() {
-        return authorId;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getArticle() {
-        return article;
-    }
-
-    public String getArticleImage() {
-        return articleImage;
-    }
-
-    public PostCategory getCategory() {
-        return category;
-    }
 
 }
