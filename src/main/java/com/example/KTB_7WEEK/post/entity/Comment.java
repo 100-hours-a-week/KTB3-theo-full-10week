@@ -71,7 +71,7 @@ public class Comment {
         post.getComments().add(this);
     }
 
-    // 연결관계 편의 메소드 User
+    // 연관관계 편의 메소드 User
     public void writeBy(User author) {
         this.author = author;
         author.getComments().add(this); // 동기화하는 과정에서 동시성 문제 없나?

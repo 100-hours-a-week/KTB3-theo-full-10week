@@ -11,6 +11,9 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -75,7 +78,8 @@ public interface PostApiDoc {
                             """)
             })),
     })
-    public ResponseEntity<BaseResponse> findPublicPosts(@RequestParam(name = "page", defaultValue = "1") int page);
+    public ResponseEntity<BaseResponse> findPublicPosts(@RequestParam(name = "page", defaultValue = "1")
+                                                        @Positive int page);
 
     @Operation(summary = "게시글 조회", description = "게시글 PK를 통해 특정 게시글을 조회합니다.")
     @ApiResponses({
@@ -113,7 +117,9 @@ public interface PostApiDoc {
                             """)
             })),
     })
-    public ResponseEntity<BaseResponse> findPublicPostById(@PathVariable("postId") Long postId);
+    public ResponseEntity<BaseResponse> findPublicPostById(@PathVariable("postId")
+                                                           @NotNull
+                                                           @Positive Long postId);
 
     @Operation(summary = "게시글에 대한 전체 댓글 조회", description = "페이지 단위 게시글에 대한 전체 댓글을 조회합니다.")
     @ApiResponses({
@@ -187,8 +193,11 @@ public interface PostApiDoc {
                             """)
             })),
     })
-    public ResponseEntity<BaseResponse> findCommentByPostId(@PathVariable("postId") Long postId,
-                                                            @RequestParam(name = "page", defaultValue = "1") int page);
+    public ResponseEntity<BaseResponse> findCommentByPostId(@PathVariable("postId")
+                                                            @NotNull
+                                                            @Positive Long postId,
+                                                            @RequestParam(name = "page", defaultValue = "1")
+                                                            @Positive int page);
 
     @Operation(summary = "게시글 생성", description = "새로운 게시글을 등록합니다.")
     @ApiResponses({
@@ -216,7 +225,8 @@ public interface PostApiDoc {
                             """)
             })),
     })
-    public ResponseEntity<BaseResponse> createPublicPost(@RequestBody CreatePostRequestDto request);
+    public ResponseEntity<BaseResponse> createPublicPost(@RequestBody
+                                                         @Valid CreatePostRequestDto request);
 
     @Operation(summary = "조회 수 증가", description = "게시글 PK를 통해 조회 수를 1증가 합니다.")
     @ApiResponses({
@@ -246,7 +256,9 @@ public interface PostApiDoc {
                             """)
             })),
     })
-    public ResponseEntity<BaseResponse> increaseHit(@PathVariable("postId") Long postId);
+    public ResponseEntity<BaseResponse> increaseHit(@PathVariable("postId")
+                                                    @NotNull
+                                                    @Positive Long postId);
 
     @Operation(summary = "좋아요 수 증가", description = "게시글 PK를 통해 종아요 수를 1증가 합니다.")
     @ApiResponses({
@@ -276,7 +288,9 @@ public interface PostApiDoc {
                             """)
             })),
     })
-    public ResponseEntity<BaseResponse> increaseLike(@PathVariable("postId") Long postId);
+    public ResponseEntity<BaseResponse> increaseLike(@PathVariable("postId")
+                                                     @NotNull
+                                                     @Positive Long postId);
 
     @Operation(summary = "댓글 등록", description = "게시글 PK를 통해 새로운 댓글을 등록합니다.")
     @ApiResponses({
@@ -316,8 +330,11 @@ public interface PostApiDoc {
                             """)
             })),
     })
-    public ResponseEntity<BaseResponse> createComment(@PathVariable("postId") Long postId,
-                                                      @RequestBody CreateCommentRequestDto request);
+    public ResponseEntity<BaseResponse> createComment(@PathVariable("postId")
+                                                      @NotNull
+                                                      @Positive Long postId,
+                                                      @RequestBody
+                                                      @Valid CreateCommentRequestDto request);
 
     @Operation(summary = "댓글 수정", description = "게시글 PK와 댓글의 PK를 조회하여 특정 댓글의 내용을 수정합니다.")
     @ApiResponses({
@@ -369,9 +386,13 @@ public interface PostApiDoc {
                             """)
             })),
     })
-    public ResponseEntity<BaseResponse> updateComment(@PathVariable("postId") Long postId,
-                                                      @PathVariable("commentId") Long commentId,
-                                                      @RequestBody UpdateCommentRequestDto request);
+    public ResponseEntity<BaseResponse> updateComment(@PathVariable("postId")
+                                                      @NotNull
+                                                      @Positive Long postId,
+                                                      @PathVariable("commentId")
+                                                      @NotNull
+                                                      @Positive Long commentId,
+                                                      @RequestBody @Valid UpdateCommentRequestDto request);
 
     @Operation(summary = "게시글 수정", description = "게시글 PK를 통해 게시글의 내용을 수정합니다.")
     @ApiResponses({
@@ -415,8 +436,11 @@ public interface PostApiDoc {
                             """)
             })),
     })
-    public ResponseEntity<BaseResponse> updatePublicPost(@PathVariable("postId") Long myPostId,
-                                                         @RequestBody UpdateMyPostRequestDto request);
+    public ResponseEntity<BaseResponse> updatePublicPost(@PathVariable("postId")
+                                                         @NotNull
+                                                         @Positive Long myPostId,
+                                                         @RequestBody
+                                                         @Valid UpdateMyPostRequestDto request);
 
 
     @Operation(summary = "게시글 삭제", description = "게시글 PK를 통해 특정 게시글을 삭제합니다.")
@@ -439,7 +463,9 @@ public interface PostApiDoc {
                             """)
             })),
     })
-    public ResponseEntity<BaseResponse> deletePostById(@PathVariable("postId") Long postId);
+    public ResponseEntity<BaseResponse> deletePostById(@PathVariable("postId")
+                                                       @NotNull
+                                                       @Positive Long postId);
 
     @Operation(summary = "댓글 삭제", description = "게시글 PK와 댓글 PK를 통해 특정 댓글을 삭제합니다.")
     @ApiResponses({
@@ -469,6 +495,10 @@ public interface PostApiDoc {
                             """)
             })),
     })
-    public ResponseEntity<BaseResponse> deleteCommentById(@PathVariable("postId") Long postId,
-                                                          @PathVariable("commentId") Long commentId);
+    public ResponseEntity<BaseResponse> deleteCommentById(@PathVariable("postId")
+                                                          @Positive
+                                                          @NotNull Long postId,
+                                                          @PathVariable("commentId")
+                                                          @NotNull
+                                                          @Positive Long commentId);
 }

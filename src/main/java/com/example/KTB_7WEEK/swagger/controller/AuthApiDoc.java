@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -42,7 +43,7 @@ public interface AuthApiDoc {
             })),
     })
 
-    public ResponseEntity<BaseResponse> login(@RequestBody LoginRequestDto request);
+    public ResponseEntity<BaseResponse> login(@RequestBody @Valid LoginRequestDto request);
 
     @Operation(summary = "로그아웃", description = "회원의 접속상태를 로그아웃으로 변경합니다.")
     @ApiResponses({

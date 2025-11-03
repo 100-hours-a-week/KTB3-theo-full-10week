@@ -6,6 +6,7 @@ import com.example.KTB_7WEEK.auth.dto.request.LoginRequestDto;
 import com.example.KTB_7WEEK.app.response.BaseResponse;
 import com.example.KTB_7WEEK.auth.service.TokenService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,8 @@ public class AuthController implements AuthApiDoc {
     }
 
     @PostMapping("/access/token") // 로그인
-    public ResponseEntity<BaseResponse> login(@RequestBody LoginRequestDto request) {
+    public ResponseEntity<BaseResponse> login(@RequestBody
+                                              @Valid LoginRequestDto request) {
         BaseResponse response = authService.login(request);
         String token = tokenService.issue(Duration.ofMinutes(tokenExpireMin));
 
