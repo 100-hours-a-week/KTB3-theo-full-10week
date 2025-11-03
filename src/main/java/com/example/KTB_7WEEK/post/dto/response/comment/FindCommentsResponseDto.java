@@ -4,12 +4,12 @@ import java.util.List;
 
 public class FindCommentsResponseDto {
     private long postId;
-    private int totalPages;
-    private int totalCount;
-    private int pageSize;
-    private int pageIndex;
+    private long totalPages;
+    private long totalElements;
+    private long size;
+    private long currentPage;
     private boolean hasNext;
-    private List<FindCommentResponseDto> comments;
+    private List<FindCommentResponseDto> contents;
 
     public FindCommentsResponseDto() {
     }
@@ -18,41 +18,41 @@ public class FindCommentsResponseDto {
         return postId;
     }
 
-    public int getTotalPages() {
+    public long getTotalPages() {
         return totalPages;
     }
 
-    public int getTotalCount() {
-        return totalCount;
+    public long getTotalElements() {
+        return totalElements;
     }
 
-    public int getPageSize() {
-        return pageSize;
+    public long getSize() {
+        return size;
     }
 
-    public int getPageIndex() {
-        return pageIndex;
+    public long getCurrentPage() {
+        return currentPage;
     }
 
-    public boolean isHasNext() {
+    public boolean hasNext() {
         return hasNext;
     }
 
-    public List<FindCommentResponseDto> getComments() {
-        return comments;
+    public List<FindCommentResponseDto> getContents() {
+        return contents;
     }
 
-    public static FindCommentsResponseDto toDto(long postId, int totalPages, int totalCount,
-                                                int pageSize, int pageIndex, boolean hasNext,
-                                                List<FindCommentResponseDto> comments) {
+    public static FindCommentsResponseDto toDto(long postId, long totalPages, long totalElements,
+                                                long size, long currentPage, boolean hasNext,
+                                                List<FindCommentResponseDto> contents) {
         FindCommentsResponseDto dto = new FindCommentsResponseDto();
         dto.postId = postId;
         dto.totalPages = totalPages;
-        dto.totalCount = totalCount;
-        dto.pageIndex = pageIndex;
-        dto.pageSize = pageSize;
+        dto.totalElements = totalElements;
+        dto.currentPage = currentPage;
+        dto.size = size;
         dto.hasNext = hasNext;
-        dto.comments = comments;
+        dto.contents = contents;
         return dto;
     }
 }

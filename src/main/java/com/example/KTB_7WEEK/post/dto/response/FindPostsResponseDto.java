@@ -29,7 +29,7 @@ public class FindPostsResponseDto {
         return currentPage;
     }
 
-    public boolean isHasNext() {
+    public boolean hasNext() {
         return hasNext;
     }
 

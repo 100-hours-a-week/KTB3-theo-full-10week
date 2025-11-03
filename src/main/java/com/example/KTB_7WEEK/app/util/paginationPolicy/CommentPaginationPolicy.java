@@ -2,42 +2,31 @@ package com.example.KTB_7WEEK.app.util.paginationPolicy;
 
 
 import com.example.KTB_7WEEK.post.entity.Comment;
+import org.springframework.data.domain.Sort;
 
 import java.util.Comparator;
 import java.util.function.Predicate;
 
-public enum CommentPaginationPolicy implements PaginationPolicy{
-    DEFAULT(10,
-            Comparator.comparing(Comment::getCreatedAt).thenComparing(Comment::getId),
-            comment -> !comment.isDeleted());
+public enum CommentPaginationPolicy implements PaginationPolicy {
+    DEFAULT(10, Sort.by("createdAt").descending());
 
-    private final int limit;
-    private final Comparator<Comment> comparator;
-    private final Predicate<Comment> predicate;
+    private final int size;
+    private final Sort sort;
 
-    CommentPaginationPolicy(int limit, Comparator<Comment> comparator, Predicate<Comment> predicate) {
-        this.limit = limit;
-        this.comparator = comparator;
-        this.predicate = predicate;
+    CommentPaginationPolicy(int size, Sort sort) {
+        this.size = size;
+        this.sort = sort;
     }
 
     @Override
-    public int limit() {
-        return limit;
+    public int size() {
+        return size;
     }
 
     @Override
-    public Comparator<Comment> comparator() {
-        return comparator;
+    public Sort sort() {
+        return this.sort;
     }
 
-    @Override
-    public Predicate<Comment> predicate() {
-        return predicate;
-    }
 
-    @Override
-    public long offset(int page) {
-        return (page - 1) * limit;
-    }
 }

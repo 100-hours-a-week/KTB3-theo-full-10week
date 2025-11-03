@@ -71,11 +71,10 @@ public class PostService {
     }
 
     // 게시글 목록 조회
-    // TODO: JPA 페이지네이션 구현
     @Loggable
     public BaseResponse<FindPostsResponseDto> findPosts(int page) {
-        int size = 10;
-        Sort sort = Sort.by("createdAt").descending();
+        int size = PostPaginationPolicy.DEFAULT.size();
+        Sort sort = PostPaginationPolicy.DEFAULT.sort();
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<Post> posts = postRepository.findAll(pageable);
 
@@ -173,26 +172,23 @@ public class PostService {
             throw new PostNotFoundException();
         }
 
-        List<Comment> comments = commentRepository.findAllByPostId(postId);
-        int totalPages = comments.size() / CommentPaginationPolicy.DEFAULT.limit();
-        totalPages = (comments.size() % CommentPaginationPolicy.DEFAULT.limit()) > 0
-                ? totalPages + 1 : totalPages;
-        int totalCount = comments.size();
-        int commentPerPage = CommentPaginationPolicy.DEFAULT.limit();
-        int currentPage = page;
-        boolean hasNext = (totalPages > currentPage);
+        int size = CommentPaginationPolicy.DEFAULT.size();
+        Sort sort = CommentPaginationPolicy.DEFAULT.sort();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Comment> comments = commentRepository.findAll(pageable);
 
-        List<FindCommentResponseDto> commentDtoList = comments.stream()
-                .filter(CommentPaginationPolicy.DEFAULT.predicate())
-                .sorted(CommentPaginationPolicy.DEFAULT.comparator())
-                .skip(CommentPaginationPolicy.DEFAULT.offset(page))
-                .limit(CommentPaginationPolicy.DEFAULT.limit())
+        long totalElements = comments.getTotalElements();
+        long currentPage = page;
+        long totalPages = comments.getTotalPages();
+        boolean hasNext = comments.hasNext();
+        List<FindCommentResponseDto> contents = comments.getContent()
+                .stream()
                 .map((c) -> FindCommentResponseDto.toDto(c))
                 .collect(Collectors.toCollection(ArrayList::new));
 
         return new BaseResponse(ResponseMessage.COMMENTS_LOAD_SUCCESS,
-                FindCommentsResponseDto.toDto(postId, totalPages, totalCount, commentPerPage, currentPage, hasNext,
-                        commentDtoList));
+                FindCommentsResponseDto.toDto(postId, totalPages, totalElements, size, currentPage, hasNext,
+                        contents));
     }
 
     // 댓글 조회 By Comment Id
