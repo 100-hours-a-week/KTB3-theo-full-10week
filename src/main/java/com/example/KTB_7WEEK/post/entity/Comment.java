@@ -41,6 +41,7 @@ public class Comment {
 
     public Comment(Builder builder) {
         this.id = builder.id;
+        this.post = builder.post;
         this.author = builder.author;
         this.content = builder.content;
     }

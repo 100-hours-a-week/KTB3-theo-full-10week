@@ -1,7 +1,8 @@
 package com.example.KTB_7WEEK.post.service;
 
 import com.example.KTB_7WEEK.app.aop.aspect.log.Loggable;
-import com.example.KTB_7WEEK.post.dto.request.LikePostReqeustDto;
+import com.example.KTB_7WEEK.post.dto.request.CancelLikePostRequestDto;
+import com.example.KTB_7WEEK.post.dto.request.LikePostRequestDto;
 import com.example.KTB_7WEEK.post.dto.request.UpdateMyPostRequestDto;
 import com.example.KTB_7WEEK.post.dto.request.comment.CreateCommentRequestDto;
 import com.example.KTB_7WEEK.post.dto.request.comment.UpdateCommentRequestDto;
@@ -16,6 +17,7 @@ import com.example.KTB_7WEEK.post.entity.Comment;
 import com.example.KTB_7WEEK.post.entity.PostLike;
 import com.example.KTB_7WEEK.post.entity.PostLikeId;
 import com.example.KTB_7WEEK.post.exception.*;
+import com.example.KTB_7WEEK.post.exception.comment.CommentDeleteException;
 import com.example.KTB_7WEEK.post.exception.comment.CommentNotFoundException;
 import com.example.KTB_7WEEK.post.repository.CommentRepository;
 import com.example.KTB_7WEEK.post.dto.request.CreatePostRequestDto;
@@ -123,8 +125,6 @@ public class PostService {
     // 게시글 삭제 By Id
     @Loggable
     public BaseResponse deletePostById(long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException());
-
         postRepository.deleteById(postId);
 
         return new BaseResponse(ResponseMessage.POST_DELETE_SUCCESS, new Post());
@@ -142,7 +142,7 @@ public class PostService {
 
     // 게시글 좋아요
     @Loggable
-    public BaseResponse<LikePostResponseDto> likePost(Long postId, LikePostReqeustDto req) {
+    public BaseResponse<LikePostResponseDto> likePost(Long postId, LikePostRequestDto req) {
         Long userId = req.getUserId();
         PostLikeId postLikeId = new PostLikeId(userId, postId);
         if (postLikeRepository.existsById(postLikeId)) {
@@ -158,14 +158,25 @@ public class PostService {
                 LikePostResponseDto.toDto(toSave));
     }
 
+    // 게시글 좋아요 비활성화
+    public BaseResponse cancelLikePost(Long postId, CancelLikePostRequestDto req) {
+        Long userId = req.getUserId();
+        PostLikeId postLikeId = new PostLikeId(userId, postId);
+        postLikeRepository.deleteById(postLikeId);
+
+        return new BaseResponse(ResponseMessage.CANCEL_LIKE_POST_SUCCESS,
+                CancelLikePostResponseDto.toDto(postLikeId));
+    }
     // 댓글 등록
     @Loggable
     public BaseResponse<CreateCommentResponseDto> createComment(long postId, CreateCommentRequestDto req) {
 
-        Post findPost = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException());
+        Post findPost = postRepository.getReferenceById(postId);
+        long userId = findPost.getAuthor().getId();
+        User findUser = userRepository.getReferenceById(userId);
         System.out.println("================================");
         Comment toSave = new Comment.Builder()
-                .author(findPost.getAuthor())
+                .author(findUser)
                 .post(findPost)
                 .content(req.getContent())
                 .build();
@@ -222,6 +233,7 @@ public class PostService {
 
         Comment toUpdate = commentRepository.findById(commentId).orElseThrow(() -> new CommentNotFoundException());
         toUpdate.updateContent(req.getContent());
+        toUpdate.updateNow();
 
         return new BaseResponse(ResponseMessage.COMMENT_UPDATE_SUCCESS,
                 UpdateCommentResponseDto.toDto(toUpdate));
@@ -231,7 +243,9 @@ public class PostService {
     @Loggable
     public BaseResponse deleteCommentById(long postId, long commentId) {
         int row = commentRepository.deleteByIdAndPostId(commentId, postId);
-
+        if(row < 1) {
+            throw new CommentDeleteException();
+        }
         return new BaseResponse(ResponseMessage.COMMENT_DELETE_SUCCESS, new Comment());
     }
 

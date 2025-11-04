@@ -1,7 +1,6 @@
 package com.example.KTB_7WEEK.post.dto.response;
 
 import com.example.KTB_7WEEK.app.util.DateTimePattern;
-import com.example.KTB_7WEEK.post.dto.request.LikePostReqeustDto;
 import com.example.KTB_7WEEK.post.entity.PostLike;
 import lombok.Getter;
 

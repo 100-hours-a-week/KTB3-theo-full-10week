@@ -2,12 +2,14 @@ package com.example.KTB_7WEEK.post.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import lombok.Getter;
 
 import java.io.Serializable;
 import java.util.Objects;
 
 
 @Embeddable
+@Getter
 public class PostLikeId implements Serializable {
 
     @Column(name = "user_id")

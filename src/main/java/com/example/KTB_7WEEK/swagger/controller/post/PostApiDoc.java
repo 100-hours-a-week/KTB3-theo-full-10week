@@ -1,7 +1,8 @@
 package com.example.KTB_7WEEK.swagger.controller.post;
 
+import com.example.KTB_7WEEK.post.dto.request.CancelLikePostRequestDto;
 import com.example.KTB_7WEEK.post.dto.request.CreatePostRequestDto;
-import com.example.KTB_7WEEK.post.dto.request.LikePostReqeustDto;
+import com.example.KTB_7WEEK.post.dto.request.LikePostRequestDto;
 import com.example.KTB_7WEEK.post.dto.request.UpdateMyPostRequestDto;
 import com.example.KTB_7WEEK.post.dto.request.comment.CreateCommentRequestDto;
 import com.example.KTB_7WEEK.post.dto.request.comment.UpdateCommentRequestDto;
@@ -259,7 +260,7 @@ public interface PostApiDoc {
                                                     @NotNull
                                                     @Positive Long postId);
 
-    @Operation(summary = "게시글 좋아요 활성", description = "회원 PK와 게시글 PK를 통해 종아요 기능을 활성화 합니다.")
+    @Operation(summary = "게시글 좋아요 활성화", description = "회원 PK와 게시글 PK를 통해 종아요 기능을 활성화 합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "좋아요 성공"
                     , content = @Content(mediaType = "application/json", examples = {
@@ -291,8 +292,40 @@ public interface PostApiDoc {
                                                  @NotNull
                                                  @Positive Long postId,
                                                  @RequestBody
-                                                 @Valid LikePostReqeustDto request);
+                                                 @Valid LikePostRequestDto request);
 
+    @Operation(summary = "게시글 좋아요 비 활성화", description = "회원 PK와 게시글 PK를 통해 종아요 기능을 비 활성화 합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "좋아요 취소 성공"
+                    , content = @Content(mediaType = "application/json", examples = {
+                    @ExampleObject(name = "좋아요 취소 성공", value = """
+                            {
+                                "message": "Cancel Like Post Success",
+                                "data": {
+                                    "userId": 1,
+                                    "postId": 1,
+                                },
+                                "timestamp": "2025-10-12 22:26:17"
+                            }
+                            """)
+            })),
+            @ApiResponse(responseCode = "404", description = "리소스를 찾을 수 없습니다."
+                    , content = @Content(mediaType = "application/json", examples = {
+                    @ExampleObject(name = "게시글을 찾을 수 없음", value = """
+                            {
+                                "code": 404,
+                                "status": "NOT_FOUND",
+                                "message": "게시글을 찾을 수 없습니다.",
+                                "path": "/post/100/like"
+                            }
+                            """)
+            })),
+    })
+    public ResponseEntity<BaseResponse> cancelLikePost(@PathVariable("postId")
+                                                 @NotNull
+                                                 @Positive Long postId,
+                                                 @RequestBody
+                                                 @Valid CancelLikePostRequestDto request);
     @Operation(summary = "댓글 등록", description = "게시글 PK를 통해 새로운 댓글을 등록합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "댓글 생성 성공"

@@ -7,16 +7,16 @@ import org.springframework.validation.annotation.Validated;
 
 @Validated
 @Getter
-public class LikePostReqeustDto {
+public class LikePostRequestDto {
 
     @Positive(message = "회원 PK는 양수입니다.")
     @Schema(description = "게시글 좋아요 선택한 회원 PK", example = "1")
     private long userId;
 
-    public LikePostReqeustDto() {
+    public LikePostRequestDto() {
     }
 
-    public LikePostReqeustDto(long userId) {
+    public LikePostRequestDto(long userId) {
         this.userId = userId;
     }
 }

@@ -1,6 +1,7 @@
 package com.example.KTB_7WEEK.post.controller;
 
-import com.example.KTB_7WEEK.post.dto.request.LikePostReqeustDto;
+import com.example.KTB_7WEEK.post.dto.request.CancelLikePostRequestDto;
+import com.example.KTB_7WEEK.post.dto.request.LikePostRequestDto;
 import com.example.KTB_7WEEK.swagger.controller.post.PostApiDoc;
 import com.example.KTB_7WEEK.post.dto.request.CreatePostRequestDto;
 import com.example.KTB_7WEEK.post.dto.request.comment.UpdateCommentRequestDto;
@@ -69,13 +70,23 @@ public class PublicPostController implements PostApiDoc {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PostMapping("/{postId}/like") // 좋아요 수 증가
+    @PostMapping("/{postId}/like") // 좋아요 활성화
     public ResponseEntity<BaseResponse> likePost(@PathVariable("postId")
                                                      @NotNull
                                                      @Positive Long postId,
                                                      @RequestBody
-                                                     @Valid LikePostReqeustDto request) {
+                                                     @Valid LikePostRequestDto request) {
         BaseResponse response = publicPostService.likePost(postId, request);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PostMapping("/{postId}/like/cancel") // 좋아요 비 활성화
+    public ResponseEntity<BaseResponse> cancelLikePost(@PathVariable("postId")
+                                                 @NotNull
+                                                 @Positive Long postId,
+                                                 @RequestBody
+                                                 @Valid CancelLikePostRequestDto request) {
+        BaseResponse response = publicPostService.cancelLikePost(postId, request);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
