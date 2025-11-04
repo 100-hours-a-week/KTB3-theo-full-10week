@@ -18,19 +18,19 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", nullable = false, unique = true)
-    private Long id = 0L;
+    private Long id;
 
     @Column(name = "email", nullable = false, unique = true)
-    private String email = "";
+    private String email;
 
     @Column(name = "password", nullable = false, length = 20)
-    private String password = "";
+    private String password;
 
     @Column(name = "nickname", nullable = false, length = 10, unique = true)
-    private String nickname = "";
+    private String nickname;
 
     @Column(name = "profile_image")
-    private String profileImage = "";
+    private String profileImage;
 
     // 회원이 작성한 게시글 목록, Post 삭제 전이
     @OneToMany(mappedBy = "author", cascade = CascadeType.REMOVE)
@@ -85,13 +85,13 @@ public class User {
     }
 
     public static class Builder {
-        private long id = 0L;
-        private String email = "";
-        private String password = "";
-        private String nickname = "";
-        private String profileImage = "";
+        private Long id;
+        private String email;
+        private String password;
+        private String nickname;
+        private String profileImage;
 
-        public Builder id(long id) {
+        public Builder id(Long id) {
             this.id = id;
             return this;
         }

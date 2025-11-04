@@ -18,16 +18,16 @@ public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_id", nullable = false, unique = true)
-    private Long id = 0L;
+    private Long id;
 
     @Column(name = "title", length = 26, nullable = false)
-    private String title = "";
+    private String title;
 
     @Column(name = "article", nullable = false)
-    private String article = "";
+    private String article;
 
     @Column(name = "article_image")
-    private String articleImage = "";
+    private String articleImage;
 
     @Enumerated(EnumType.STRING)
     @JoinColumn(name = "category", nullable = false)
@@ -94,11 +94,11 @@ public class Post {
     }
 
     public static class Builder {
-        private long id = 0L;
-        private User author = new User();
-        private String title = "";
-        private String article = "";
-        private String articleImage = "";
+        private Long id;
+        private User author;
+        private String title;
+        private String article;
+        private String articleImage;
         private PostCategory category = PostCategory.NONE;
 
         public Builder id(long id) {
