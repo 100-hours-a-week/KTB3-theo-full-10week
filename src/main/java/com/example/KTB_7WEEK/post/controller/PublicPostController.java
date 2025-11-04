@@ -2,7 +2,7 @@ package com.example.KTB_7WEEK.post.controller;
 
 import com.example.KTB_7WEEK.post.dto.request.CancelLikePostRequestDto;
 import com.example.KTB_7WEEK.post.dto.request.LikePostRequestDto;
-import com.example.KTB_7WEEK.swagger.controller.post.PostApiDoc;
+import com.example.KTB_7WEEK.app.swagger.controller.post.PostApiDoc;
 import com.example.KTB_7WEEK.post.dto.request.CreatePostRequestDto;
 import com.example.KTB_7WEEK.post.dto.request.comment.UpdateCommentRequestDto;
 import com.example.KTB_7WEEK.app.response.BaseResponse;

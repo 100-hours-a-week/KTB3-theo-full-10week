@@ -25,10 +25,6 @@ public class UserService {
 
     /**
      * User Service Business Logic & Convert <BaseResponse> Method
-     * <p>
-     * TODO
-     * 1. register 메소드 이메일, 닉네임 중복체크 하는 동안 다른 트랜잭션이 값 바꾸면 중간에 검사 실패할 수 있다.
-     * 2. 비밀번호 암호화 BCrypt
      **/
     // 회원가입
     @Loggable
@@ -36,18 +32,18 @@ public class UserService {
         String email = req.getEmail();
         String nickname = req.getNickname();
 
-        if (userRepository.existsByEmail(email)) throw new EmailAlreadyRegisteredException();
-        if (userRepository.existsByNickname(nickname)) throw new NicknameAlreadyRegisteredException();
+        if (userRepository.existsByEmail(email)) throw new EmailAlreadyRegisteredException(); // 이메일 중복 검사
+        if (userRepository.existsByNickname(nickname)) throw new NicknameAlreadyRegisteredException(); // 닉네임 중복 검사
 
-        User toSave = new User.Builder()
+        User toSave = new User.Builder() // User 생성
                 .email(email)
                 .password(req.getPassword())
                 .nickname(req.getNickname())
                 .profileImage(req.getProfileImage())
                 .build();
 
-        User saved = userRepository.save(toSave);
-        return new BaseResponse(ResponseMessage.USER_REGISTER_SUCCESS, RegistUserResponseDto.toDto(saved));
+        User saved = userRepository.save(toSave); // DB save User
+        return new BaseResponse(ResponseMessage.USER_REGISTER_SUCCESS, RegistUserResponseDto.toDto(toSave));
 
     }
 
@@ -61,7 +57,6 @@ public class UserService {
     // 회원정보 삭제
     @Loggable
     public BaseResponse deleteById(long id) {
-        User toDelete = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException());
         userRepository.deleteById(id);
 
         return new BaseResponse(ResponseMessage.USER_DELETE_SUCCESS, new User());
@@ -71,24 +66,24 @@ public class UserService {
     @Loggable
     public BaseResponse<CheckNicknameAvailabilityResponseDto> doubleCheckNickname(CheckNicknameAvailabilityRequestDto req) {
         String nickname = req.getNickname();
-        if (userRepository.existsByNickname(nickname)) {
+        if (userRepository.existsByNickname(nickname)) { // if 닉네임 is unique
             return new BaseResponse(ResponseMessage.NICKNAME_IS_NOT_AVAILABLE,
-                    CheckNicknameAvailabilityResponseDto.toDto(nickname, false));
+                    CheckNicknameAvailabilityResponseDto.toDto(nickname, false)); // Nickname is Not Available
         }
         return new BaseResponse(ResponseMessage.NICKNAME_IS_AVAILABLE,
-                CheckNicknameAvailabilityResponseDto.toDto(nickname, true));
+                CheckNicknameAvailabilityResponseDto.toDto(nickname, true)); // Nickname is Available
     }
 
     // 이메일 중복 검사
     @Loggable
     public BaseResponse<CheckEmailAvailabilityResponseDto> doubleCheckEmail(CheckEmailAvailabilityRequestDto req) {
         String email = req.getEmail();
-        if (userRepository.existsByEmail(email)) {
+        if (userRepository.existsByEmail(email)) { // if 이메일 is unique
             return new BaseResponse(ResponseMessage.EMAIL_IS_NOT_AVAILABLE,
-                    CheckEmailAvailabilityResponseDto.toDto(email, false));
+                    CheckEmailAvailabilityResponseDto.toDto(email, false)); // Email Not Available
         }
         return new BaseResponse(ResponseMessage.EMAIL_IS_AVAILABLE,
-                CheckEmailAvailabilityResponseDto.toDto(email, true));
+                CheckEmailAvailabilityResponseDto.toDto(email, true)); // Email is Available
     }
 
 
@@ -100,11 +95,12 @@ public class UserService {
         if (userRepository.existsByNickname(nickname)) throw new NicknameAlreadyRegisteredException();
 
         User toUpdate = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
-        toUpdate.updateNickname(nickname);
-        toUpdate.updateNowTime();
 
-        User updated = userRepository.save(toUpdate);
-        return new BaseResponse(ResponseMessage.NICKNAME_EDIT_SUCCESS, UpdateNicknameResponseDto.toDto(updated));
+        // 변경 감지
+        toUpdate.updateNickname(nickname); // 닉네임 수정
+        toUpdate.updateNowTime(); // 업데이트 시간 최신화
+
+        return new BaseResponse(ResponseMessage.NICKNAME_EDIT_SUCCESS, UpdateNicknameResponseDto.toDto(toUpdate));
     }
 
     // 비밀번호 변경
@@ -113,8 +109,10 @@ public class UserService {
         String password = req.getPassword();
 
         User toUpdate = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
-        toUpdate.updatePassword(password);
-        toUpdate.updateNowTime();
+
+        // 변경감지
+        toUpdate.updatePassword(password); // 비밀번호 수정
+        toUpdate.updateNowTime(); // 업데이트 시간 최신화
 
         return new BaseResponse(ResponseMessage.PASSWORD_CHANGE_SUCCESS, UpdatePasswordResponseDto.toDto(toUpdate.getId()));
     }

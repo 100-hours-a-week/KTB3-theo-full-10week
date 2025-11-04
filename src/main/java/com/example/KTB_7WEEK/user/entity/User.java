@@ -32,9 +32,11 @@ public class User {
     @Column(name = "profile_image")
     private String profileImage = "";
 
+    // 회원이 작성한 게시글 목록, Post 삭제 전이
     @OneToMany(mappedBy = "author", cascade = CascadeType.REMOVE)
     private Set<Post> posts = new HashSet<>();
 
+    // 회원이 좋아요 누른 게시글 목록, PostLike 삭제 전이
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private Set<PostLike> likes = new HashSet<>();
 

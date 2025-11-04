@@ -1,6 +1,5 @@
 package com.example.KTB_7WEEK.auth.repository;
 
-import com.example.KTB_7WEEK.app.util.db.table.TokenBlackListTable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -8,9 +7,9 @@ import java.util.Optional;
 
 @Repository
 public class TokenRepository {
-    private TokenBlackListTable tokenBlackListTable;
+    private TokenBlackList tokenBlackListTable;
 
-    public TokenRepository(TokenBlackListTable tokenBlackListTable) {
+    public TokenRepository(TokenBlackList tokenBlackListTable) {
         this.tokenBlackListTable = tokenBlackListTable;
     }
 

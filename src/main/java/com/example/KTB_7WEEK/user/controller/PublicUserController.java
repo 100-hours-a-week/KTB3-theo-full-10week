@@ -1,6 +1,6 @@
 package com.example.KTB_7WEEK.user.controller;
 
-import com.example.KTB_7WEEK.swagger.controller.user.UserApiDoc;
+import com.example.KTB_7WEEK.app.swagger.controller.user.UserApiDoc;
 import com.example.KTB_7WEEK.app.response.BaseResponse;
 import com.example.KTB_7WEEK.user.service.UserService;
 import com.example.KTB_7WEEK.user.dto.request.*;

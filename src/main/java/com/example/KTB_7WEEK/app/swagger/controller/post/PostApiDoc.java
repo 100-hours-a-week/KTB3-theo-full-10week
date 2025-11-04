@@ -1,4 +1,4 @@
-package com.example.KTB_7WEEK.swagger.controller.post;
+package com.example.KTB_7WEEK.app.swagger.controller.post;
 
 import com.example.KTB_7WEEK.post.dto.request.CancelLikePostRequestDto;
 import com.example.KTB_7WEEK.post.dto.request.CreatePostRequestDto;

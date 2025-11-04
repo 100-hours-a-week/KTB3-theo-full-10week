@@ -1,4 +1,4 @@
-package com.example.KTB_7WEEK.swagger.config;
+package com.example.KTB_7WEEK.app.swagger.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;

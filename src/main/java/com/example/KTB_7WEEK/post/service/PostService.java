@@ -65,9 +65,9 @@ public class PostService {
     // 게시글 생성
     @Loggable
     public BaseResponse<CreateCommentResponseDto> createPost(CreatePostRequestDto req) {
-        User author = userRepository.findById(req.getAuthorId()).orElseThrow(() -> new UserNotFoundException());
-        User u = userRepository.getReferenceById(req.getAuthorId());
-        Post toSave = new Post.Builder()
+        User author = userRepository.getReferenceById(req.getAuthorId()); // User Proxy
+
+        Post toSave = new Post.Builder() // Post for Save
                 .author(author)
                 .title(req.getTitle())
                 .article(req.getArticle())
@@ -75,27 +75,28 @@ public class PostService {
                 .category(req.getCategory())
                 .build();
 
-        Post saved = postRepository.save(toSave);
+        Post saved = postRepository.save(toSave); // DB Save Post
         return new BaseResponse(ResponseMessage.POST_REGISTER_SUCCESS, CreatePostResponseDto.toDto(saved.getId()));
     }
 
     // 게시글 목록 조회
     @Loggable
     public BaseResponse<FindPostsResponseDto> findPosts(int page) {
-        int size = PostPaginationPolicy.DEFAULT.size();
-        Sort sort = PostPaginationPolicy.DEFAULT.sort();
+        int size = PostPaginationPolicy.DEFAULT.size(); // 페이지 내 컨텐츠 수 DEFAULT = 10;
+        Sort sort = PostPaginationPolicy.DEFAULT.sort(); // 최신순
         Pageable pageable = PageRequest.of(page, size, sort);
-        Page<Post> posts = postRepository.findAll(pageable);
+        Page<Post> posts = postRepository.findAll(pageable); // get Page
 
-        long totalElements = posts.getTotalElements();
-        long currentPage = page;
-        long totalPages = posts.getTotalPages();
-        boolean hasNext = posts.hasNext();
+        long totalElements = posts.getTotalElements(); // 컨텐츠 총 개수
+        long currentPage = page; // 현재 페이지
+        long totalPages = posts.getTotalPages(); // 전체 페이지 개수
+        boolean hasNext = posts.hasNext(); // 다음 페이지 여부
 
         List<FindPostResponseDto> contents = posts.getContent()
                 .stream()
                 .map((p) -> FindPostResponseDto.toDto(p))
                 .collect(Collectors.toCollection(ArrayList::new));
+
         return new BaseResponse(ResponseMessage.POSTS_LOAD_SUCCESS,
                 FindPostsResponseDto.toDto(totalPages, totalElements, size, currentPage, hasNext, contents));
     }
@@ -112,11 +113,12 @@ public class PostService {
     public BaseResponse<UpdateMyPostResponseDto> updateMyPost(long postId, UpdateMyPostRequestDto req) {
         Post toUpdate = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException());
 
+        // 변경 감지
         toUpdate.updateTitle(req.getTitle());
         toUpdate.updateArticle(req.getArticle());
         toUpdate.updateArticleImage(req.getArticleImage());
         toUpdate.updateCategory(req.getCategory());
-        toUpdate.updateNow();
+        toUpdate.updateNow(); // 업데이트 필드 최신화
 
         return new BaseResponse(ResponseMessage.MY_POST_UPDATE_SUCCESS,
                 UpdateMyPostResponseDto.toDto(toUpdate));
@@ -133,7 +135,7 @@ public class PostService {
     // 게시글 조회 수 증가
     @Loggable
     public BaseResponse<IncreaseHitResponseDto> increaseViewCount(Long postId) {
-        postRepository.increaseViewCount(postId);
+        postRepository.increaseViewCount(postId); // 조회 수 증가
         Post updated = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException());
 
         return new BaseResponse(ResponseMessage.INCREASE_HIT_SUCCESS,
@@ -144,15 +146,16 @@ public class PostService {
     @Loggable
     public BaseResponse<LikePostResponseDto> likePost(Long postId, LikePostRequestDto req) {
         Long userId = req.getUserId();
-        PostLikeId postLikeId = new PostLikeId(userId, postId);
-        if (postLikeRepository.existsById(postLikeId)) {
+        PostLikeId postLikeId = new PostLikeId(userId, postId); // 복합키 생성
+        if (postLikeRepository.existsById(postLikeId)) { // 이미 회원이 좋아요 활성화 했는지
             throw new AlreadyLikedPost();
         }
-        User user = userRepository.getReferenceById(userId);
-        Post post = postRepository.getReferenceById(postId);
 
-        PostLike toSave = new PostLike(user, post);
-        postLikeRepository.save(toSave);
+        User user = userRepository.getReferenceById(userId); // User Proxy
+        Post post = postRepository.getReferenceById(postId); // Post Proxy
+
+        PostLike toSave = new PostLike(user, post); // 좋아요 Entity 생성
+        postLikeRepository.save(toSave); // DB Save 좋아요 entity
 
         return new BaseResponse(ResponseMessage.LIKE_POST_SUCCESS,
                 LikePostResponseDto.toDto(toSave));
@@ -161,7 +164,7 @@ public class PostService {
     // 게시글 좋아요 비활성화
     public BaseResponse cancelLikePost(Long postId, CancelLikePostRequestDto req) {
         Long userId = req.getUserId();
-        PostLikeId postLikeId = new PostLikeId(userId, postId);
+        PostLikeId postLikeId = new PostLikeId(userId, postId); // 조회용 복합키 생성
         postLikeRepository.deleteById(postLikeId);
 
         return new BaseResponse(ResponseMessage.CANCEL_LIKE_POST_SUCCESS,
@@ -170,11 +173,10 @@ public class PostService {
     // 댓글 등록
     @Loggable
     public BaseResponse<CreateCommentResponseDto> createComment(long postId, CreateCommentRequestDto req) {
-
-        Post findPost = postRepository.getReferenceById(postId);
+        Post findPost = postRepository.getReferenceById(postId); // Post Proxy
         long userId = findPost.getAuthor().getId();
-        User findUser = userRepository.getReferenceById(userId);
-        System.out.println("================================");
+        User findUser = userRepository.getReferenceById(userId); // User Proxy
+
         Comment toSave = new Comment.Builder()
                 .author(findUser)
                 .post(findPost)
@@ -190,19 +192,20 @@ public class PostService {
     // 댓글 조회 By Post Id
     @Loggable
     public BaseResponse<FindCommentsResponseDto> findCommentByPostId(long postId, int page) {
-        if (!postRepository.existsById(postId)) {
+        if (!postRepository.existsById(postId)) { // 게시글 존재하지 않을 때
             throw new PostNotFoundException();
         }
 
-        int size = CommentPaginationPolicy.DEFAULT.size();
-        Sort sort = CommentPaginationPolicy.DEFAULT.sort();
+        int size = CommentPaginationPolicy.DEFAULT.size(); // 페이지 내 컨텐츠 수 DEFAULT = 10;
+        Sort sort = CommentPaginationPolicy.DEFAULT.sort(); // DEFAULT : 최신 순
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<Comment> comments = commentRepository.findAllByPostId(postId, pageable);
 
-        long totalElements = comments.getTotalElements();
-        long currentPage = page;
-        long totalPages = comments.getTotalPages();
-        boolean hasNext = comments.hasNext();
+        long totalElements = comments.getTotalElements(); // 전체 컨텐츠 개수
+        long currentPage = page; // 현재 페이지
+        long totalPages = comments.getTotalPages(); // 총 페이지 개수
+        boolean hasNext = comments.hasNext(); // 다음 페이지 존재 여부
+
         List<FindCommentResponseDto> contents = comments.getContent()
                 .stream()
                 .map((c) -> FindCommentResponseDto.toDto(c))
@@ -232,8 +235,9 @@ public class PostService {
         }
 
         Comment toUpdate = commentRepository.findById(commentId).orElseThrow(() -> new CommentNotFoundException());
-        toUpdate.updateContent(req.getContent());
-        toUpdate.updateNow();
+        // 변경 감지
+        toUpdate.updateContent(req.getContent()); // 댓글 내용 수정
+        toUpdate.updateNow(); // 업데이트 시간 최신화
 
         return new BaseResponse(ResponseMessage.COMMENT_UPDATE_SUCCESS,
                 UpdateCommentResponseDto.toDto(toUpdate));
@@ -243,9 +247,6 @@ public class PostService {
     @Loggable
     public BaseResponse deleteCommentById(long postId, long commentId) {
         int row = commentRepository.deleteByIdAndPostId(commentId, postId);
-        if(row < 1) {
-            throw new CommentDeleteException();
-        }
         return new BaseResponse(ResponseMessage.COMMENT_DELETE_SUCCESS, new Comment());
     }
 

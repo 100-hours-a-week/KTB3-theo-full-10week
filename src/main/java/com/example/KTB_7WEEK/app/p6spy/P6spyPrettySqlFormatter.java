@@ -1,4 +1,4 @@
-package com.example.KTB_7WEEK.p6spy;
+package com.example.KTB_7WEEK.app.p6spy;
 
 import com.p6spy.engine.logging.Category;
 import com.p6spy.engine.spy.appender.MessageFormattingStrategy;

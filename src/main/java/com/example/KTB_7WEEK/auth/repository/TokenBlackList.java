@@ -1,4 +1,4 @@
-package com.example.KTB_7WEEK.app.util.db.table;
+package com.example.KTB_7WEEK.auth.repository;
 
 
 import org.springframework.stereotype.Component;
@@ -8,10 +8,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Component
-public class TokenBlackListTable {
+public class TokenBlackList {
     private Set<String> blackList = Collections.synchronizedSet(new HashSet<>());
 
-    public TokenBlackListTable() {
+    public TokenBlackList() {
     }
 
     public Set<String> getTable() {

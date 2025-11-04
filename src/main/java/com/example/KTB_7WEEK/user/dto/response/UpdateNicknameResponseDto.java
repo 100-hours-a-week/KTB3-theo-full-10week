@@ -11,7 +11,6 @@ import java.time.format.DateTimeFormatter;
 public class UpdateNicknameResponseDto {
     private long id;
     private String nickname;
-    private String createdAt;
     private String updatedAt;
 
     public UpdateNicknameResponseDto() {
@@ -21,8 +20,6 @@ public class UpdateNicknameResponseDto {
         UpdateNicknameResponseDto dto = new UpdateNicknameResponseDto();
         dto.id = user.getId();
         dto.nickname = user.getNickname();
-        dto.createdAt = user.getCreatedAt()
-                .format(DateTimeFormatter.ofPattern(DateTimePattern.DEFAULT_DATE_TIME));
         dto.updatedAt = user.getUpdatedAt()
                 .format(DateTimeFormatter.ofPattern(DateTimePattern.DEFAULT_DATE_TIME));
         return dto;

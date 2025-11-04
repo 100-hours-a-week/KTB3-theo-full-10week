@@ -22,10 +22,11 @@ public class AuthService {
     public BaseResponse<LoginResponseDto> login(LoginRequestDto req) {
         String email = req.getEmail();
         String password = req.getPassword();
+
         boolean isLoginSuccess = false;
         ResponseMessage resMsg = ResponseMessage.LOGIN_FAIL;
 
-                User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException());
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException());
 
         if (user.getEmail().equals(email) && user.getPassword().equals(password)) {
             isLoginSuccess = true;

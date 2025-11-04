@@ -2,7 +2,7 @@ package com.example.KTB_7WEEK.auth.controller;
 
 import com.example.KTB_7WEEK.auth.dto.response.LoginResponseDto;
 import com.example.KTB_7WEEK.auth.service.AuthService;
-import com.example.KTB_7WEEK.swagger.controller.AuthApiDoc;
+import com.example.KTB_7WEEK.app.swagger.controller.AuthApiDoc;
 import com.example.KTB_7WEEK.auth.dto.request.LoginRequestDto;
 import com.example.KTB_7WEEK.app.response.BaseResponse;
 import com.example.KTB_7WEEK.auth.service.TokenService;

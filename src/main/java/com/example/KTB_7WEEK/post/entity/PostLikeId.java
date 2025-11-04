@@ -10,7 +10,7 @@ import java.util.Objects;
 
 @Embeddable
 @Getter
-public class PostLikeId implements Serializable {
+public class PostLikeId implements Serializable { // 복합키 클래스
 
     @Column(name = "user_id")
     private Long userId;
