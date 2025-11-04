@@ -33,8 +33,8 @@ public class FindPostResponseDto {
         dto.article = post.getArticle();
         dto.articleImage = post.getArticleImage();
         dto.category = post.getCategory();
-//        dto.hit = post.getHit();
-//        dto.like = post.getLike();
+        dto.hit = post.getView_count();
+        dto.like = post.getLikes().size();
         dto.createdAt = post.getCreatedAt().format(
                 DateTimeFormatter.ofPattern(DateTimePattern.DEFAULT_DATE_TIME));
         dto.updatedAt = post.getUpdatedAt().format(

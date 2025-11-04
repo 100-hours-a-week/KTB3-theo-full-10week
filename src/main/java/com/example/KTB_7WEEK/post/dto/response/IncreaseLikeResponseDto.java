@@ -18,7 +18,7 @@ public class IncreaseLikeResponseDto {
     public static IncreaseLikeResponseDto toDto(Post post) {
         IncreaseLikeResponseDto dto = new IncreaseLikeResponseDto();
         dto.id = post.getId();
-//        dto.like = post.getLike();
+        dto.like = post.getLikes().size();
         dto.updateAt = post.getUpdatedAt()
                 .format(DateTimeFormatter.ofPattern(DateTimePattern.DEFAULT_DATE_TIME));
         return dto;

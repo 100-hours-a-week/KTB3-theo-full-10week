@@ -62,10 +62,10 @@ public class PublicPostController implements PostApiDoc {
 
 
     @PostMapping("/{postId}/hit") // 조회 수 증가
-    public ResponseEntity<BaseResponse> increaseHit(@PathVariable("postId")
+    public ResponseEntity<BaseResponse> increaseViewCount(@PathVariable("postId")
                                                     @NotNull
                                                     @Positive Long postId) {
-        BaseResponse response = publicPostService.increaseHit(postId);
+        BaseResponse response = publicPostService.increaseViewCount(postId);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 

@@ -8,7 +8,9 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -30,6 +32,9 @@ public class User {
     @Column(name = "profile_image")
     private String profileImage = "";
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private Set<PostLike> likes = new HashSet<>();
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
@@ -38,15 +43,6 @@ public class User {
 
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted = false;
-
-    @OneToMany(mappedBy = "author") // 읽기 조회용
-    private List<Post> posts = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user") // 읽기 조회용
-    private List<PostLike> likes = new ArrayList<>();
-
-    @OneToMany(mappedBy = "author") // 읽기 조회용
-    private List<Comment> comments = new ArrayList<>();
 
     public User() {
     }

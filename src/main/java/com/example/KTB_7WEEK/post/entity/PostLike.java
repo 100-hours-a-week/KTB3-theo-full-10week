@@ -35,8 +35,5 @@ public class PostLike {
         this.user = user;
         this.post = post;
         this.createdAt = LocalDateTime.now();
-
-        user.getLikes().add(this);
-        post.getLikes().add(this);
     }
 }

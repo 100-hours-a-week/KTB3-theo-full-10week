@@ -65,34 +65,11 @@ public class Comment {
         this.isDeleted = true;
     }
 
-    // 연관관계 편의 메소드 Post
-    public void onPost(Post post) {
-        this.post = post;
-        post.getComments().add(this);
-    }
-
-    public void removeInPost() {
-        this.post.getComments().remove(this);
-        this.post = null;
-    }
-
-    // 연관관계 편의 메소드 User
-    public void writeBy(User author) {
-        this.author = author;
-        author.getComments().add(this); // 동기화하는 과정에서 동시성 문제 없나?
-    }
-
-    public void deleteByAuthor() {
-        this.author.getComments().remove(this);
-        this.author = null;
-    }
-
-
     public static class Builder {
-        private Long id = 0L;
-        private Post post = new Post();
-        private User author = new User();
-        private String content = "";
+        private Long id;
+        private Post post;
+        private User author;
+        private String content;
 
         public Builder id(long id) {
             this.id = id;

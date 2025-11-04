@@ -11,7 +11,7 @@ import org.springframework.validation.annotation.Validated;
 @Getter
 public class PasswordChangeRequestDto {
     @NotBlank(message = "비밀번호는 필수 입력입니다.")
-    @Size(min = 1, max = 10)
+    @Size(min = 1, max = 20)
     @Schema(description = "변경 요청 비밀번호", example = "1q2w3e4r!Q!Q")
     private String password;
 

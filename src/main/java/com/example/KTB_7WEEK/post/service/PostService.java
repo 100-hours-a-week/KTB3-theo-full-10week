@@ -73,8 +73,6 @@ public class PostService {
                 .category(req.getCategory())
                 .build();
 
-        toSave.postByAuthor(author);
-
         Post saved = postRepository.save(toSave);
         return new BaseResponse(ResponseMessage.POST_REGISTER_SUCCESS, CreatePostResponseDto.toDto(saved.getId()));
     }
@@ -87,33 +85,30 @@ public class PostService {
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<Post> posts = postRepository.findAll(pageable);
 
-        System.out.println(posts.getContent().size());
         long totalElements = posts.getTotalElements();
         long currentPage = page;
         long totalPages = posts.getTotalPages();
         boolean hasNext = posts.hasNext();
 
-
         List<FindPostResponseDto> contents = posts.getContent()
                 .stream()
                 .map((p) -> FindPostResponseDto.toDto(p))
                 .collect(Collectors.toCollection(ArrayList::new));
-        System.out.println(contents.size());
         return new BaseResponse(ResponseMessage.POSTS_LOAD_SUCCESS,
                 FindPostsResponseDto.toDto(totalPages, totalElements, size, currentPage, hasNext, contents));
     }
 
     // 게시글 조회
     @Loggable
-    public BaseResponse<FindPostResponseDto> findPostById(long id) {
-        Post post = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException());
+    public BaseResponse<FindPostResponseDto> findPostById(long postId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException());
         return new BaseResponse(ResponseMessage.POST_INFO_LOAD_SUCCESS, FindPostResponseDto.toDto(post));
     }
 
     // My Post 수정
     @Loggable
-    public BaseResponse<UpdateMyPostResponseDto> updateMyPost(long id, UpdateMyPostRequestDto req) {
-        Post toUpdate = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException());
+    public BaseResponse<UpdateMyPostResponseDto> updateMyPost(long postId, UpdateMyPostRequestDto req) {
+        Post toUpdate = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException());
 
         toUpdate.updateTitle(req.getTitle());
         toUpdate.updateArticle(req.getArticle());
@@ -127,25 +122,22 @@ public class PostService {
 
     // 게시글 삭제 By Id
     @Loggable
-    public BaseResponse deletePostById(long id) {
-        Post post = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException());
+    public BaseResponse deletePostById(long postId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException());
 
-        post.deleteByAuthor();
-        postRepository.deleteById(id);
+        postRepository.deleteById(postId);
 
         return new BaseResponse(ResponseMessage.POST_DELETE_SUCCESS, new Post());
     }
 
     // 게시글 조회 수 증가
     @Loggable
-    public BaseResponse<IncreaseHitResponseDto> increaseHit(long id) {
-//        Post toUpdate = postRepository.findPostById(id).orElseThrow(() -> new PostNotFoundException());
-
-        Post toUpdate = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException());
-//        toUpdate.increaseHit();
+    public BaseResponse<IncreaseHitResponseDto> increaseViewCount(Long postId) {
+        postRepository.increaseViewCount(postId);
+        Post updated = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException());
 
         return new BaseResponse(ResponseMessage.INCREASE_HIT_SUCCESS,
-                IncreaseHitResponseDto.toDto(toUpdate));
+                IncreaseHitResponseDto.toDto(updated));
     }
 
     // 게시글 좋아요
@@ -156,8 +148,8 @@ public class PostService {
         if (postLikeRepository.existsById(postLikeId)) {
             throw new AlreadyLikedPost();
         }
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
-        Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException());
+        User user = userRepository.getReferenceById(userId);
+        Post post = postRepository.getReferenceById(postId);
 
         PostLike toSave = new PostLike(user, post);
         postLikeRepository.save(toSave);
@@ -169,24 +161,19 @@ public class PostService {
     // 댓글 등록
     @Loggable
     public BaseResponse<CreateCommentResponseDto> createComment(long postId, CreateCommentRequestDto req) {
-        if (!postRepository.existsById(postId)) {
-            throw new PostNotFoundException();
-        }
 
         Post findPost = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException());
+        System.out.println("================================");
         Comment toSave = new Comment.Builder()
                 .author(findPost.getAuthor())
                 .post(findPost)
                 .content(req.getContent())
                 .build();
 
-        toSave.onPost(findPost);
-        toSave.writeBy(findPost.getAuthor());
-
         Comment saved = commentRepository.save(toSave);
 
         return new BaseResponse(ResponseMessage.COMMENT_CREATE_SUCCESS,
-                CreateCommentResponseDto.toDto(toSave));
+                CreateCommentResponseDto.toDto(saved));
     }
 
     // 댓글 조회 By Post Id
@@ -217,8 +204,8 @@ public class PostService {
 
     // 댓글 조회 By Comment Id
     @Loggable
-    public BaseResponse<FindCommentResponseDto> findCommentByCommentId(long id) {
-        Comment comment = commentRepository.findById(id).orElseThrow(() -> new CommentNotFoundException());
+    public BaseResponse<FindCommentResponseDto> findCommentByCommentId(long commentId) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new CommentNotFoundException());
         return new BaseResponse(ResponseMessage.COMMENT_LOAD_SUCCESS, FindCommentResponseDto.toDto(comment));
     }
 
@@ -243,13 +230,8 @@ public class PostService {
     // 댓글 삭제
     @Loggable
     public BaseResponse deleteCommentById(long postId, long commentId) {
-        if (!postRepository.existsById(postId)) {
-            throw new PostNotFoundException();
-        }
-        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new CommentNotFoundException());
-        comment.removeInPost();
-        comment.deleteByAuthor();
-        commentRepository.deleteById(commentId);
+        int row = commentRepository.deleteByIdAndPostId(commentId, postId);
+
         return new BaseResponse(ResponseMessage.COMMENT_DELETE_SUCCESS, new Comment());
     }
 

@@ -9,8 +9,7 @@ import java.time.format.DateTimeFormatter;
 @Getter
 public class IncreaseHitResponseDto {
     private long id;
-    private long hit;
-    private String updateAt;
+    private long viewCount;
 
     public IncreaseHitResponseDto() {
     }
@@ -18,9 +17,7 @@ public class IncreaseHitResponseDto {
     public static IncreaseHitResponseDto toDto(Post post) {
         IncreaseHitResponseDto dto = new IncreaseHitResponseDto();
         dto.id = post.getId();
-//        dto.hit = post.getHit();
-        dto.updateAt = post.getUpdatedAt()
-                .format(DateTimeFormatter.ofPattern(DateTimePattern.DEFAULT_DATE_TIME));
+        dto.viewCount = post.getView_count();
         return dto;
     }
 }

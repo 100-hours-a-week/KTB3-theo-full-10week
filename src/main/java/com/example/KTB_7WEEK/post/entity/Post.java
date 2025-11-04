@@ -7,7 +7,9 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -31,11 +33,11 @@ public class Post {
     @JoinColumn(name = "category", nullable = false)
     private PostCategory category = PostCategory.NONE;
 
-    @OneToMany
-    private List<Hit> hits = new ArrayList<>();
+    @Column(name = "view_count")
+    private Long view_count = 0L;
 
-    @OneToMany(mappedBy = "post")
-    private List<PostLike> likes = new ArrayList<>();
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    private Set<PostLike> likes = new HashSet<>();
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -50,7 +52,7 @@ public class Post {
     @JoinColumn(name = "author_id")
     private User author;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<Comment> comments = new ArrayList<>();
 
     public Post() {
@@ -87,17 +89,6 @@ public class Post {
 
     public void delete() {
         this.isDeleted = true;
-    }
-
-    // 연관관계 편의 메소드
-    public void postByAuthor(User author) {
-        this.author = author;
-        author.getPosts().add(this);
-    }
-
-    public void deleteByAuthor() {
-        this.author.getPosts().remove(this);
-        this.author = null;
     }
 
     public static class Builder {

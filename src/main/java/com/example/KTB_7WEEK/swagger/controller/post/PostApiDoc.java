@@ -255,7 +255,7 @@ public interface PostApiDoc {
                             """)
             })),
     })
-    public ResponseEntity<BaseResponse> increaseHit(@PathVariable("postId")
+    public ResponseEntity<BaseResponse> increaseViewCount(@PathVariable("postId")
                                                     @NotNull
                                                     @Positive Long postId);
 
