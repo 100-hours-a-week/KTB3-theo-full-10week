@@ -1,7 +1,11 @@
 package com.example.KTB_7WEEK.post.entity;
 
+import com.example.KTB_7WEEK.app.response.BaseResponse;
+import com.example.KTB_7WEEK.auth.dto.request.LoginRequestDto;
+import com.example.KTB_7WEEK.post.dto.request.LikePostReqeustDto;
 import com.example.KTB_7WEEK.post.repository.PostLikeRepository;
 import com.example.KTB_7WEEK.post.repository.PostRepository;
+import com.example.KTB_7WEEK.post.service.PostService;
 import com.example.KTB_7WEEK.user.entity.User;
 import com.example.KTB_7WEEK.user.repository.user.UserRepository;
 import jakarta.persistence.EntityManager;
@@ -9,6 +13,7 @@ import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +30,9 @@ class PostTest {
     UserRepository userRepository;
     @Autowired
     PostLikeRepository postLikeRepository;
+
+    @Autowired
+    PostService postService;
 
     @Test
     @Rollback(false)
@@ -53,10 +61,13 @@ class PostTest {
     @Test
     @Rollback(value = false)
     void likeTest() {
-        User user = userRepository.findById(2L).get();
-        Post post = postRepository.findById(1L).get();
-        PostLike like = new PostLike(user, post);
-        postLikeRepository.save(like);
+//        User user = userRepository.findById(2L).get();
+//        Post post = postRepository.findById(1L).get();
+//        PostLike like = new PostLike(user, post);
+
+        LikePostReqeustDto dto = new LikePostReqeustDto(2L);
+        long postId = 1L;
+        postService.likePost(postId, dto);
 
     }
 

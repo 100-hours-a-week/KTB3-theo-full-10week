@@ -34,7 +34,7 @@ public class Post {
     @OneToMany
     private List<Hit> hits = new ArrayList<>();
 
-    @OneToMany
+    @OneToMany(mappedBy = "post")
     private List<PostLike> likes = new ArrayList<>();
 
     @Column(name = "created_at", nullable = false)
@@ -63,10 +63,6 @@ public class Post {
         this.article = builder.article;
         this.articleImage = builder.articleImage;
         this.category = builder.category;
-    }
-
-    public void identify(long id) {
-        this.id = id;
     }
 
     public void updateTitle(String title) {

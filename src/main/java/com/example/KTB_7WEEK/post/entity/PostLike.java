@@ -2,10 +2,13 @@ package com.example.KTB_7WEEK.post.entity;
 
 import com.example.KTB_7WEEK.user.entity.User;
 import jakarta.persistence.*;
+import lombok.Getter;
+import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
 public class PostLike {
 
     @EmbeddedId
@@ -22,7 +25,7 @@ public class PostLike {
     private Post post;
 
     @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 
     protected PostLike() {
     }
@@ -31,6 +34,9 @@ public class PostLike {
         this.likeId = new PostLikeId(user.getId(), post.getId());
         this.user = user;
         this.post = post;
-    }
+        this.createdAt = LocalDateTime.now();
 
+        user.getLikes().add(this);
+        post.getLikes().add(this);
+    }
 }

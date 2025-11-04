@@ -22,7 +22,7 @@ public enum ResponseMessage {
     MY_POST_UPDATE_SUCCESS("My Post Update Success"),
     POST_DELETE_SUCCESS("Post Delete Success"),
     INCREASE_HIT_SUCCESS("Increase Hit Success"),
-    INCREASE_LIKE_SUCCESS("Increase Like Success"),
+    LIKE_POST_SUCCESS("Like Post Success"),
 
     // COMMENT
     COMMENT_CREATE_SUCCESS("Comment Create Success"),

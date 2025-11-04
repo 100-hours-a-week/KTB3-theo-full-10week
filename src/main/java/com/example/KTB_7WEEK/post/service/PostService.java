@@ -1,6 +1,7 @@
 package com.example.KTB_7WEEK.post.service;
 
 import com.example.KTB_7WEEK.app.aop.aspect.log.Loggable;
+import com.example.KTB_7WEEK.post.dto.request.LikePostReqeustDto;
 import com.example.KTB_7WEEK.post.dto.request.UpdateMyPostRequestDto;
 import com.example.KTB_7WEEK.post.dto.request.comment.CreateCommentRequestDto;
 import com.example.KTB_7WEEK.post.dto.request.comment.UpdateCommentRequestDto;
@@ -12,6 +13,8 @@ import com.example.KTB_7WEEK.post.dto.response.comment.FindCommentResponseDto;
 import com.example.KTB_7WEEK.post.dto.response.comment.FindCommentsResponseDto;
 import com.example.KTB_7WEEK.post.dto.response.comment.UpdateCommentResponseDto;
 import com.example.KTB_7WEEK.post.entity.Comment;
+import com.example.KTB_7WEEK.post.entity.PostLike;
+import com.example.KTB_7WEEK.post.entity.PostLikeId;
 import com.example.KTB_7WEEK.post.exception.*;
 import com.example.KTB_7WEEK.post.exception.comment.CommentNotFoundException;
 import com.example.KTB_7WEEK.post.repository.CommentRepository;
@@ -19,6 +22,7 @@ import com.example.KTB_7WEEK.post.dto.request.CreatePostRequestDto;
 import com.example.KTB_7WEEK.post.entity.Post;
 import com.example.KTB_7WEEK.app.util.paginationPolicy.CommentPaginationPolicy;
 import com.example.KTB_7WEEK.app.util.paginationPolicy.PostPaginationPolicy;
+import com.example.KTB_7WEEK.post.repository.PostLikeRepository;
 import com.example.KTB_7WEEK.post.repository.PostRepository;
 import com.example.KTB_7WEEK.user.entity.User;
 import com.example.KTB_7WEEK.user.exception.UserNotFoundException;
@@ -40,13 +44,16 @@ import java.util.stream.Collectors;
 public class PostService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final PostLikeRepository postLikeRepository;
     private final CommentRepository commentRepository;
 
     public PostService(UserRepository userRepository,
                        PostRepository postRepository,
+                       PostLikeRepository postLikeRepository,
                        CommentRepository commentRepository) {
         this.userRepository = userRepository;
         this.postRepository = postRepository;
+        this.postLikeRepository = postLikeRepository;
         this.commentRepository = commentRepository;
     }
 
@@ -57,7 +64,7 @@ public class PostService {
     @Loggable
     public BaseResponse<CreateCommentResponseDto> createPost(CreatePostRequestDto req) {
         User author = userRepository.findById(req.getAuthorId()).orElseThrow(() -> new UserNotFoundException());
-
+        User u = userRepository.getReferenceById(req.getAuthorId());
         Post toSave = new Post.Builder()
                 .author(author)
                 .title(req.getTitle())
@@ -112,7 +119,7 @@ public class PostService {
         toUpdate.updateArticle(req.getArticle());
         toUpdate.updateArticleImage(req.getArticleImage());
         toUpdate.updateCategory(req.getCategory());
-
+        toUpdate.updateNow();
 
         return new BaseResponse(ResponseMessage.MY_POST_UPDATE_SUCCESS,
                 UpdateMyPostResponseDto.toDto(toUpdate));
@@ -141,14 +148,22 @@ public class PostService {
                 IncreaseHitResponseDto.toDto(toUpdate));
     }
 
-    // 게시글 좋아요 수 증가
+    // 게시글 좋아요
     @Loggable
-    public BaseResponse<IncreaseLikeResponseDto> increaseLike(long id) {
-        Post toUpdate = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException());
-//        toUpdate.increaseLike();
+    public BaseResponse<LikePostResponseDto> likePost(Long postId, LikePostReqeustDto req) {
+        Long userId = req.getUserId();
+        PostLikeId postLikeId = new PostLikeId(userId, postId);
+        if (postLikeRepository.existsById(postLikeId)) {
+            throw new AlreadyLikedPost();
+        }
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
+        Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException());
 
-        return new BaseResponse(ResponseMessage.INCREASE_LIKE_SUCCESS,
-                IncreaseLikeResponseDto.toDto(toUpdate));
+        PostLike toSave = new PostLike(user, post);
+        postLikeRepository.save(toSave);
+
+        return new BaseResponse(ResponseMessage.LIKE_POST_SUCCESS,
+                LikePostResponseDto.toDto(toSave));
     }
 
     // 댓글 등록
@@ -171,7 +186,7 @@ public class PostService {
         Comment saved = commentRepository.save(toSave);
 
         return new BaseResponse(ResponseMessage.COMMENT_CREATE_SUCCESS,
-                CreateCommentResponseDto.toDto(saved));
+                CreateCommentResponseDto.toDto(toSave));
     }
 
     // 댓글 조회 By Post Id

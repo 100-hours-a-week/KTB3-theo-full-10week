@@ -2,6 +2,7 @@ package com.example.KTB_7WEEK.user.entity;
 
 import com.example.KTB_7WEEK.post.entity.Comment;
 import com.example.KTB_7WEEK.post.entity.Post;
+import com.example.KTB_7WEEK.post.entity.PostLike;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -40,6 +41,9 @@ public class User {
 
     @OneToMany(mappedBy = "author") // 읽기 조회용
     private List<Post> posts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user") // 읽기 조회용
+    private List<PostLike> likes = new ArrayList<>();
 
     @OneToMany(mappedBy = "author") // 읽기 조회용
     private List<Comment> comments = new ArrayList<>();

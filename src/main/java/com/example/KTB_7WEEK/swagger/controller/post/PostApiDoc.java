@@ -1,6 +1,7 @@
 package com.example.KTB_7WEEK.swagger.controller.post;
 
 import com.example.KTB_7WEEK.post.dto.request.CreatePostRequestDto;
+import com.example.KTB_7WEEK.post.dto.request.LikePostReqeustDto;
 import com.example.KTB_7WEEK.post.dto.request.UpdateMyPostRequestDto;
 import com.example.KTB_7WEEK.post.dto.request.comment.CreateCommentRequestDto;
 import com.example.KTB_7WEEK.post.dto.request.comment.UpdateCommentRequestDto;
@@ -258,17 +259,17 @@ public interface PostApiDoc {
                                                     @NotNull
                                                     @Positive Long postId);
 
-    @Operation(summary = "좋아요 수 증가", description = "게시글 PK를 통해 종아요 수를 1증가 합니다.")
+    @Operation(summary = "게시글 좋아요 활성", description = "회원 PK와 게시글 PK를 통해 종아요 기능을 활성화 합니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "좋아요 수 증가 성공"
+            @ApiResponse(responseCode = "200", description = "좋아요 성공"
                     , content = @Content(mediaType = "application/json", examples = {
-                    @ExampleObject(name = "좋아요 수 증가 성공", value = """
+                    @ExampleObject(name = "좋아요 성공", value = """
                             {
-                                "message": "Increase Like Success",
+                                "message": "Like Post Success",
                                 "data": {
-                                    "id": 1,
-                                    "like": 1,
-                                    "updateAt": "2025-10-12 22:26:17"
+                                    "userId": 1,
+                                    "postId": 1,
+                                    "createdAt": "2025-10-12 22:26:17"
                                 },
                                 "timestamp": "2025-10-12 22:26:17"
                             }
@@ -286,9 +287,11 @@ public interface PostApiDoc {
                             """)
             })),
     })
-    public ResponseEntity<BaseResponse> increaseLike(@PathVariable("postId")
-                                                     @NotNull
-                                                     @Positive Long postId);
+    public ResponseEntity<BaseResponse> likePost(@PathVariable("postId")
+                                                 @NotNull
+                                                 @Positive Long postId,
+                                                 @RequestBody
+                                                 @Valid LikePostReqeustDto request);
 
     @Operation(summary = "댓글 등록", description = "게시글 PK를 통해 새로운 댓글을 등록합니다.")
     @ApiResponses({

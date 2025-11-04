@@ -23,6 +23,7 @@ public enum ErrorCode {
 
     // POST
     INVALID_POST_ID(400, HttpStatus.BAD_REQUEST, "PostId은 1이상 입니다."),
+    ALREADY_LIKED_POST(400, HttpStatus.BAD_REQUEST, "이미 좋아요 누른 게시글입니다."),
     POST_TITLE_LENGTH_OVER(400, HttpStatus.BAD_REQUEST, "게시글 제목 최대 26자 입니다."),
     POST_NOT_FOUND(404, HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다."),
     POST_CREATE_ERROR(500, HttpStatus.INTERNAL_SERVER_ERROR, "게시글 생성 실패"),

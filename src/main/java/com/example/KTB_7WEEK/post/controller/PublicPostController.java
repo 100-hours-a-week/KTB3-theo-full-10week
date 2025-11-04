@@ -1,5 +1,6 @@
 package com.example.KTB_7WEEK.post.controller;
 
+import com.example.KTB_7WEEK.post.dto.request.LikePostReqeustDto;
 import com.example.KTB_7WEEK.swagger.controller.post.PostApiDoc;
 import com.example.KTB_7WEEK.post.dto.request.CreatePostRequestDto;
 import com.example.KTB_7WEEK.post.dto.request.comment.UpdateCommentRequestDto;
@@ -69,10 +70,12 @@ public class PublicPostController implements PostApiDoc {
     }
 
     @PostMapping("/{postId}/like") // 좋아요 수 증가
-    public ResponseEntity<BaseResponse> increaseLike(@PathVariable("postId")
+    public ResponseEntity<BaseResponse> likePost(@PathVariable("postId")
                                                      @NotNull
-                                                     @Positive Long postId) {
-        BaseResponse response = publicPostService.increaseLike(postId);
+                                                     @Positive Long postId,
+                                                     @RequestBody
+                                                     @Valid LikePostReqeustDto request) {
+        BaseResponse response = publicPostService.likePost(postId, request);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 

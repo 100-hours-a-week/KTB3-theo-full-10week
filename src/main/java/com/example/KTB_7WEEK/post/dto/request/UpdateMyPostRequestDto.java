@@ -4,9 +4,11 @@ import com.example.KTB_7WEEK.post.entity.PostCategory;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
 import org.springframework.validation.annotation.Validated;
 
 @Validated
+@Getter
 public class UpdateMyPostRequestDto {
 
     @NotBlank(message = "제목은 필수 입력입니다.")
@@ -24,22 +26,5 @@ public class UpdateMyPostRequestDto {
     private PostCategory category;
 
     public UpdateMyPostRequestDto() {};
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getArticle() {
-        return article;
-    }
-
-    public String getArticleImage() {
-        return articleImage;
-    }
-
-    public PostCategory getCategory() {
-        return category;
-    }
-
 
 }
