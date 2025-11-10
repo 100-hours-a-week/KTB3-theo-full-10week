@@ -15,7 +15,7 @@ public class RegistUserRequestDto {
     private String email;
 
     @NotBlank(message = "비밀번호는 필수 입력입니다.")
-    @Size(min = 1, max = 20)
+    @Size(min = 8, max = 20)
     @Pattern(regexp = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9])\\S{8,20}$/")
     @Schema(description = "회원가입시 사용할 비밀번호", example = "1q2w3e4r!Q")
     private String password;

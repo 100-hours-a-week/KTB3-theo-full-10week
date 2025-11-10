@@ -43,7 +43,7 @@ public class UserService {
                 .build();
 
         User saved = userRepository.save(toSave); // DB save User
-        return new BaseResponse(ResponseMessage.USER_REGISTER_SUCCESS, RegistUserResponseDto.toDto(toSave));
+        return new BaseResponse(ResponseMessage.USER_REGISTER_SUCCESS, RegistUserResponseDto.toDto(saved));
 
     }
 
