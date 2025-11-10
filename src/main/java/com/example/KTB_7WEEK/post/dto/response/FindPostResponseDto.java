@@ -10,7 +10,7 @@ import java.time.format.DateTimeFormatter;
 @Getter
 public class FindPostResponseDto {
     private long id = 0L;
-    private long authorId = 0L;
+    private String authorNickname = "";
     private String title = "";
     private String article = "";
     private String articleImage = "";
@@ -28,7 +28,7 @@ public class FindPostResponseDto {
     public static FindPostResponseDto toDto(Post post) {
         FindPostResponseDto dto = new FindPostResponseDto();
         dto.id = post.getId();
-        dto.authorId = post.getAuthor().getId();
+        dto.authorNickname = post.getAuthor().getNickname();
         dto.title = post.getTitle();
         dto.article = post.getArticle();
         dto.articleImage = post.getArticleImage();
