@@ -18,6 +18,7 @@ public class FindPostResponseDto {
 
     private long hit = 0;
     private long like = 0;
+    private long commentCount = 0;
     private String createdAt = "";
     private String updatedAt = "";
     private boolean isDeleted = false;
@@ -35,6 +36,7 @@ public class FindPostResponseDto {
         dto.category = post.getCategory();
         dto.hit = post.getView_count();
         dto.like = post.getLikes().size();
+        dto.commentCount = post.getComments().size();
         dto.createdAt = post.getCreatedAt().format(
                 DateTimeFormatter.ofPattern(DateTimePattern.DEFAULT_DATE_TIME));
         dto.updatedAt = post.getUpdatedAt().format(
