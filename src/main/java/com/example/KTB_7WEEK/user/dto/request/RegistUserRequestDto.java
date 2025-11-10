@@ -3,10 +3,13 @@ package com.example.KTB_7WEEK.user.dto.request;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.multipart.MultipartFile;
 
 @Validated
 @Getter
+@Setter
 public class RegistUserRequestDto {
 
     @NotBlank(message = "이메일은 필수 입력입니다.")
@@ -16,7 +19,8 @@ public class RegistUserRequestDto {
 
     @NotBlank(message = "비밀번호는 필수 입력입니다.")
     @Size(min = 8, max = 20)
-    @Pattern(regexp = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9])\\S{8,20}$/")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9])\\S{8,20}$",
+            message = "비밀번호는 대문자, 소문자, 숫자, 특수문자를 각각 최소 1개 포함해야 합니다.")
     @Schema(description = "회원가입시 사용할 비밀번호", example = "1q2w3e4r!Q")
     private String password;
 
@@ -25,8 +29,7 @@ public class RegistUserRequestDto {
     @Schema(description = "회원가입시 사용할 닉네임", example = "nickname")
     private String nickname;
 
-    @Schema(description = "회원가입시 사용할 프로필 이미지 URL", example = "https://www.test.com")
-    private String profileImage;
+    private MultipartFile profileImage;
 
     public RegistUserRequestDto() {
     }

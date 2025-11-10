@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,9 +37,9 @@ public class PublicUserController implements UserApiDoc {
     /**
      * Post Mapping
      **/
-    @PostMapping // 회원가입
-    public ResponseEntity<BaseResponse> createPublicUser(@RequestBody
-                                                         @Valid RegistUserRequestDto request) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE) // 회원가입
+    public ResponseEntity<BaseResponse> createPublicUser(@Valid
+                                                         @ModelAttribute RegistUserRequestDto request) {
         BaseResponse response = publicUserService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

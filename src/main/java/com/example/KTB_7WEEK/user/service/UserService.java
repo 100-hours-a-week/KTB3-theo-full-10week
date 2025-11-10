@@ -4,6 +4,7 @@ package com.example.KTB_7WEEK.user.service;
 import com.example.KTB_7WEEK.app.aop.aspect.log.Loggable;
 import com.example.KTB_7WEEK.app.response.BaseResponse;
 import com.example.KTB_7WEEK.app.response.ResponseMessage;
+import com.example.KTB_7WEEK.app.storage.FileStorage;
 import com.example.KTB_7WEEK.user.entity.User;
 import com.example.KTB_7WEEK.user.repository.user.UserRepository;
 import com.example.KTB_7WEEK.user.dto.request.*;
@@ -17,10 +18,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class UserService {
     private final UserRepository userRepository;
-
+    private final FileStorage fileStorage;
     // 생성자 DI
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, FileStorage fileStorage) {
         this.userRepository = userRepository;
+        this.fileStorage = fileStorage;
     }
 
     /**
@@ -31,6 +33,7 @@ public class UserService {
     public BaseResponse<RegistUserResponseDto> register(RegistUserRequestDto req) {
         String email = req.getEmail();
         String nickname = req.getNickname();
+        String profileImageUrl = fileStorage.saveProfileImage(req.getProfileImage());
 
         if (userRepository.existsByEmail(email)) throw new EmailAlreadyRegisteredException(); // 이메일 중복 검사
         if (userRepository.existsByNickname(nickname)) throw new NicknameAlreadyRegisteredException(); // 닉네임 중복 검사
@@ -39,7 +42,7 @@ public class UserService {
                 .email(email)
                 .password(req.getPassword())
                 .nickname(req.getNickname())
-                .profileImage(req.getProfileImage())
+                .profileImage(profileImageUrl)
                 .build();
 
         User saved = userRepository.save(toSave); // DB save User
