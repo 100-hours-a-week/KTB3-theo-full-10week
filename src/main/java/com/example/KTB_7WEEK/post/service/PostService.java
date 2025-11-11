@@ -82,7 +82,8 @@ public class PostService {
     // 게시글 목록 조회
     @Loggable
     public BaseResponse<FindPostsResponseDto> findPosts(int page, int size) {
-        int contentSize = PostPaginationPolicy.DEFAULT.size(); // 페이지 내 컨텐츠 수 DEFAULT = 10;
+        int contentSize = (size != PostPaginationPolicy.DEFAULT.size())
+                ? size : PostPaginationPolicy.DEFAULT.size();  // 페이지 내 컨텐츠 수 DEFAULT = 10;
         Sort sort = PostPaginationPolicy.DEFAULT.sort(); // 최신순
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<Post> posts = postRepository.findAll(pageable); // get Page
