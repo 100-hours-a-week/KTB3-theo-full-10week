@@ -81,8 +81,8 @@ public class PostService {
 
     // 게시글 목록 조회
     @Loggable
-    public BaseResponse<FindPostsResponseDto> findPosts(int page) {
-        int size = PostPaginationPolicy.DEFAULT.size(); // 페이지 내 컨텐츠 수 DEFAULT = 10;
+    public BaseResponse<FindPostsResponseDto> findPosts(int page, int size) {
+        int contentSize = PostPaginationPolicy.DEFAULT.size(); // 페이지 내 컨텐츠 수 DEFAULT = 10;
         Sort sort = PostPaginationPolicy.DEFAULT.sort(); // 최신순
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<Post> posts = postRepository.findAll(pageable); // get Page
@@ -98,7 +98,7 @@ public class PostService {
                 .collect(Collectors.toCollection(ArrayList::new));
 
         return new BaseResponse(ResponseMessage.POSTS_LOAD_SUCCESS,
-                FindPostsResponseDto.toDto(totalPages, totalElements, size, currentPage, hasNext, contents));
+                FindPostsResponseDto.toDto(totalPages, totalElements, contentSize, currentPage, hasNext, contents));
     }
 
     // 게시글 조회

@@ -16,7 +16,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @EntityGraph(attributePaths = {"author"})
     Optional<Post> findById(Long postId);
 
-    @EntityGraph(attributePaths = {"author", "likes"})
+    @EntityGraph(attributePaths = {"author", "likes", "comments"})
     Page<Post> findAll(Pageable pageable);
 
     @Modifying(flushAutomatically = true, clearAutomatically = true)

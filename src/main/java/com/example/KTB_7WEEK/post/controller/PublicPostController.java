@@ -31,8 +31,9 @@ public class PublicPostController implements PostApiDoc {
      * Get Mapping
      **/
     @GetMapping // 전체 게시글 목록 조회
-    public ResponseEntity<BaseResponse> findPublicPosts(@RequestParam(name = "page", defaultValue = "0") int page) {
-        BaseResponse response = publicPostService.findPosts(page);
+    public ResponseEntity<BaseResponse> findPublicPosts(@RequestParam(name = "page", defaultValue = "0") int page,
+                                                        @RequestParam(name = "size", defaultValue = "0") int size) {
+        BaseResponse response = publicPostService.findPosts(page, size);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
