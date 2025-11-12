@@ -2,6 +2,7 @@ package com.example.KTB_7WEEK.user.controller;
 
 import com.example.KTB_7WEEK.app.swagger.controller.user.UserApiDoc;
 import com.example.KTB_7WEEK.app.response.BaseResponse;
+import com.example.KTB_7WEEK.user.exception.UserNotFoundException;
 import com.example.KTB_7WEEK.user.service.UserService;
 import com.example.KTB_7WEEK.user.dto.request.*;
 import jakarta.validation.Valid;
@@ -11,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 
 @RestController

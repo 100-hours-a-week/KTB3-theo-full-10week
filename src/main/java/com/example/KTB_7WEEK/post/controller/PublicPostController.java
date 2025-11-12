@@ -14,6 +14,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,9 +56,9 @@ public class PublicPostController implements PostApiDoc {
     /**
      * Post Mapping
      **/
-    @PostMapping // 게시글 생성
-    public ResponseEntity<BaseResponse> createPublicPost(@RequestBody
-                                                         @Valid CreatePostRequestDto request) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE) // 게시글 생성
+    public ResponseEntity<BaseResponse> createPublicPost(@Valid
+                                                         @ModelAttribute CreatePostRequestDto request) {
         BaseResponse response = publicPostService.createPost(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -65,28 +66,28 @@ public class PublicPostController implements PostApiDoc {
 
     @PostMapping("/{postId}/hit") // 조회 수 증가
     public ResponseEntity<BaseResponse> increaseViewCount(@PathVariable("postId")
-                                                    @NotNull
-                                                    @Positive Long postId) {
+                                                          @NotNull
+                                                          @Positive Long postId) {
         BaseResponse response = publicPostService.increaseViewCount(postId);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PostMapping("/{postId}/like") // 좋아요 활성화
     public ResponseEntity<BaseResponse> likePost(@PathVariable("postId")
-                                                     @NotNull
-                                                     @Positive Long postId,
-                                                     @RequestBody
-                                                     @Valid LikePostRequestDto request) {
+                                                 @NotNull
+                                                 @Positive Long postId,
+                                                 @RequestBody
+                                                 @Valid LikePostRequestDto request) {
         BaseResponse response = publicPostService.likePost(postId, request);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PostMapping("/{postId}/like/cancel") // 좋아요 비 활성화
     public ResponseEntity<BaseResponse> cancelLikePost(@PathVariable("postId")
-                                                 @NotNull
-                                                 @Positive Long postId,
-                                                 @RequestBody
-                                                 @Valid CancelLikePostRequestDto request) {
+                                                       @NotNull
+                                                       @Positive Long postId,
+                                                       @RequestBody
+                                                       @Valid CancelLikePostRequestDto request) {
         BaseResponse response = publicPostService.cancelLikePost(postId, request);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

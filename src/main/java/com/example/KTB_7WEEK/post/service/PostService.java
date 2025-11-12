@@ -1,6 +1,8 @@
 package com.example.KTB_7WEEK.post.service;
 
 import com.example.KTB_7WEEK.app.aop.aspect.log.Loggable;
+import com.example.KTB_7WEEK.app.storage.ArticleImageStorage;
+import com.example.KTB_7WEEK.app.storage.FileStorage;
 import com.example.KTB_7WEEK.post.dto.request.CancelLikePostRequestDto;
 import com.example.KTB_7WEEK.post.dto.request.LikePostRequestDto;
 import com.example.KTB_7WEEK.post.dto.request.UpdateMyPostRequestDto;
@@ -35,6 +37,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 
 import java.util.ArrayList;
@@ -48,15 +51,18 @@ public class PostService {
     private final PostRepository postRepository;
     private final PostLikeRepository postLikeRepository;
     private final CommentRepository commentRepository;
+    private final ArticleImageStorage articleImageStorage;
 
     public PostService(UserRepository userRepository,
                        PostRepository postRepository,
                        PostLikeRepository postLikeRepository,
-                       CommentRepository commentRepository) {
+                       CommentRepository commentRepository,
+                       ArticleImageStorage articleImageStorage) {
         this.userRepository = userRepository;
         this.postRepository = postRepository;
         this.postLikeRepository = postLikeRepository;
         this.commentRepository = commentRepository;
+        this.articleImageStorage = articleImageStorage;
     }
 
     /**
@@ -66,12 +72,13 @@ public class PostService {
     @Loggable
     public BaseResponse<CreateCommentResponseDto> createPost(CreatePostRequestDto req) {
         User author = userRepository.getReferenceById(req.getAuthorId()); // User Proxy
+        String articleImage = articleImageStorage.saveArticleImage(req.getArticleImage());
 
         Post toSave = new Post.Builder() // Post for Save
                 .author(author)
                 .title(req.getTitle())
                 .article(req.getArticle())
-                .articleImage(req.getArticleImage())
+                .articleImage(articleImage)
                 .category(req.getCategory())
                 .build();
 

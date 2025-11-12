@@ -226,8 +226,8 @@ public interface PostApiDoc {
                             """)
             })),
     })
-    public ResponseEntity<BaseResponse> createPublicPost(@RequestBody
-                                                         @Valid CreatePostRequestDto request);
+    public ResponseEntity<BaseResponse> createPublicPost(@Valid
+                                                         @ModelAttribute CreatePostRequestDto request);
 
     @Operation(summary = "조회 수 증가", description = "게시글 PK를 통해 조회 수를 1증가 합니다.")
     @ApiResponses({
@@ -258,8 +258,8 @@ public interface PostApiDoc {
             })),
     })
     public ResponseEntity<BaseResponse> increaseViewCount(@PathVariable("postId")
-                                                    @NotNull
-                                                    @Positive Long postId);
+                                                          @NotNull
+                                                          @Positive Long postId);
 
     @Operation(summary = "게시글 좋아요 활성화", description = "회원 PK와 게시글 PK를 통해 종아요 기능을 활성화 합니다.")
     @ApiResponses({
@@ -323,10 +323,11 @@ public interface PostApiDoc {
             })),
     })
     public ResponseEntity<BaseResponse> cancelLikePost(@PathVariable("postId")
-                                                 @NotNull
-                                                 @Positive Long postId,
-                                                 @RequestBody
-                                                 @Valid CancelLikePostRequestDto request);
+                                                       @NotNull
+                                                       @Positive Long postId,
+                                                       @RequestBody
+                                                       @Valid CancelLikePostRequestDto request);
+
     @Operation(summary = "댓글 등록", description = "게시글 PK를 통해 새로운 댓글을 등록합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "댓글 생성 성공"

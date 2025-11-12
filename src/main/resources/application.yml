@@ -41,4 +41,6 @@ logging:
     org.hibernate.SQL: debug
 
 file:
-  upload-dir: uploads/profile
+  upload-dir:
+    profile: uploads/profile
+    article: uploads/article

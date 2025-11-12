@@ -11,8 +11,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
     private final TokenAuthInterceptor tokenAuthInterceptor;
-    @Value("${file.upload-dir}")
-    private String uploadDir;
+
+//    @Value("${file.upload-dir}")
+//    private String uploadDir;
 
 
     public WebMvcConfig(TokenAuthInterceptor tokenAuthInterceptor) {
@@ -45,7 +46,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/images/profile/**")
-                .addResourceLocations("file:"+uploadDir+"/");
+        registry.addResourceHandler("/images/**")
+                .addResourceLocations("file:uploads/");
     }
 }

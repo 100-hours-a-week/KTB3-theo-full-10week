@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.multipart.MultipartFile;
 
 @Validated
 @Getter
@@ -25,7 +26,7 @@ public class CreatePostRequestDto {
     private String article;
 
     @Schema(description = "게시글 본문 내 삽입할 이미지 URL", example = "https://www.test.com")
-    private String articleImage;
+    private MultipartFile articleImage;
 
     @Schema(description = "게시글의 카테고리(소통방, 고민상담, 정보공유)", example = "COMMUNITY, COUNSELING, INFO_SHARE")
     private PostCategory category;

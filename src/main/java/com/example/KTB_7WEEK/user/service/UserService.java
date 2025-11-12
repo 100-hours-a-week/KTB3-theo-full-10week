@@ -5,6 +5,8 @@ import com.example.KTB_7WEEK.app.aop.aspect.log.Loggable;
 import com.example.KTB_7WEEK.app.response.BaseResponse;
 import com.example.KTB_7WEEK.app.response.ResponseMessage;
 import com.example.KTB_7WEEK.app.storage.FileStorage;
+import com.example.KTB_7WEEK.app.storage.ImageStorage;
+import com.example.KTB_7WEEK.app.storage.ProfileImageStorage;
 import com.example.KTB_7WEEK.user.entity.User;
 import com.example.KTB_7WEEK.user.repository.user.UserRepository;
 import com.example.KTB_7WEEK.user.dto.request.*;
@@ -13,16 +15,20 @@ import com.example.KTB_7WEEK.user.exception.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.nio.file.attribute.UserPrincipalNotFoundException;
+
 
 @Service
 @Transactional
 public class UserService {
     private final UserRepository userRepository;
-    private final FileStorage fileStorage;
+    private final ProfileImageStorage profileImageStorage;
+
     // 생성자 DI
-    public UserService(UserRepository userRepository, FileStorage fileStorage) {
+    public UserService(UserRepository userRepository, ProfileImageStorage profileImageStorage) {
         this.userRepository = userRepository;
-        this.fileStorage = fileStorage;
+        this.profileImageStorage = profileImageStorage;
     }
 
     /**
@@ -33,7 +39,7 @@ public class UserService {
     public BaseResponse<RegistUserResponseDto> register(RegistUserRequestDto req) {
         String email = req.getEmail();
         String nickname = req.getNickname();
-        String profileImageUrl = fileStorage.saveProfileImage(req.getProfileImage());
+        String profileImageUrl = profileImageStorage.saveProfileImage(req.getProfileImage());
 
         if (userRepository.existsByEmail(email)) throw new EmailAlreadyRegisteredException(); // 이메일 중복 검사
         if (userRepository.existsByNickname(nickname)) throw new NicknameAlreadyRegisteredException(); // 닉네임 중복 검사

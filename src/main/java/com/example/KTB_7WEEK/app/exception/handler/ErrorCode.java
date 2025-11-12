@@ -4,6 +4,10 @@ import org.springframework.http.HttpStatus;
 
 public enum ErrorCode {
 
+    // COMMON
+    IMAGE_NOT_FOUND(400, HttpStatus.BAD_REQUEST, "이미지 파일을 찾을 수 없습니다."),
+    TOO_LARGE_IMAGE(413, HttpStatus.PAYLOAD_TOO_LARGE, "이미지 용량을 초과하였습니다."),
+
     // USER
     INVALID_PASSWORD(400, HttpStatus.BAD_REQUEST, "비밀번호 형식 불일치(8자 이상 20자 이하 / 대문자, 소문자, 숫자, 특수문자 각각 1개씩 포함해야 합니다."),
     INVALID_EMAIL(400, HttpStatus.BAD_REQUEST, "이메일 형식 불일치(영 대소문자, 숫자만 가능합니다) ex) test@test.com"),
@@ -19,6 +23,7 @@ public enum ErrorCode {
     NICKNAME_UPDATE_ERROR(500, HttpStatus.INTERNAL_SERVER_ERROR, "유저 닉네임 수정 실패"),
     FAIL_USER_EMAIL_MAPPING(500,HttpStatus.INTERNAL_SERVER_ERROR, "유저&이메일 매핑 실패"),
     FAIL_USER_EMAIL_MAPPING_DELETE(500, HttpStatus.INTERNAL_SERVER_ERROR, "유저&이메일 매핑 정보 삭제 실패"),
+    SAVE_PROFILE_IMAGE_FAIL(500, HttpStatus.INTERNAL_SERVER_ERROR, "프로필 이미지 저장 실패"),
 
 
     // POST
