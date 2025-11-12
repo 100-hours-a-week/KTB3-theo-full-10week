@@ -42,6 +42,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -72,13 +73,13 @@ public class PostService {
     @Loggable
     public BaseResponse<CreateCommentResponseDto> createPost(CreatePostRequestDto req) {
         User author = userRepository.getReferenceById(req.getAuthorId()); // User Proxy
-        String articleImage = articleImageStorage.saveArticleImage(req.getArticleImage());
+        String articleImageUrl = articleImageStorage.saveArticleImage(req.getArticleImage());
 
         Post toSave = new Post.Builder() // Post for Save
                 .author(author)
                 .title(req.getTitle())
                 .article(req.getArticle())
-                .articleImage(articleImage)
+                .articleImage(articleImageUrl)
                 .category(req.getCategory())
                 .build();
 

@@ -6,11 +6,15 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Optional;
+
 @Validated
 @Getter
+@Setter
 public class CreatePostRequestDto {
     @Positive(message = "작성자 PK는 양수입니다.")
     @Schema(description = "게시글 작성 유저 PK", example = "1")
@@ -25,7 +29,6 @@ public class CreatePostRequestDto {
     @Schema(description = "게시글 본문", example = "게시글 본문 내용")
     private String article;
 
-    @Schema(description = "게시글 본문 내 삽입할 이미지 URL", example = "https://www.test.com")
     private MultipartFile articleImage;
 
     @Schema(description = "게시글의 카테고리(소통방, 고민상담, 정보공유)", example = "COMMUNITY, COUNSELING, INFO_SHARE")

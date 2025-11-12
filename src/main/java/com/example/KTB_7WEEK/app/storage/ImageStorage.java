@@ -25,10 +25,11 @@ public class ImageStorage implements FileStorage {
 
     @Override
     public String saveImage(MultipartFile multipartFile, Path uploadDir) {
-        if (multipartFile.isEmpty()) {
-            throw new ImageNotFoundException();
+        if (multipartFile == null || multipartFile.isEmpty()) {
+            return "";
         }
-
+        System.out.println(getMaxFileSize());
+        System.out.println(multipartFile.getSize());
         if (multipartFile.getSize() > getMaxFileSize()) {
             throw new TooLargeImageException();
         }
@@ -60,6 +61,20 @@ public class ImageStorage implements FileStorage {
     }
 
     private long getMaxFileSize() {
-        return Long.parseLong(this.maxFileSize.substring(maxFileSize.length() - 2));
+        long fileSize = Long.parseLong(this.maxFileSize.substring(0, maxFileSize.length() - 2));
+        String metric = this.maxFileSize.substring(maxFileSize.length() - 2);
+
+        switch (metric) {
+            case "KB":
+                fileSize *= 1024;
+                break;
+            case "MB":
+                fileSize *= (1024 * 1024);
+                break;
+            case "GB":
+                fileSize *= (1024 * 1024 * 1024);
+                break;
+        }
+        return fileSize;
     }
 }
