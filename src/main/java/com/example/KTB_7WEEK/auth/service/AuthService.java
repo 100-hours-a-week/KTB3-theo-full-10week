@@ -32,7 +32,7 @@ public class AuthService {
             isLoginSuccess = true;
             resMsg = ResponseMessage.LOGIN_SUCCESS;
         }
-        return new BaseResponse(resMsg, LoginResponseDto.toDto(user.getId(), isLoginSuccess));
+        return new BaseResponse(resMsg, LoginResponseDto.toDto(user, isLoginSuccess));
     }
 
     @Loggable
