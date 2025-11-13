@@ -77,18 +77,15 @@ public class ImageStorage implements FileStorage {
         String oldFileName = extractFileName(path);
         String newFileName = saveImage(multipartFile, uploadDir);
         boolean isDelete = deleteImage(uploadDir, oldFileName);
-        System.out.println("delete Success? -> " + isDelete);
         return newFileName;
     }
 
     @Override
     public boolean deleteImage(Path uploadDir, String path) {
         String filename = extractFileName(path);
-        System.out.println(filename);
         if(filename == null || filename.isBlank()) return false;
         try {
             Path file = uploadDir.resolve(StringUtils.cleanPath(filename)).normalize();
-            System.out.println("Delete file : " + file.toString());
             return Files.deleteIfExists(file);
         } catch (IOException e) {
             return false;
