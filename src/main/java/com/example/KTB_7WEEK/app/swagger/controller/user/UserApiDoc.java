@@ -2,6 +2,7 @@ package com.example.KTB_7WEEK.app.swagger.controller.user;
 
 import com.example.KTB_7WEEK.app.response.BaseResponse;
 import com.example.KTB_7WEEK.user.dto.request.*;
+import com.example.KTB_7WEEK.user.dto.response.EditProfileResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -11,7 +12,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -206,6 +210,49 @@ public interface UserApiDoc {
     public ResponseEntity<BaseResponse> doubleCheckEmail(@RequestBody
                                                          @Valid CheckEmailAvailabilityRequestDto request);
 
+    @Operation(summary = "회원 프로필 수정", description = "특정 회원의 PK를 통해 프로필 이미지, 닉네임을 수정합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "수정 완료"
+                    , content = @Content(mediaType = "application/json", examples = {
+                    @ExampleObject(name = "회원 프로필 수정", value = """
+                            {
+                                "message" : "Profile_Edit_Success",
+                                "data" : {
+                                    "nickname" : "startup",
+                                    "profile_image" : "xxx",
+                                    "updatedAt" : "2025-09-01 00:00:00"
+                                }
+                            }
+                            """)
+            })),
+            @ApiResponse(responseCode = "401", description = "로그인 인증이 필요합니다."
+                    , content = @Content(mediaType = "application/json", examples = {
+                    @ExampleObject(name = "로그인 인증이 필요합니다.", value = """
+                            {
+                                 "code": 401,
+                                 "status": "UNAUTHORIZED",
+                                 "message": "로그인 인증이 필요합니다.",
+                                 "path": "/user/3"
+                             }
+                            """)
+            })),
+            @ApiResponse(responseCode = "404", description = "회원을 찾을 수 없습니다."
+                    , content = @Content(mediaType = "application/json", examples = {
+                    @ExampleObject(name = "회원을 찾을 수 없음", value = """
+                            {
+                                "code": 404,
+                                "status": "NOT_FOUND",
+                                "message": "회원을 찾을 수 없습니다.",
+                                "path": "/user/3/password"
+                            }
+                            """)
+            })),
+    })
+    public ResponseEntity<BaseResponse> editProfile(@PathVariable("userId")
+                                                    @NotNull
+                                                    @Positive Long userId,
+                                                    @Valid
+                                                    @ModelAttribute EditProfileRequestDto request);
 
     @Operation(summary = "비밀번호 수정", description = "특정 회원의 PK를 통해 비밀번호를 수정합니다.")
     @ApiResponses({

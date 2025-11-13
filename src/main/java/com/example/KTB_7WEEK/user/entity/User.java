@@ -84,6 +84,10 @@ public class User {
         this.password = password;
     }
 
+    public void updateProfileImage(String profileImage) {
+        this.profileImage = profileImage;
+    }
+
     public static class Builder {
         private Long id;
         private String email;

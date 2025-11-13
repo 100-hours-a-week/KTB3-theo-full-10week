@@ -14,6 +14,7 @@ public enum ResponseMessage {
     EMAIL_IS_AVAILABLE("Email is Available"),
     NICKNAME_EDIT_SUCCESS("Nickname Edit Success"),
     PASSWORD_CHANGE_SUCCESS("Password Change Success"),
+    EDIT_PROFILE_SUCCESS("Profile Edit Success"),
 
     // POST
     POST_REGISTER_SUCCESS("Post Register Success"),

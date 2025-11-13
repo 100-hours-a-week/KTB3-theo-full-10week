@@ -2,7 +2,6 @@ package com.example.KTB_7WEEK.user.controller;
 
 import com.example.KTB_7WEEK.app.swagger.controller.user.UserApiDoc;
 import com.example.KTB_7WEEK.app.response.BaseResponse;
-import com.example.KTB_7WEEK.user.exception.UserNotFoundException;
 import com.example.KTB_7WEEK.user.service.UserService;
 import com.example.KTB_7WEEK.user.dto.request.*;
 import jakarta.validation.Valid;
@@ -12,8 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
 
 
 @RestController
@@ -61,6 +58,21 @@ public class PublicUserController implements UserApiDoc {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+
+
+    /**
+     * Patch Mapping
+     **/
+    @PatchMapping(value = "/{userId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<BaseResponse> editProfile(@PathVariable("userId")
+                                                 @NotNull
+                                                 @Positive Long userId,
+                                                 @Valid
+                                                 @ModelAttribute EditProfileRequestDto request) {
+        BaseResponse response = publicUserService.editProfile(userId, request);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     @PatchMapping("/{userId}/password") // 비밀번호 수정
     public ResponseEntity<BaseResponse> changePassword(@PathVariable("userId")
                                                        @NotNull
@@ -71,9 +83,6 @@ public class PublicUserController implements UserApiDoc {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    /**
-     * Patch Mapping
-     **/
     @PatchMapping("/{userId}/nickname") // 닉네임 수정
     public ResponseEntity<BaseResponse> editNickName(@PathVariable("userId")
                                                      @NotNull

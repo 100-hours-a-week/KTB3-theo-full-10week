@@ -14,6 +14,7 @@ import com.example.KTB_7WEEK.user.dto.response.*;
 import com.example.KTB_7WEEK.user.exception.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.attribute.UserPrincipalNotFoundException;
@@ -95,6 +96,22 @@ public class UserService {
                 CheckEmailAvailabilityResponseDto.toDto(email, true)); // Email is Available
     }
 
+    // 유저 프로필 수정(닉네임, 프로필 이미지)
+    @Loggable
+    public BaseResponse<EditProfileResponseDto> editProfile(Long userId, EditProfileRequestDto req) {
+        User toUpdate = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
+
+        String newNickname = req.getNickname();
+        String newProfileImageUrl = profileImageStorage.updateProfileImage(req.getProfileImage());
+
+        if (!toUpdate.getNickname().equals(newNickname)) { // 닉네임 수정
+            throw new NicknameAlreadyRegisteredException();
+        }
+        toUpdate.updateProfileImage(newProfileImageUrl); // 프로필 이미지 수정
+        toUpdate.updateNowTime(); // 업데이트 시간 최산화
+
+        return new BaseResponse(ResponseMessage.EDIT_PROFILE_SUCCESS, EditProfileResponseDto.toDto(toUpdate));
+    }
 
     // 닉네임 수정
     @Loggable

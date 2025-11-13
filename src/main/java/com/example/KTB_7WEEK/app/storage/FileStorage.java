@@ -6,5 +6,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 public interface FileStorage {
-    String saveImage(MultipartFile multipartFile, Path uploadDir) throws IOException;
+    String saveImage(MultipartFile multipartFile, Path uploadDir);
+
+    String updateImage(MultipartFile multipartFile, Path uploadDir);
+
+    boolean deleteImage(Path uploadDir);
 }

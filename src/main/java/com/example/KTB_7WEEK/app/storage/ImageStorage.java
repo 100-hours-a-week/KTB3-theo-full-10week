@@ -5,14 +5,17 @@ import com.example.KTB_7WEEK.app.exception.common.TooLargeImageException;
 import com.example.KTB_7WEEK.user.exception.SaveProfileImageFailException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class ImageStorage implements FileStorage {
 
 
@@ -28,8 +31,6 @@ public class ImageStorage implements FileStorage {
         if (multipartFile == null || multipartFile.isEmpty()) {
             return "";
         }
-        System.out.println(getMaxFileSize());
-        System.out.println(multipartFile.getSize());
         if (multipartFile.getSize() > getMaxFileSize()) {
             throw new TooLargeImageException();
         }
@@ -76,5 +77,20 @@ public class ImageStorage implements FileStorage {
                 break;
         }
         return fileSize;
+    }
+
+    @Override
+    public String updateImage(MultipartFile multipartFile, Path uploadDir) {
+        deleteImage(uploadDir);
+        return saveImage(multipartFile, uploadDir);
+    }
+
+    @Override
+    public boolean deleteImage(Path uploadDir) {
+        try {
+            return Files.deleteIfExists(uploadDir);
+        } catch (IOException e) {
+            return false;
+        }
     }
 }
