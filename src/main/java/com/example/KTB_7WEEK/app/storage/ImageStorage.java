@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.UUID;
 
 @Service
@@ -32,13 +33,6 @@ public class ImageStorage implements FileStorage {
         }
         if (multipartFile.getSize() > getMaxFileSize()) {
             throw new TooLargeImageException();
-        }
-
-        try {
-            System.out.println(multipartFile.getSize());
-            System.out.println(multipartFile.getBytes().length);
-        } catch (IOException e) {
-
         }
 
         String filename = StringUtils.cleanPath(multipartFile.getOriginalFilename());
@@ -79,20 +73,29 @@ public class ImageStorage implements FileStorage {
     }
 
     @Override
-    public String updateImage(MultipartFile multipartFile, Path uploadDir, String oldFileName) {
+    public String updateImage(MultipartFile multipartFile, Path uploadDir, String path) {
+        String oldFileName = extractFileName(path);
         String newFileName = saveImage(multipartFile, uploadDir);
-        deleteImage(uploadDir, oldFileName);
+        boolean isDelete = deleteImage(uploadDir, oldFileName);
+        System.out.println("delete Success? -> " + isDelete);
         return newFileName;
     }
 
     @Override
-    public boolean deleteImage(Path uploadDir, String filename) {
+    public boolean deleteImage(Path uploadDir, String path) {
+        String filename = extractFileName(path);
+        System.out.println(filename);
         if(filename == null || filename.isBlank()) return false;
         try {
             Path file = uploadDir.resolve(StringUtils.cleanPath(filename)).normalize();
+            System.out.println("Delete file : " + file.toString());
             return Files.deleteIfExists(file);
         } catch (IOException e) {
             return false;
         }
+    }
+
+    private String extractFileName(String path) {
+        return Paths.get(path).getFileName().toString();
     }
 }

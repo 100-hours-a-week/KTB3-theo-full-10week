@@ -102,13 +102,11 @@ public class UserService {
         User toUpdate = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
 
         String newNickname = req.getNickname();
-        String oldFileName = req.getOldFileName();
-        String newProfileImageUrl = profileImageStorage.updateProfileImage(req.getProfileImage(), oldFileName);
+        String oldFilePath = req.getOldFilePath();
+        String newProfileImageUrl = profileImageStorage.updateProfileImage(req.getProfileImage(), oldFilePath);
 
-        System.out.println(newNickname);
-        System.out.println(newProfileImageUrl);
-        if (toUpdate.getNickname().equals(newNickname)) { // 닉네임 수정
-            throw new NicknameAlreadyRegisteredException();
+        if (!toUpdate.getNickname().equals(newNickname)) { // 닉네임 수정
+            toUpdate.updateNickname(newNickname);
         }
         toUpdate.updateProfileImage(newProfileImageUrl); // 프로필 이미지 수정
         toUpdate.updateNowTime(); // 업데이트 시간 최산화
