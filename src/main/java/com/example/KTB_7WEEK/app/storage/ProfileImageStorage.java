@@ -28,8 +28,8 @@ public class ProfileImageStorage extends ImageStorage {
         return "/images/profile/" + newFilename;
     }
 
-    public String updateProfileImage(MultipartFile multipartFile) {
-        String updatedFilename = super.updateImage(multipartFile, uploadDir);
+    public String updateProfileImage(MultipartFile multipartFile, String oldFileName) {
+        String updatedFilename = super.updateImage(multipartFile, uploadDir, oldFileName);
         return "/images/profile/" + updatedFilename;
     }
 }

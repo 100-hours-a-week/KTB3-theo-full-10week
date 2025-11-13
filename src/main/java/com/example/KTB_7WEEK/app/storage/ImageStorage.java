@@ -15,7 +15,6 @@ import java.nio.file.Path;
 import java.util.UUID;
 
 @Service
-@Transactional
 public class ImageStorage implements FileStorage {
 
 
@@ -80,15 +79,18 @@ public class ImageStorage implements FileStorage {
     }
 
     @Override
-    public String updateImage(MultipartFile multipartFile, Path uploadDir) {
-        deleteImage(uploadDir);
-        return saveImage(multipartFile, uploadDir);
+    public String updateImage(MultipartFile multipartFile, Path uploadDir, String oldFileName) {
+        String newFileName = saveImage(multipartFile, uploadDir);
+        deleteImage(uploadDir, oldFileName);
+        return newFileName;
     }
 
     @Override
-    public boolean deleteImage(Path uploadDir) {
+    public boolean deleteImage(Path uploadDir, String filename) {
+        if(filename == null || filename.isBlank()) return false;
         try {
-            return Files.deleteIfExists(uploadDir);
+            Path file = uploadDir.resolve(StringUtils.cleanPath(filename)).normalize();
+            return Files.deleteIfExists(file);
         } catch (IOException e) {
             return false;
         }

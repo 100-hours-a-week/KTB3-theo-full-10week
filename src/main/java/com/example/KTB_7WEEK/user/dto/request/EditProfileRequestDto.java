@@ -18,6 +18,8 @@ public class EditProfileRequestDto {
     @Schema(description = "회원가입시 사용할 닉네임", example = "nickname")
     private String nickname;
 
+    private String oldFileName;
+
     private MultipartFile profileImage;
 
     public EditProfileRequestDto() {};
