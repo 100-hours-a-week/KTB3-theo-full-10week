@@ -2,12 +2,16 @@ package com.example.KTB_7WEEK.post.dto.response.comment;
 
 import com.example.KTB_7WEEK.app.util.DateTimePattern;
 import com.example.KTB_7WEEK.post.entity.Comment;
+import lombok.Getter;
 
 import java.time.format.DateTimeFormatter;
 
+@Getter
 public class FindCommentResponseDto {
     private long id;
     private long authorId;
+    private String authorNickname;
+    private String authorProfileImage;
     private String content;
     private String created_at;
     private String updated_at;
@@ -15,30 +19,12 @@ public class FindCommentResponseDto {
     public FindCommentResponseDto() {
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public long getAuthorId() {
-        return authorId;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public String getCreated_at() {
-        return created_at;
-    }
-
-    public String getUpdated_at() {
-        return updated_at;
-    }
-
     public static FindCommentResponseDto toDto(Comment comment) {
         FindCommentResponseDto dto = new FindCommentResponseDto();
         dto.id = comment.getId();
         dto.authorId = comment.getAuthor().getId();
+        dto.authorNickname = comment.getAuthor().getNickname();
+        dto.authorProfileImage = comment.getAuthor().getProfileImage();
         dto.content = comment.getContent();
         dto.created_at = comment.getCreatedAt()
                 .format(DateTimeFormatter.ofPattern(DateTimePattern.DEFAULT_DATE_TIME));
