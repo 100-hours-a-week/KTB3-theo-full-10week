@@ -13,8 +13,8 @@ public class FindCommentResponseDto {
     private String authorNickname;
     private String authorProfileImage;
     private String content;
-    private String created_at;
-    private String updated_at;
+    private String createdAt;
+    private String updatedAt;
 
     public FindCommentResponseDto() {
     }
@@ -26,9 +26,9 @@ public class FindCommentResponseDto {
         dto.authorNickname = comment.getAuthor().getNickname();
         dto.authorProfileImage = comment.getAuthor().getProfileImage();
         dto.content = comment.getContent();
-        dto.created_at = comment.getCreatedAt()
+        dto.createdAt = comment.getCreatedAt()
                 .format(DateTimeFormatter.ofPattern(DateTimePattern.DEFAULT_DATE_TIME));
-        dto.updated_at = comment.getUpdatedAt()
+        dto.updatedAt = comment.getUpdatedAt()
                 .format(DateTimeFormatter.ofPattern(DateTimePattern.DEFAULT_DATE_TIME));
         return dto;
     }
