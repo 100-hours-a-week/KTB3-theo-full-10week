@@ -73,16 +73,15 @@ public class ImageStorage implements FileStorage {
     }
 
     @Override
-    public String updateImage(MultipartFile multipartFile, Path uploadDir, String path) {
-        String oldFileName = extractFileName(path);
+    public String updateImage(MultipartFile multipartFile, Path uploadDir, String oldFileName) {
+//        String oldFileName = extractFileName(path);
         String newFileName = saveImage(multipartFile, uploadDir);
         boolean isDelete = deleteImage(uploadDir, oldFileName);
         return newFileName;
     }
 
     @Override
-    public boolean deleteImage(Path uploadDir, String path) {
-        String filename = extractFileName(path);
+    public boolean deleteImage(Path uploadDir, String filename) {
         if(filename == null || filename.isBlank()) return false;
         try {
             Path file = uploadDir.resolve(StringUtils.cleanPath(filename)).normalize();

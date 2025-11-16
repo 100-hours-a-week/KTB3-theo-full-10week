@@ -25,12 +25,12 @@ public class ProfileImageStorage extends ImageStorage {
 
     public String saveProfileImage(MultipartFile multipartFile) {
         String newFilename = super.saveImage(multipartFile, uploadDir);
-        return "/images/profile/" + newFilename;
+        return newFilename;
     }
 
-    public String updateProfileImage(MultipartFile multipartFile, String oldFilePath) {
-        String updatedFileName = super.updateImage(multipartFile, uploadDir, oldFilePath);
-        return "/images/profile/" + updatedFileName;
+    public String updateProfileImage(MultipartFile multipartFile, String oldFileName) {
+        String updatedFileName = super.updateImage(multipartFile, uploadDir, oldFileName);
+        return updatedFileName;
     }
 
 

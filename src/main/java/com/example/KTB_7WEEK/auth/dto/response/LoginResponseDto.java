@@ -8,6 +8,7 @@ import lombok.Getter;
 public class LoginResponseDto {
     private long id = 0L;
     private String profileImage = "";
+    private String nickname = "";
     private boolean isLoginSuccess = false;
 
     public LoginResponseDto() {
@@ -25,6 +26,7 @@ public class LoginResponseDto {
         LoginResponseDto dto = new LoginResponseDto();
         dto.id = user.getId();
         dto.profileImage = user.getProfileImage();
+        dto.nickname = user.getNickname();
         dto.isLoginSuccess = isLoginSuccess;
         return dto;
     }
