@@ -10,8 +10,8 @@ public class UpdateCommentResponseDto {
     private long postId;
     private long authorId;
     private String content;
-    private String createAt;
-    private String updateAt;
+    private String createdAt;
+    private String updatedAt;
 
     public UpdateCommentResponseDto() {
     }
@@ -32,12 +32,12 @@ public class UpdateCommentResponseDto {
         return content;
     }
 
-    public String getCreateAt() {
-        return createAt;
+    public String getCreatedAt() {
+        return createdAt;
     }
 
-    public String getUpdateAt() {
-        return updateAt;
+    public String getUpdatedAt() {
+        return updatedAt;
     }
 
     public static UpdateCommentResponseDto toDto(Comment comment) {
@@ -46,9 +46,9 @@ public class UpdateCommentResponseDto {
         dto.postId = comment.getPost().getId();
         dto.authorId = comment.getAuthor().getId();
         dto.content = comment.getContent();
-        dto.createAt = comment.getCreatedAt()
+        dto.createdAt = comment.getCreatedAt()
                 .format(DateTimeFormatter.ofPattern(DateTimePattern.DEFAULT_DATE_TIME));
-        dto.updateAt = comment.getUpdatedAt()
+        dto.updatedAt = comment.getUpdatedAt()
                 .format(DateTimeFormatter.ofPattern(DateTimePattern.DEFAULT_DATE_TIME));
 
         return dto;

@@ -123,8 +123,8 @@ public class PublicPostController implements PostApiDoc {
     public ResponseEntity<BaseResponse> updatePublicPost(@PathVariable("postId")
                                                          @NotNull
                                                          @Positive Long myPostId,
-                                                         @RequestBody
-                                                         @Valid UpdateMyPostRequestDto request) {
+                                                         @Valid
+                                                         @ModelAttribute UpdateMyPostRequestDto request) {
         BaseResponse response = publicPostService.updateMyPost(myPostId, request);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

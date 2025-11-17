@@ -475,8 +475,8 @@ public interface PostApiDoc {
     public ResponseEntity<BaseResponse> updatePublicPost(@PathVariable("postId")
                                                          @NotNull
                                                          @Positive Long myPostId,
-                                                         @RequestBody
-                                                         @Valid UpdateMyPostRequestDto request);
+                                                         @Valid
+                                                         @ModelAttribute UpdateMyPostRequestDto request);
 
 
     @Operation(summary = "게시글 삭제", description = "게시글 PK를 통해 특정 게시글을 삭제합니다.")

@@ -102,8 +102,8 @@ public class UserService {
         User toUpdate = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
 
         String newNickname = req.getNickname();
-        String oldFilePath = req.getOldFilePath();
-        String newProfileImageUrl = profileImageStorage.updateProfileImage(req.getProfileImage(), oldFilePath);
+        String oldFileName = req.getOldFileName();
+        String newProfileImageUrl = profileImageStorage.updateProfileImage(req.getProfileImage(), oldFileName);
 
         if (!toUpdate.getNickname().equals(newNickname)) { // 닉네임 수정
             toUpdate.updateNickname(newNickname);

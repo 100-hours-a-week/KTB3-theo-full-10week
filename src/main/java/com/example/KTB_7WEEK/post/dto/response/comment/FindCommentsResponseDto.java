@@ -1,7 +1,10 @@
 package com.example.KTB_7WEEK.post.dto.response.comment;
 
+import lombok.Getter;
+
 import java.util.List;
 
+@Getter
 public class FindCommentsResponseDto {
     private long postId;
     private long totalPages;
@@ -12,34 +15,6 @@ public class FindCommentsResponseDto {
     private List<FindCommentResponseDto> contents;
 
     public FindCommentsResponseDto() {
-    }
-
-    public long getPostId() {
-        return postId;
-    }
-
-    public long getTotalPages() {
-        return totalPages;
-    }
-
-    public long getTotalElements() {
-        return totalElements;
-    }
-
-    public long getSize() {
-        return size;
-    }
-
-    public long getCurrentPage() {
-        return currentPage;
-    }
-
-    public boolean hasNext() {
-        return hasNext;
-    }
-
-    public List<FindCommentResponseDto> getContents() {
-        return contents;
     }
 
     public static FindCommentsResponseDto toDto(long postId, long totalPages, long totalElements,

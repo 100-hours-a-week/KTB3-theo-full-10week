@@ -25,7 +25,7 @@ public class ArticleImageStorage extends ImageStorage {
         return newFilename;
     }
 
-    public String updateProfileImage(MultipartFile multipartFile, String oldFileName) {
+    public String updateArticleImage(MultipartFile multipartFile, String oldFileName) {
         String updatedFilename = super.updateImage(multipartFile, uploadDir, oldFileName);
         return updatedFilename;
     }

@@ -122,10 +122,12 @@ public class PostService {
     public BaseResponse<UpdateMyPostResponseDto> updateMyPost(long postId, UpdateMyPostRequestDto req) {
         Post toUpdate = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException());
 
+        String oldFileName = req.getOldFileName();
+        String newArticleImageUrl = articleImageStorage.updateArticleImage(req.getArticleImage(), oldFileName);
         // 변경 감지
         toUpdate.updateTitle(req.getTitle());
         toUpdate.updateArticle(req.getArticle());
-        toUpdate.updateArticleImage(req.getArticleImage());
+        toUpdate.updateArticleImage(newArticleImageUrl);
         toUpdate.updateCategory(req.getCategory());
         toUpdate.updateNow(); // 업데이트 필드 최신화
 
