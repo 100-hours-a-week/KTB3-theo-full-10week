@@ -185,7 +185,7 @@ public class PostService {
     @Loggable
     public BaseResponse<CreateCommentResponseDto> createComment(long postId, CreateCommentRequestDto req) {
         Post findPost = postRepository.getReferenceById(postId); // Post Proxy
-        long userId = findPost.getAuthor().getId();
+        long userId = req.getUserId();
         User findUser = userRepository.getReferenceById(userId); // User Proxy
 
         Comment toSave = new Comment.Builder()

@@ -33,11 +33,14 @@ public class User {
     private String profileImage;
 
     // 회원이 작성한 게시글 목록, Post 삭제 전이
-    @OneToMany(mappedBy = "author", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "author", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Post> posts = new HashSet<>();
 
+    @OneToMany(mappedBy = "author", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
+
     // 회원이 좋아요 누른 게시글 목록, PostLike 삭제 전이
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<PostLike> likes = new HashSet<>();
 
     @Column(name = "created_at", nullable = false)

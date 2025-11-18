@@ -17,7 +17,8 @@ public class CreateCommentRequestDto {
     @Schema(description = "댓글 내용", example = "댓글 내용")
     private String content;
 
-    public CreateCommentRequestDto() {}
+    public CreateCommentRequestDto() {
+    }
 
     public long getUserId() {
         return userId;

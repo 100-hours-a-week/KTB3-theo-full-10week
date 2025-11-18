@@ -38,7 +38,7 @@ public class Post {
     private Long view_count = 0L;
 
     // 게시글에 대한 좋아요 조회용 목록, Comment 삭제전이
-    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<PostLike> likes = new HashSet<>();
 
     @Column(name = "created_at", nullable = false)
@@ -54,7 +54,7 @@ public class Post {
     @JoinColumn(name = "author_id")
     private User author;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
     public Post() {
