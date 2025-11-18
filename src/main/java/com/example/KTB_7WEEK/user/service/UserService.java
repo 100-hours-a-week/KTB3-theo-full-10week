@@ -66,8 +66,14 @@ public class UserService {
 
     // 회원정보 삭제
     @Loggable
-    public BaseResponse deleteById(long id) {
-        userRepository.deleteById(id);
+    public BaseResponse deleteById(long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
+        String profileImage = user.getProfileImage();
+        boolean isDelete = profileImageStorage.deleteProfileImage(profileImage);
+        if (!isDelete) {
+            throw new DeleteProfileImageFailException();
+        }
+        userRepository.deleteById(userId);
 
         return new BaseResponse(ResponseMessage.USER_DELETE_SUCCESS, new User());
     }

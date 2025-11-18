@@ -1,5 +1,6 @@
 package com.example.KTB_7WEEK.app.exception.handler;
 
+import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
 import org.springframework.http.HttpStatus;
 
 public enum ErrorCode {
@@ -7,6 +8,7 @@ public enum ErrorCode {
     // COMMON
     IMAGE_NOT_FOUND(400, HttpStatus.BAD_REQUEST, "이미지 파일을 찾을 수 없습니다."),
     TOO_LARGE_IMAGE(413, HttpStatus.PAYLOAD_TOO_LARGE, "이미지 용량을 초과하였습니다."),
+    SAVE_IMAGE_FAIL(500, HttpStatus.INTERNAL_SERVER_ERROR, "이미지 저장 실패"),
 
     // USER
     INVALID_PASSWORD(400, HttpStatus.BAD_REQUEST, "비밀번호 형식 불일치(8자 이상 20자 이하 / 대문자, 소문자, 숫자, 특수문자 각각 1개씩 포함해야 합니다."),
@@ -24,6 +26,7 @@ public enum ErrorCode {
     FAIL_USER_EMAIL_MAPPING(500,HttpStatus.INTERNAL_SERVER_ERROR, "유저&이메일 매핑 실패"),
     FAIL_USER_EMAIL_MAPPING_DELETE(500, HttpStatus.INTERNAL_SERVER_ERROR, "유저&이메일 매핑 정보 삭제 실패"),
     SAVE_PROFILE_IMAGE_FAIL(500, HttpStatus.INTERNAL_SERVER_ERROR, "프로필 이미지 저장 실패"),
+    DELETE_PROFILE_IMAGE_FAIL(500, HttpStatus.INTERNAL_SERVER_ERROR, "프로필 이미지 삭제 실패"),
 
 
     // POST
@@ -36,6 +39,9 @@ public enum ErrorCode {
     POST_DELETE_ERROR(500, HttpStatus.INTERNAL_SERVER_ERROR, "게시글 삭제 실패"),
     INCREASE_HIT_FAIL(500, HttpStatus.INTERNAL_SERVER_ERROR, "조회수 증가 실패"),
     INCREASE_LIKE_FAIL(500, HttpStatus.INTERNAL_SERVER_ERROR, "좋아요 수 증가 실패"),
+    SAVE_ARTICLE_IMAGE_FAIL(500, HttpStatus.INTERNAL_SERVER_ERROR, "게시글 이미지 저장 실패"),
+    DELETE_ARTICLE_IMAGE_FAIL(500, HttpStatus.INTERNAL_SERVER_ERROR, "게시글 이미지 삭제 실패"),
+
 
     // COMMENT
     NO_COMMENT_NOT_ALLOWED(400, HttpStatus.BAD_REQUEST, "댓글은 1자 이상 입니다."),

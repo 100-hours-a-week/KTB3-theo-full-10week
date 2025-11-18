@@ -1,5 +1,7 @@
 package com.example.KTB_7WEEK.app.storage;
 
+import com.example.KTB_7WEEK.app.exception.common.SaveImageFailException;
+import com.example.KTB_7WEEK.user.exception.SaveProfileImageFailException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,8 +26,12 @@ public class ProfileImageStorage extends ImageStorage {
     }
 
     public String saveProfileImage(MultipartFile multipartFile) {
-        String newFilename = super.saveImage(multipartFile, uploadDir);
-        return newFilename;
+        try {
+            String newFilename = super.saveImage(multipartFile, uploadDir);
+            return newFilename;
+        } catch (SaveImageFailException e) {
+            throw new SaveProfileImageFailException();
+        }
     }
 
     public String updateProfileImage(MultipartFile multipartFile, String oldFileName) {
@@ -33,5 +39,8 @@ public class ProfileImageStorage extends ImageStorage {
         return updatedFileName;
     }
 
+    public boolean deleteProfileImage(String fileName) {
+        return super.deleteImage(uploadDir, fileName);
+    }
 
 }

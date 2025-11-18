@@ -1,5 +1,7 @@
 package com.example.KTB_7WEEK.app.storage;
 
+import com.example.KTB_7WEEK.app.exception.common.SaveImageFailException;
+import com.example.KTB_7WEEK.post.exception.SaveArticleImageFailException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,12 +23,21 @@ public class ArticleImageStorage extends ImageStorage {
     }
 
     public String saveArticleImage(MultipartFile multipartFile) {
-        String newFilename = super.saveImage(multipartFile, uploadDir);
-        return newFilename;
+        try {
+            String newFilename = super.saveImage(multipartFile, uploadDir);
+            return newFilename;
+        } catch (SaveImageFailException e) {
+            throw new SaveArticleImageFailException();
+        }
+
     }
 
     public String updateArticleImage(MultipartFile multipartFile, String oldFileName) {
         String updatedFilename = super.updateImage(multipartFile, uploadDir, oldFileName);
         return updatedFilename;
+    }
+
+    public boolean deleteArticleImage(String fileName) {
+        return super.deleteImage(uploadDir,fileName);
     }
 }

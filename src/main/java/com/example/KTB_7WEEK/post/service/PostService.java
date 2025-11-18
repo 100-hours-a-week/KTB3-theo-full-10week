@@ -138,6 +138,13 @@ public class PostService {
     // 게시글 삭제 By Id
     @Loggable
     public BaseResponse deletePostById(long postId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException());
+        String articleImage = post.getArticleImage();
+        boolean isDelete = articleImageStorage.deleteArticleImage(articleImage);
+        if(!isDelete) {
+            throw new DeleteArticleImageFailException();
+        }
+
         postRepository.deleteById(postId);
 
         return new BaseResponse(ResponseMessage.POST_DELETE_SUCCESS, new Post());
