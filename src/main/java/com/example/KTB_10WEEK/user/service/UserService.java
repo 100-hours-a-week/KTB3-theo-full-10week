@@ -10,6 +10,7 @@ import com.example.KTB_10WEEK.user.repository.user.UserRepository;
 import com.example.KTB_10WEEK.user.dto.request.*;
 import com.example.KTB_10WEEK.user.dto.response.*;
 import com.example.KTB_10WEEK.user.exception.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
     private final UserRepository userRepository;
     private final ProfileImageStorage profileImageStorage;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
     // 생성자 DI
     public UserService(UserRepository userRepository, ProfileImageStorage profileImageStorage) {
@@ -41,7 +43,7 @@ public class UserService {
 
         User toSave = new User.Builder() // User 생성
                 .email(email)
-                .password(req.getPassword())
+                .password(bCryptPasswordEncoder.encode(req.getPassword()))
                 .nickname(req.getNickname())
                 .profileImage(profileImageUrl)
                 .build();
