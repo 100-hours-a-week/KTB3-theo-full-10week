@@ -1,6 +1,6 @@
-# KTB3-theo-full-7week
+# KTB3-theo-full-10week
 
-## 7주차 과제
+## 10주차 과제
 
-5주차 과제 산출 REST API Server + JPA와 연관관계 매핑
+10주차 스프링 시큐리티 적용
 
