@@ -1,8 +1,12 @@
 package com.example.KTB_7WEEK.app.config;
 
 import com.example.KTB_7WEEK.auth.interceptor.TokenAuthInterceptor;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import org.apache.catalina.filters.CorsFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -46,6 +50,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/images/logo/**")
+                .addResourceLocations("file:logo/");
+
         registry.addResourceHandler("/images/**")
                 .addResourceLocations("file:uploads/");
     }

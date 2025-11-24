@@ -44,3 +44,5 @@ file:
   upload-dir:
     profile: uploads/profile
     article: uploads/article
+  logo: logo
+

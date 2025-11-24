@@ -5,6 +5,7 @@ import jakarta.persistence.Embeddable;
 import lombok.Getter;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 
 @Embeddable
@@ -25,4 +26,16 @@ public class PostLikeId implements Serializable { // 복합키 클래스
         this.postId = postId;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PostLikeId that = (PostLikeId) o;
+        return Objects.equals(userId, that.userId) && Objects.equals(postId, that.postId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(userId, postId);
+    }
 }
