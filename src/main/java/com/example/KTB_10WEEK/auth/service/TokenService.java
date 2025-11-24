@@ -34,25 +34,25 @@ public class TokenService {
         this.encryptor = encryptor;
     }
 
-    public TokenPair issueTokens() {
-        String accessToken = issueAccessToken();
-        String refreshToken = issueRefreshToken();
+    public TokenPair issueTokens(String email) {
+        String accessToken = issueAccessToken(email);
+        String refreshToken = issueRefreshToken(email);
 
         TokenPair tokenPair = new TokenPair(accessToken, refreshToken);
 
         return tokenPair;
     }
 
-    private String issueAccessToken() {
-        return issue(ACCESS_TOKEN_TTL_MILLS, "ACCESS_TOKEN");
+    private String issueAccessToken(String email) {
+        return issue(ACCESS_TOKEN_TTL_MILLS, "ACCESS_TOKEN", email);
     }
 
-    private String issueRefreshToken() {
-        return issue(REFRESH_TOKEN_TTL_MILLS, "REFRESH_TOKEN");
+    private String issueRefreshToken(String email) {
+        return issue(REFRESH_TOKEN_TTL_MILLS, "REFRESH_TOKEN", email);
     }
 
     // 토큰 발급
-    private String issue(Long ttlMillis, String tokenType) {
+    private String issue(Long ttlMillis, String tokenType, String email) {
         long now = System.currentTimeMillis();
         long exp = now + ttlMillis;
         Map<String, Object> header = Map.of(
@@ -63,6 +63,7 @@ public class TokenService {
         Map<String, Object> payload = Map.of(
                 "iss", issuer, // 발급자
                 "sub", tokenType, // 제목
+                "email", email, // 유저 이메일
                 "exp", exp, // 만료 시간
                 "iat", now // 발급 시간
         );

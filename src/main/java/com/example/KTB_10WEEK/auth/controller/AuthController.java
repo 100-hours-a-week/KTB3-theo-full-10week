@@ -37,7 +37,7 @@ public class AuthController implements AuthApiDoc {
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }
 
-        TokenPair tokenPair = tokenService.issueTokens();
+        TokenPair tokenPair = tokenService.issueTokens(request.getEmail());
         String accessToken = tokenPair.getAccessToken();
         String refreshToken = tokenPair.getRefreshToken();
 
