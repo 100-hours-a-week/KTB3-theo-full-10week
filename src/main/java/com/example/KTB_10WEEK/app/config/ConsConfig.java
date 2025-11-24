@@ -18,6 +18,7 @@ public class ConsConfig {
         config.setAllowedOrigins(List.of("http://localhost:5500"));
         config.setAllowedMethods(List.of("GET", "POST", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
+        config.setExposedHeaders(List.of("Authorization", "X-Refresh-Token"));
         config.setAllowCredentials(true);
         config.setMaxAge((long) (60 * 60));
 

@@ -1,109 +1,77 @@
 package com.example.KTB_10WEEK.auth.service;
 
-import com.example.KTB_10WEEK.app.aop.aspect.log.Loggable;
-import com.example.KTB_10WEEK.auth.exception.AlreadyExpiredToken;
-import com.example.KTB_10WEEK.auth.exception.FailTokenExpireException;
-import com.example.KTB_10WEEK.auth.exception.InvalidTokenException;
-import com.example.KTB_10WEEK.auth.repository.TokenRepository;
+import com.example.KTB_10WEEK.auth.dto.response.TokenPair;
+import com.example.KTB_10WEEK.auth.repository.RefreshTokenRepository;
 import com.example.KTB_10WEEK.auth.service.decoder.Decoder;
 import com.example.KTB_10WEEK.auth.service.encoder.Encoder;
 import com.example.KTB_10WEEK.auth.service.encryption.Encrypt;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.util.Map;
-import java.util.Optional;
 
-@Component
+@Service
+@Transactional
 public class TokenService {
-    @Value("${application.auth.secret}")
-    private String secret_key;
 
+    @Value("${application.auth.secret}")
+    private String SECRET_KEY;
+    @Value("${application.auth.token.issuer}")
+    private String issuer;
+    private final RefreshTokenRepository refreshTokenRepository;
     private Encoder encoder;
     private Decoder decoder;
-    private static final ObjectMapper objectMapper = new ObjectMapper();
     private Encrypt encryptor;
-    private TokenRepository tokenRepository;
+    private static final long ACCESS_TOKEN_TTL_MILLS = 1000 * 60 * 15; // 15분
+    private static final long REFRESH_TOKEN_TTL_MILLS = 1000 * 60 * 60 * 24 * 7; // 7일
 
-    public TokenService(Encoder encoder, Decoder decoder, Encrypt encryptor, TokenRepository tokenRepository) {
+    public TokenService(RefreshTokenRepository refreshTokenRepository, Encoder encoder, Decoder decoder, Encrypt encryptor) {
+        this.refreshTokenRepository = refreshTokenRepository;
         this.encoder = encoder;
         this.decoder = decoder;
         this.encryptor = encryptor;
-        this.tokenRepository = tokenRepository;
+    }
+
+    public TokenPair issueTokens() {
+        String accessToken = issueAccessToken();
+        String refreshToken = issueRefreshToken();
+
+        TokenPair tokenPair = new TokenPair(accessToken, refreshToken);
+
+        return tokenPair;
+    }
+
+    private String issueAccessToken() {
+        return issue(ACCESS_TOKEN_TTL_MILLS, "ACCESS_TOKEN");
+    }
+
+    private String issueRefreshToken() {
+        return issue(REFRESH_TOKEN_TTL_MILLS, "REFRESH_TOKEN");
     }
 
     // 토큰 발급
-    @Loggable
-    public String issue(Duration ttl) {
+    private String issue(Long ttlMillis, String tokenType) {
         long now = System.currentTimeMillis();
-        long exp = now + ttl.toMillis();
+        long exp = now + ttlMillis;
         Map<String, Object> header = Map.of(
                 "alg", encryptor.getAlgorithm(),
-                "typ", "JWT"
+                "typ", "jwt"
         );
 
         Map<String, Object> payload = Map.of(
-                "iss", "KTB-5WEEK", // 발급자
-                "sub", "token", // 제목
+                "iss", issuer, // 발급자
+                "sub", tokenType, // 제목
                 "exp", exp, // 만료 시간
                 "iat", now // 발급 시간
         );
 
         String headerBase64 = encoder.encodeJson(header);
         String payloadBase64 = encoder.encodeJson(payload);
-        String signature = encoder.encodeToString(encryptor.encrypt(headerBase64 + "." + payloadBase64, secret_key));
+        String signature = encoder.encodeToString(encryptor.encrypt(headerBase64 + "." + payloadBase64, SECRET_KEY));
         String token = headerBase64 + "." + payloadBase64 + "." + signature;
 
         return token;
-    }
-
-    // 토큰 검증
-    @Loggable
-    public Optional<Boolean> verify(String token) {
-        String[] parts = token.split("\\.");
-        if (parts.length != 3) return Optional.ofNullable(false);
-
-        if (tokenRepository.isBlackList(token).get()) {
-            throw new AlreadyExpiredToken();
-        }
-
-        try {
-            Map<String, Object> header = objectMapper.readValue(decoder.decode(parts[0]),
-                    new TypeReference<Map<String, Object>>() {
-                    });
-            Map<String, Object> payload = objectMapper.readValue(decoder.decode(parts[1]),
-                    new TypeReference<Map<String, Object>>() {
-                    });
-
-            if (!header.get("alg").equals(encryptor.getAlgorithm()) || !header.get("typ").equals("JWT")) {
-                return Optional.ofNullable(false);
-            }
-
-            if (!parts[2].equals(encoder.encodeToString(encryptor.encrypt(parts[0] + "." + parts[1], secret_key)))) {
-                return Optional.ofNullable(false);
-            }
-
-            long now = System.currentTimeMillis();
-            long exp = ((Number) payload.get("exp")).longValue();
-            if (exp < now) return Optional.ofNullable(false);
-
-            return Optional.ofNullable(false);
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    // 토큰 무효화
-    @Loggable
-    public boolean expire(String authorization) {
-        if (authorization != null && authorization.startsWith("Bearer ")) {
-            String token = authorization.substring(7);
-            tokenRepository.isBlackList(token).orElseThrow(() -> new AlreadyExpiredToken());
-            return tokenRepository.toBlackList(token).orElseThrow(() -> new FailTokenExpireException());
-        }
-        throw new InvalidTokenException();
     }
 }

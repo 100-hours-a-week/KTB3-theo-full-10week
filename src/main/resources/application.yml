@@ -1,8 +1,9 @@
 application:
-  name: KTB_7WEEK
+  name: KTB_10WEEK
   auth:
-    secret: secretKey
+    secret: SECRET_KEY
     token:
+      issuer : KTB_10WEEK
       expire: 10
 
 springdoc:
