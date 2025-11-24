@@ -1,0 +1,130 @@
+package com.example.KTB_10WEEK.user.entity;
+
+import com.example.KTB_10WEEK.post.entity.Comment;
+import com.example.KTB_10WEEK.post.entity.Post;
+import com.example.KTB_10WEEK.post.entity.PostLike;
+import jakarta.persistence.*;
+import lombok.Getter;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+@Entity
+@Getter
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id", nullable = false, unique = true)
+    private Long id;
+
+    @Column(name = "email", nullable = false, unique = true)
+    private String email;
+
+    @Column(name = "password", nullable = false, length = 20)
+    private String password;
+
+    @Column(name = "nickname", nullable = false, length = 10, unique = true)
+    private String nickname;
+
+    @Column(name = "profile_image")
+    private String profileImage;
+
+    // 회원이 작성한 게시글 목록, Post 삭제 전이
+    @OneToMany(mappedBy = "author", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private Set<Post> posts = new HashSet<>();
+
+    @OneToMany(mappedBy = "author", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
+
+    // 회원이 좋아요 누른 게시글 목록, PostLike 삭제 전이
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private Set<PostLike> likes = new HashSet<>();
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt = createdAt;
+
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted = false;
+
+    public User() {
+    }
+
+    public User(Builder builder) {
+        this.id = builder.id;
+        this.email = builder.email;
+        this.password = builder.password;
+        this.nickname = builder.nickname;
+        this.profileImage = builder.profileImage;
+    }
+
+    public boolean isDeleted() {
+        return this.isDeleted;
+    }
+
+    public void identify(long id) {
+        this.id = id;
+    }
+
+    public void updateNowTime() {
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public void softDelete() {
+        this.isDeleted = true;
+    }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void updatePassword(String password) {
+        this.password = password;
+    }
+
+    public void updateProfileImage(String profileImage) {
+        this.profileImage = profileImage;
+    }
+
+    public static class Builder {
+        private Long id;
+        private String email;
+        private String password;
+        private String nickname;
+        private String profileImage;
+
+        public Builder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder email(String email) {
+            this.email = email;
+            return this;
+        }
+
+        public Builder password(String password) {
+            this.password = password;
+            return this;
+        }
+
+        public Builder nickname(String nickname) {
+            this.nickname = nickname;
+            return this;
+        }
+
+        public Builder profileImage(String profileImage) {
+            this.profileImage = profileImage;
+            return this;
+        }
+
+        public User build() {
+            return new User(this);
+        }
+    }
+}
