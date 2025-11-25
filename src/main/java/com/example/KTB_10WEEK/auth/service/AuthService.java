@@ -35,24 +35,20 @@ public class AuthService {
         String rawPassword = req.getPassword();
 
         boolean isLoginSuccess = false;
-        ResponseMessage resMsg = ResponseMessage.LOGIN_FAIL;
+        BaseResponse<LoginResponseDto> loginResponse;
 
         User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException());
         Set<Long> likedPostIds = postLikeRepository.findLikePostIdsByUserId(user.getId());
 
         if (user.getEmail().equals(email) && passwordEncoder.matches(rawPassword, user.getPassword())) {
             isLoginSuccess = true;
-            resMsg = ResponseMessage.LOGIN_SUCCESS;
-        }
-        LoginResponseDto loginResponseDto = LoginResponseDto.toDto(user, likedPostIds, isLoginSuccess);
-        BaseResponse<LoginResponseDto> loginResponse = new BaseResponse<LoginResponseDto>(resMsg, loginResponseDto);
-
-        if (!isLoginSuccess) {
+            loginResponse = new BaseResponse(ResponseMessage.LOGIN_SUCCESS, LoginResponseDto.success(user, likedPostIds, isLoginSuccess));
+            TokenPair issuedTokens = issueTokens(user.getId(), email);
+            return new LoginWithTokenResponseDto(loginResponse, issuedTokens);
+        } else {
+            loginResponse = new BaseResponse(ResponseMessage.LOGIN_FAIL, LoginResponseDto.fail());
             return new LoginWithTokenResponseDto(loginResponse, null);
         }
-
-        TokenPair issuedTokens = issueTokens(user.getId(), email);
-        return new LoginWithTokenResponseDto(loginResponse, issuedTokens);
     }
 
     private TokenPair issueTokens(long userId, String email) {
