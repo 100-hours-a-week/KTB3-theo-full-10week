@@ -14,23 +14,23 @@ public final class RefreshTokenCookie {
 
     public ResponseCookie create(String refreshToken) {
         return ResponseCookie
-                .from(cookieProperty.getRefreshTokenCookieName(), refreshToken)
-                .path(cookieProperty.getRefreshTokenCookiePath())
+                .from(cookieProperty.refreshTokenCookieName(), refreshToken)
+                .path(cookieProperty.refreshTokenCookiePath())
                 .httpOnly(true)
                 .secure(true)
-                .sameSite(cookieProperty.getRefreshTokenCookieSameSite())
-                .maxAge(cookieProperty.getRefreshTokenCookieMaxAge())
+                .sameSite(cookieProperty.refreshTokenCookieSameSite())
+                .maxAge(cookieProperty.refreshTokenCookieMaxAge())
                 .build();
     }
 
     // 리프레시 토큰 쿠키 제거용
     public ResponseCookie expire() {
         return ResponseCookie
-                .from(cookieProperty.getRefreshTokenCookieName(), "")
-                .path(cookieProperty.getRefreshTokenCookiePath())
+                .from(cookieProperty.refreshTokenCookieName(), "")
+                .path(cookieProperty.refreshTokenCookiePath())
                 .httpOnly(true)
                 .secure(true)
-                .sameSite(cookieProperty.getRefreshTokenCookieSameSite())
+                .sameSite(cookieProperty.refreshTokenCookieSameSite())
                 .maxAge(0) // 만료 시간
                 .build();
     }

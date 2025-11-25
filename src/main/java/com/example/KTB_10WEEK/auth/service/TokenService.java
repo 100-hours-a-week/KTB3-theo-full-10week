@@ -10,7 +10,6 @@ import com.example.KTB_10WEEK.auth.service.encryption.Encrypt;
 import com.example.KTB_10WEEK.auth.service.property.TokenProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,17 +39,23 @@ public class TokenService {
     }
 
     public TokenPair issueTokens(Long userId, String email) {
+
         String accessToken = issueAccessToken(userId, email);
         String refreshToken = issueRefreshToken(userId, email);
 
         TokenPair tokenPair = new TokenPair(accessToken, refreshToken);
 
-        RefreshToken rt = new RefreshToken.Builder()
-                .userId(userId)
-                .token(refreshToken)
-                .build();
-
-        saveRefreshToken(rt);
+        RefreshToken rt = refreshTokenRepository.findByUserId(userId).map(token -> {
+            token.updateToken(refreshToken);
+            return token;
+        }).orElseGet(() -> {
+            RefreshToken newRefreshToken = new RefreshToken.Builder()
+                    .userId(userId)
+                    .token(refreshToken)
+                    .build();
+            saveRefreshToken(newRefreshToken);
+            return newRefreshToken;
+        });
 
         return tokenPair;
     }
@@ -83,11 +88,11 @@ public class TokenService {
     }
 
     private String issueAccessToken(Long userId, String email) {
-        return issue(tokenProperty.getAccessTokenTtlMillis(), "ACCESS_TOKEN", userId, email);
+        return issue(tokenProperty.accessTokenTtlMillis(), "ACCESS_TOKEN", userId, email);
     }
 
     private String issueRefreshToken(Long userId, String email) {
-        return issue(tokenProperty.getRefreshTokenTtlMillis(), "REFRESH_TOKEN", userId, email);
+        return issue(tokenProperty.refreshTokenTtlMillis(), "REFRESH_TOKEN", userId, email);
     }
 
     // 토큰 발급
@@ -100,7 +105,7 @@ public class TokenService {
         );
 
         Map<String, Object> payload = Map.of(
-                "iss", tokenProperty.getIssuer(), // 발급자
+                "iss", tokenProperty.issuer(), // 발급자
                 "sub", tokenType, // 제목
                 "userId", userId,
                 "email", email, // 유저 이메일
@@ -110,26 +115,14 @@ public class TokenService {
 
         String headerBase64 = encoder.encodeJson(header);
         String payloadBase64 = encoder.encodeJson(payload);
-        String signature = encoder.encodeToString(encryptor.encrypt(headerBase64 + "." + payloadBase64, tokenProperty.getSecretkey()));
+        String signature = encoder.encodeToString(encryptor.encrypt(headerBase64 + "." + payloadBase64, tokenProperty.secretkey()));
         String token = headerBase64 + "." + payloadBase64 + "." + signature;
 
         return token;
     }
 
     public void verify(String token) {
-        String[] parts = splitToken(token);
-
-        String headerPart = parts[0];
-        String payloadPart = parts[1];
-        String signaturePart = parts[2];
-
-        Map<String, Object> header = base64JsonToMap(headerPart);
-        Map<String, Object> payload = base64JsonToMap(payloadPart);
-
-        validateHeader(header);
-        validateSignature(headerPart, payloadPart, signaturePart);
-        validateExpiration(payload);
-
+       verifyAndGetPayload(token);
     }
 
     public Map<String, Object> verifyAndGetPayload(String token) {
@@ -174,7 +167,7 @@ public class TokenService {
     }
 
     private void validateSignature(String headerPart, String payloadPart, String signaturePart) {
-        byte[] encryptedHeaderAndPayload = encryptor.encrypt(headerPart + "." + payloadPart, tokenProperty.getSecretkey());
+        byte[] encryptedHeaderAndPayload = encryptor.encrypt(headerPart + "." + payloadPart, tokenProperty.secretkey());
         if (!signaturePart.equals(encoder.encodeToString(encryptedHeaderAndPayload))) {
             throw new InvalidTokenSignatureException();
         }

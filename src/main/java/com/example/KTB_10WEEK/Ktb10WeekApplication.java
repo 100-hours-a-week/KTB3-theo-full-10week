@@ -2,8 +2,10 @@ package com.example.KTB_10WEEK;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 
 @SpringBootApplication
+@ConfigurationPropertiesScan("com.example.KTB_10WEEK")
 public class Ktb10WeekApplication {
 
     public static void main(String[] args) {

@@ -11,6 +11,13 @@ application:
       refresh-token-cookie-path: /auth/access/token/refresh
       refresh-token-cookie-max-age: 604800 # 7일
       refresh-token-cookie-same-site: Lax
+    cors:
+      allowed-origins: http://localhost:5500
+      allowed-methods: GET,POST,PATCH,DELETE,OPTIONS
+      allowed-headers: "*"
+      exposed-headers: Authorization,X-Refresh-Token
+      max-age: 3600
+      url-source: /**
 
 
 springdoc:
