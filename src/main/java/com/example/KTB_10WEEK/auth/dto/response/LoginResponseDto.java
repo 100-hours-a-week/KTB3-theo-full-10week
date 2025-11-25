@@ -10,7 +10,7 @@ import java.util.Set;
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class LoginResponseDto {
-    private long id;
+    private Long id;
     private String profileImage;
     private String nickname;
     private Set<Long> likedPostIds;
