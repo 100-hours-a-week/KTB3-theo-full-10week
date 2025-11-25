@@ -32,12 +32,17 @@ public class AuthController implements AuthApiDoc {
     public ResponseEntity<BaseResponse> login(@RequestBody
                                               @Valid LoginRequestDto request) {
         BaseResponse response = authService.login(request);
-        boolean isLoginSuccess = ((LoginResponseDto) response.getData()).isLoginSuccess();
+        LoginResponseDto loginResponse = (LoginResponseDto) response.getData();
+        boolean isLoginSuccess = loginResponse.isLoginSuccess();
+
         if (!isLoginSuccess) {
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }
 
-        TokenPair tokenPair = tokenService.issueTokens(request.getEmail());
+        String email = request.getEmail();
+        Long userId = loginResponse.getId();
+
+        TokenPair tokenPair = tokenService.issueTokens(userId, email);
         String accessToken = tokenPair.getAccessToken();
         String refreshToken = tokenPair.getRefreshToken();
 

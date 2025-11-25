@@ -1,6 +1,5 @@
 package com.example.KTB_10WEEK.auth.entity;
 
-import com.example.KTB_10WEEK.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -23,10 +22,43 @@ public class RefreshToken {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    @Column(name = "expires_at", nullable = false)
-    private LocalDateTime expiresAt;
+
+    public void updateToken(String token) {
+        this.token = token;
+    }
 
     public RefreshToken() {
 
+    }
+
+    public RefreshToken(Builder builder) {
+        this.id = builder.id;
+        this.userId = builder.userId;
+        this.token = builder.token;
+    }
+
+    public static class Builder {
+        private Long id;
+        private Long userId;
+        private String token;
+
+        public Builder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder userId(Long userId) {
+            this.userId = userId;
+            return this;
+        }
+
+        public Builder token(String token) {
+            this.token = token;
+            return this;
+        }
+
+        public RefreshToken build() {
+            return new RefreshToken(this);
+        }
     }
 }

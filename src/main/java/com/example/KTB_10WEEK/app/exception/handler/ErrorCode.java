@@ -51,10 +51,14 @@ public enum ErrorCode {
     COMMENT_DELETE_ERROR(500, HttpStatus.INTERNAL_SERVER_ERROR, "댓글 삭제 실패"),
 
     // Auth
-    INVALID_TOKEN(400, HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다."),
-    ALREADY_BLACKLIST_TOKEN(401, HttpStatus.UNAUTHORIZED,"이미 무효화된 토큰입니다.(재로그인 필요)"),
+    INVALID_TOKEN_SIGNATURE(400, HttpStatus.BAD_REQUEST, "서명값이 올바르지 않은 토큰입니다."),
+    ALREADY_ROTATED_TOKEN(400, HttpStatus.BAD_REQUEST, "사용불가능한 토큰입니다."),
+    NOT_JWT_TOKEN(400, HttpStatus.BAD_REQUEST, "JWT 토큰이 아닙니다."),
+    ALREADY_EXPIRED_TOKEN(401, HttpStatus.UNAUTHORIZED,"기간이 만료된 토큰입니다."),
     UNAUTHORIZED(401, HttpStatus.UNAUTHORIZED,"로그인 인증이 필요합니다."),
-    FAIL_TOKEN_EXPIRE(500, HttpStatus.INTERNAL_SERVER_ERROR, "토큰 무효화 실패");
+    REFRESH_TOKEN_NOT_FOUND(404, HttpStatus.NOT_FOUND, "리프레시 토큰을 찾을 수 없습니다."),
+    FAIL_TOKEN_EXPIRE(500, HttpStatus.INTERNAL_SERVER_ERROR, "토큰 무효화 실패"),
+    FAIL_REFRESH_TOKEN_SAVE(500, HttpStatus.INTERNAL_SERVER_ERROR, "리프레시 토큰 저장 실패");
 
 
     private final int code;

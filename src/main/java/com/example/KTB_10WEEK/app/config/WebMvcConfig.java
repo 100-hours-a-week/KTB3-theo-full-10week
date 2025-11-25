@@ -1,6 +1,5 @@
 package com.example.KTB_10WEEK.app.config;
 
-import com.example.KTB_10WEEK.auth.interceptor.TokenAuthInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -9,27 +8,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
-    private final TokenAuthInterceptor tokenAuthInterceptor;
 
-//    @Value("${file.upload-dir}")
-//    private String uploadDir;
+    public WebMvcConfig() {
 
-
-    public WebMvcConfig(TokenAuthInterceptor tokenAuthInterceptor) {
-        this.tokenAuthInterceptor = tokenAuthInterceptor;
-    }
-
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-//        registry.addInterceptor(tokenAuthInterceptor);
-//                .addPathPatterns("/**");
-//                .excludePathPatterns("/auth/**",
-//                        "/user",
-//                        "/user/nickname/double-check",
-//                        "/user/email/double-check",
-//                        "/api-docs/**",
-//                        "/swagger-ui/**",
-//                        "/error/**");
     }
 
     @Override
