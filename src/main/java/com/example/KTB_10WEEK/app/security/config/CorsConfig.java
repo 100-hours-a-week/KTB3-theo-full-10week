@@ -1,4 +1,4 @@
-package com.example.KTB_10WEEK.app.config;
+package com.example.KTB_10WEEK.app.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,7 +9,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.List;
 
 @Configuration
-public class ConsConfig {
+public class CorsConfig {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {

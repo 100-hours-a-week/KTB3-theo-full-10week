@@ -1,10 +1,8 @@
 package com.example.KTB_10WEEK.auth.service;
 
-import com.example.KTB_10WEEK.app.response.BaseResponse;
-import com.example.KTB_10WEEK.app.response.ResponseMessage;
+import com.example.KTB_10WEEK.app.security.exception.*;
 import com.example.KTB_10WEEK.auth.dto.response.TokenPair;
 import com.example.KTB_10WEEK.auth.entity.RefreshToken;
-import com.example.KTB_10WEEK.auth.exception.*;
 import com.example.KTB_10WEEK.auth.repository.RefreshTokenRepository;
 import com.example.KTB_10WEEK.auth.service.decoder.Decoder;
 import com.example.KTB_10WEEK.auth.service.encoder.Encoder;

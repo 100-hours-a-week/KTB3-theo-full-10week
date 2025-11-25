@@ -21,13 +21,14 @@ public class AuthService {
     private final TokenService tokenService;
     private final UserRepository userRepository;
     private final PostLikeRepository postLikeRepository;
-    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final PasswordEncoder passwordEncoder;
 
 
-    public AuthService(TokenService tokenService, UserRepository userRepository, PostLikeRepository postLikeRepository) {
+    public AuthService(TokenService tokenService, UserRepository userRepository, PostLikeRepository postLikeRepository, PasswordEncoder passwordEncoder) {
         this.tokenService = tokenService;
         this.userRepository = userRepository;
         this.postLikeRepository = postLikeRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public LoginWithTokenResponseDto login(LoginRequestDto req) {
@@ -40,7 +41,7 @@ public class AuthService {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException());
         Set<Long> likedPostIds = postLikeRepository.findLikePostIdsByUserId(user.getId());
 
-        if (user.getEmail().equals(email) && passwordEncoder.matches(rawPassword, user.getPassword())) {
+        if (passwordEncoder.matches(rawPassword, user.getPassword())) {
             isLoginSuccess = true;
             loginResponse = new BaseResponse(ResponseMessage.LOGIN_SUCCESS, LoginResponseDto.success(user, likedPostIds, isLoginSuccess));
             TokenPair issuedTokens = issueTokens(user.getId(), email);

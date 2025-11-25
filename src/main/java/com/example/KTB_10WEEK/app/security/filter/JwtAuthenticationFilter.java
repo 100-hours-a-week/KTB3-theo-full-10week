@@ -1,5 +1,6 @@
-package com.example.KTB_10WEEK.app.config;
+package com.example.KTB_10WEEK.app.security.filter;
 
+import com.example.KTB_10WEEK.app.security.exception.GlobalFilterCustomException;
 import com.example.KTB_10WEEK.auth.service.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -10,7 +11,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
@@ -42,8 +42,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             );
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
-        } catch (Exception e) {
+        } catch (GlobalFilterCustomException e) {
             SecurityContextHolder.clearContext();
+            throw e;
         } finally {
             filterChain.doFilter(request, response);
         }

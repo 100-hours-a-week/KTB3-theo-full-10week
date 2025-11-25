@@ -1,6 +1,9 @@
-package com.example.KTB_10WEEK.app.config;
+package com.example.KTB_10WEEK.app.security.config;
 
+import com.example.KTB_10WEEK.app.security.filter.GlobalFilterCustomExceptionFilter;
+import com.example.KTB_10WEEK.app.security.filter.JwtAuthenticationFilter;
 import com.example.KTB_10WEEK.auth.service.TokenService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -16,9 +19,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, TokenService tokenService) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, TokenService tokenService, ObjectMapper objectMapper) throws Exception {
         JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(tokenService);
+        GlobalFilterCustomExceptionFilter globalFilterCustomExceptionFilter = new GlobalFilterCustomExceptionFilter(objectMapper);
+
         http
                 .csrf(csrf -> csrf.disable())
                 .cors(Customizer.withDefaults()) // CORS 설정 빈 주입
@@ -30,7 +36,9 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.POST, "/user/email/double-check").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/user/nickname/double-check").permitAll()
                                 .anyRequest().authenticated()
-                ).addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                )
+                .addFilterBefore(globalFilterCustomExceptionFilter, JwtAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -39,4 +47,5 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 }
