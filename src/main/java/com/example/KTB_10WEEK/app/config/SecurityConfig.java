@@ -1,5 +1,6 @@
 package com.example.KTB_10WEEK.app.config;
 
+import com.example.KTB_10WEEK.auth.service.TokenService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -16,7 +17,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, TokenService tokenService) throws Exception {
+        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(tokenService);
         http
                 .csrf(csrf -> csrf.disable())
                 .cors(Customizer.withDefaults()) // CORS 설정 빈 주입
@@ -28,7 +30,7 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.POST, "/user/email/double-check").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/user/nickname/double-check").permitAll()
                                 .anyRequest().authenticated()
-                );
+                ).addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
