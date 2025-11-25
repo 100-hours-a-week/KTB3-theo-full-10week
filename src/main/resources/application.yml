@@ -1,10 +1,17 @@
 application:
   name: KTB_10WEEK
   auth:
-    secret: SECRET_KEY
     token:
+      secretkey: SECRET_KEY
       issuer : KTB_10WEEK
-      expire: 10
+      access-token-ttl-millis: 900000 # 15분
+      refresh-token-ttl-millis: 604800000 # 7일
+    cookie:
+      refresh-token-cookie-name: Refresh-Token
+      refresh-token-cookie-path: /auth/access/token/refresh
+      refresh-token-cookie-max-age: 604800 # 7일
+      refresh-token-cookie-same-site: Lax
+
 
 springdoc:
   api-docs:

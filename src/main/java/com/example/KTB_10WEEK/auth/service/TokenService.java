@@ -7,6 +7,7 @@ import com.example.KTB_10WEEK.auth.repository.RefreshTokenRepository;
 import com.example.KTB_10WEEK.auth.service.decoder.Decoder;
 import com.example.KTB_10WEEK.auth.service.encoder.Encoder;
 import com.example.KTB_10WEEK.auth.service.encryption.Encrypt;
+import com.example.KTB_10WEEK.auth.service.property.TokenProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,25 +21,22 @@ import java.util.Map;
 @Transactional
 public class TokenService {
 
-    @Value("${application.auth.secret}")
-    private String SECRET_KEY;
-    @Value("${application.auth.token.issuer}")
-    private String issuer;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final TokenProperty tokenProperty;
 
     private final Encoder encoder;
     private final Decoder decoder;
     private final Encrypt encryptor;
+
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    private static final long ACCESS_TOKEN_TTL_MILLIS = 1000 * 60 * 15; // 15분
-    private static final long REFRESH_TOKEN_TTL_MILLIS = 1000 * 60 * 60 * 24 * 7; // 7일
-
-    public TokenService(RefreshTokenRepository refreshTokenRepository, Encoder encoder, Decoder decoder, Encrypt encryptor) {
+    public TokenService(RefreshTokenRepository refreshTokenRepository, Encoder encoder, Decoder decoder
+            , Encrypt encryptor, TokenProperty tokenProperty) {
         this.refreshTokenRepository = refreshTokenRepository;
         this.encoder = encoder;
         this.decoder = decoder;
         this.encryptor = encryptor;
+        this.tokenProperty = tokenProperty;
     }
 
     public TokenPair issueTokens(Long userId, String email) {
@@ -85,11 +83,11 @@ public class TokenService {
     }
 
     private String issueAccessToken(Long userId, String email) {
-        return issue(ACCESS_TOKEN_TTL_MILLIS, "ACCESS_TOKEN", userId, email);
+        return issue(tokenProperty.getAccessTokenTtlMillis(), "ACCESS_TOKEN", userId, email);
     }
 
     private String issueRefreshToken(Long userId, String email) {
-        return issue(REFRESH_TOKEN_TTL_MILLIS, "REFRESH_TOKEN", userId, email);
+        return issue(tokenProperty.getRefreshTokenTtlMillis(), "REFRESH_TOKEN", userId, email);
     }
 
     // 토큰 발급
@@ -102,7 +100,7 @@ public class TokenService {
         );
 
         Map<String, Object> payload = Map.of(
-                "iss", issuer, // 발급자
+                "iss", tokenProperty.getIssuer(), // 발급자
                 "sub", tokenType, // 제목
                 "userId", userId,
                 "email", email, // 유저 이메일
@@ -112,7 +110,7 @@ public class TokenService {
 
         String headerBase64 = encoder.encodeJson(header);
         String payloadBase64 = encoder.encodeJson(payload);
-        String signature = encoder.encodeToString(encryptor.encrypt(headerBase64 + "." + payloadBase64, SECRET_KEY));
+        String signature = encoder.encodeToString(encryptor.encrypt(headerBase64 + "." + payloadBase64, tokenProperty.getSecretkey()));
         String token = headerBase64 + "." + payloadBase64 + "." + signature;
 
         return token;
@@ -150,6 +148,7 @@ public class TokenService {
 
         return payload;
     }
+
     private String[] splitToken(String token) {
         String[] parts = token.split("\\.");
         if (parts.length != 3) {
@@ -175,7 +174,7 @@ public class TokenService {
     }
 
     private void validateSignature(String headerPart, String payloadPart, String signaturePart) {
-        byte[] encryptedHeaderAndPayload = encryptor.encrypt(headerPart + "." + payloadPart, SECRET_KEY);
+        byte[] encryptedHeaderAndPayload = encryptor.encrypt(headerPart + "." + payloadPart, tokenProperty.getSecretkey());
         if (!signaturePart.equals(encoder.encodeToString(encryptedHeaderAndPayload))) {
             throw new InvalidTokenSignatureException();
         }
