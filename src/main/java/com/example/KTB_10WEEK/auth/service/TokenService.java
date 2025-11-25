@@ -1,5 +1,7 @@
 package com.example.KTB_10WEEK.auth.service;
 
+import com.example.KTB_10WEEK.app.response.BaseResponse;
+import com.example.KTB_10WEEK.app.response.ResponseMessage;
 import com.example.KTB_10WEEK.auth.dto.response.TokenPair;
 import com.example.KTB_10WEEK.auth.entity.RefreshToken;
 import com.example.KTB_10WEEK.auth.exception.*;
@@ -15,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 @Transactional

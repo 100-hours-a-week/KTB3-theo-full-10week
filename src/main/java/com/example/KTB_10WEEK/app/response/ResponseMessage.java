@@ -31,7 +31,10 @@ public enum ResponseMessage {
     COMMENT_LOAD_SUCCESS("Comment Load Success"),
     COMMENTS_LOAD_SUCCESS("Comments Load Success"),
     COMMENT_UPDATE_SUCCESS("Comment Update Success"),
-    COMMENT_DELETE_SUCCESS("Comment Delete Success");
+    COMMENT_DELETE_SUCCESS("Comment Delete Success"),
+
+    //AUTH
+    TOKEN_REFRESH_SUCCESS("Token Refresh Success");
 
     private final String message;
 
