@@ -37,7 +37,7 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.POST, "/user/nickname/double-check").permitAll()
                                 .anyRequest().authenticated()
                 )
-                .addFilterBefore(globalFilterCustomExceptionFilter, JwtAuthenticationFilter.class)
+                .addFilterBefore(globalFilterCustomExceptionFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

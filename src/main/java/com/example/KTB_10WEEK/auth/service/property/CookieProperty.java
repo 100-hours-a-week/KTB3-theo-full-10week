@@ -7,6 +7,7 @@ public record CookieProperty(
         String refreshTokenCookieName,
         String refreshTokenCookiePath,
         long refreshTokenCookieMaxAge,
-        String refreshTokenCookieSameSite
+        String refreshTokenCookieSameSite,
+        String refreshTokenCookieDomain
 ) {
 }

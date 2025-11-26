@@ -38,7 +38,6 @@ public class AuthController implements AuthApiDoc {
         }
 
         ResponseCookie cookie = refreshTokenCookie.create(result.getRefreshToken());
-
         return ResponseEntity.status(HttpStatus.OK)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + result.getAccessToken())
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
