@@ -36,5 +36,5 @@ out/
 ### VS Code ###
 .vscode/
 
-*.p12
-application.yml
+src/main/resources/application.yml
+src/main/resources/bootsecurity.p12
