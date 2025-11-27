@@ -2,6 +2,7 @@ package com.example.KTB_10WEEK.app.security.config;
 
 import com.example.KTB_10WEEK.app.security.filter.GlobalFilterCustomExceptionFilter;
 import com.example.KTB_10WEEK.app.security.filter.JwtAuthenticationFilter;
+import com.example.KTB_10WEEK.app.security.role.AdminRole;
 import com.example.KTB_10WEEK.auth.service.TokenService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
@@ -31,6 +32,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers("/css/**", "/js/**", "/images/**", "/swagger-ui/**").permitAll()
+                                .requestMatchers(AdminRole.PERMITTED_URL).hasRole(AdminRole.ROLE)
                                 .requestMatchers("/auth/access/token", "/auth/access/token/refresh").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/user").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/user/email/double-check").permitAll()
