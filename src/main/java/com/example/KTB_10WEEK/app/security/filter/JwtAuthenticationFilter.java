@@ -39,7 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             Map<String, Object> payload = tokenService.verifyAndGetPayload(accessToken);
             Long userId = ((Number) payload.get("userId")).longValue();
             String role = (String) payload.get("role");
-            List<SimpleGrantedAuthority> authorityList = RoleConfig.from(role).getSimpleGrantedAuthorityList();
+            List<SimpleGrantedAuthority> authorityList = RoleConfig.from(role).getAllAuthorityList();
 
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     userId, // 누가

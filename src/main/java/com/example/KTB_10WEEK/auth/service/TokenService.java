@@ -117,7 +117,7 @@ public class TokenService {
                 "iat", now, // 발급 시간
                 "userId", userId,
                 "role", roleConfig.getRole(),
-                "authorities", roleConfig.getAuthorityList()
+                "authorities", roleConfig.getPermittedActionsList()
         );
 
         String headerBase64 = encoder.encodeJson(header);

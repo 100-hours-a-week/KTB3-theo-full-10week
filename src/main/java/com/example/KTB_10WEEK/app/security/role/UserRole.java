@@ -1,6 +1,7 @@
 package com.example.KTB_10WEEK.app.security.role;
 
 import com.example.KTB_10WEEK.app.security.authority.Authority;
+import java.util.List;
 
 public final class UserRole {
     private UserRole() {

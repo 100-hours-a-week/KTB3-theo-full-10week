@@ -17,6 +17,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -31,9 +34,9 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults()) // CORS 설정 빈 주입
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers(staticResourceUrl()).permitAll()
-                                .requestMatchers(AdminRole.PERMITTED_URL).hasRole(AdminRole.ROLE)
-                                .requestMatchers(HttpMethod.POST, postPermittedAllURL()).permitAll()
+                        auth.requestMatchers(AdminRole.PERMITTED_URL).hasRole(AdminRole.ROLE)
+                                .requestMatchers(HttpMethod.GET, PERMITTED_ALL_URL.get(HttpMethod.GET)).permitAll()
+                                .requestMatchers(HttpMethod.POST, PERMITTED_ALL_URL.get(HttpMethod.POST)).permitAll()
                                 .anyRequest().authenticated()
                 )
                 .addFilterBefore(globalFilterCustomExceptionFilter, UsernamePasswordAuthenticationFilter.class)
@@ -41,19 +44,22 @@ public class SecurityConfig {
 
         return http.build();
     }
-    private String[] postPermittedAllURL() {
-        return new String[]{
-                "/auth/access/token", "/auth/access/token/refresh",
-                "/user", "/user/email/double-check",
-                "/user/nickname/double-check"
-        };
-    }
 
-    private String[] staticResourceUrl() {
-        return new String[]{
-                "/css/**", "/js/**", "/images/**", "/swagger-ui/**"
-        };
-    }
+    private static final Map<HttpMethod, String[]> PERMITTED_ALL_URL = Map.of(
+            HttpMethod.POST, new String[]{
+                    "/user",
+                    "/auth/access/token",
+                    "/auth/access/token/refresh",
+                    "/user/email/double-check",
+                    "/user/nickname/double-check"},
+            HttpMethod.GET, new String[]{
+                    "/css/**",
+                    "/js/**",
+                    "/images/**",
+                    "/swagger-ui/**"
+            }
+
+    );
 
     @Bean
     public PasswordEncoder passwordEncoder() {

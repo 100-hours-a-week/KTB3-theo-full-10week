@@ -14,13 +14,13 @@ public enum RoleConfig {
     private final String role; // "USER", "ADMIN"
     private final String authority; // "ROLE_USER", "ROLE_ADMIN"
     private final String[] permittedUrl;
-    private final Authority[] authorities;
+    private final Authority[] permittedActions;
 
-    RoleConfig(String role, String authority, String[] permittedUrl, Authority[] authorities) {
+    RoleConfig(String role, String authority, String[] permittedUrl, Authority[] permittedActions) {
         this.role = role;
         this.authority = authority;
         this.permittedUrl = permittedUrl;
-        this.authorities = authorities;
+        this.permittedActions = permittedActions;
     }
 
     public String getRole() {
@@ -35,20 +35,36 @@ public enum RoleConfig {
         return permittedUrl;
     }
 
-    public Authority[] getAuthorities() {
-        return authorities;
+    public Authority[] getPermittedActions() {
+        return permittedActions;
     }
 
-    public List<String> getAuthorityList() {
-        return Arrays.stream(authorities)
+    // 행위 권한 리스트, 역할 제외
+    public List<String> getPermittedActionsList() {
+        return Arrays.stream(permittedActions)
                 .map(Authority::getAuthority)
                 .collect(Collectors.toList());
+
     }
 
-    public List<SimpleGrantedAuthority> getSimpleGrantedAuthorityList() {
-        return Arrays.stream(authorities)
+    // 모든 권한 리스트
+    public List<String> getAuthorityList() {
+        List<String> list = Arrays.stream(permittedActions)
+                .map(Authority::getAuthority)
+                .collect(Collectors.toList());
+
+        list.add(this.authority);
+        return list;
+    }
+
+    // 모든 권한 리스트 -> new SimpleGrantedAuthority
+    public List<SimpleGrantedAuthority> getAllAuthorityList() {
+        List<SimpleGrantedAuthority> list = Arrays.stream(permittedActions)
                 .map(authority -> new SimpleGrantedAuthority(authority.getAuthority()))
                 .collect(Collectors.toList());
+
+        list.add(new SimpleGrantedAuthority(this.authority));
+        return list;
     }
 
     public static RoleConfig from(String role) {
