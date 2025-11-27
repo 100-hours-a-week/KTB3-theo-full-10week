@@ -7,6 +7,7 @@ import com.example.KTB_10WEEK.auth.dto.response.LoginResponseDto;
 import com.example.KTB_10WEEK.auth.dto.response.LoginWithTokenResponseDto;
 import com.example.KTB_10WEEK.auth.dto.response.TokenPair;
 import com.example.KTB_10WEEK.post.repository.PostLikeRepository;
+import com.example.KTB_10WEEK.user.entity.Role;
 import com.example.KTB_10WEEK.user.entity.User;
 import com.example.KTB_10WEEK.user.exception.UserNotFoundException;
 import com.example.KTB_10WEEK.user.repository.user.UserRepository;
@@ -48,7 +49,7 @@ public class AuthService {
         if (passwordEncoder.matches(rawPassword, user.getPassword())) {
             isLoginSuccess = true;
             loginResponse = new BaseResponse(ResponseMessage.LOGIN_SUCCESS, LoginResponseDto.success(user, likedPostIds, isLoginSuccess));
-            TokenPair issuedTokens = issueTokens(user.getId(), email);
+            TokenPair issuedTokens = issueTokens(user.getId(), user.getRole());
             return new LoginWithTokenResponseDto(loginResponse, issuedTokens);
         } else {
             loginResponse = new BaseResponse(ResponseMessage.LOGIN_FAIL, LoginResponseDto.fail());
@@ -56,8 +57,8 @@ public class AuthService {
         }
     }
 
-    private TokenPair issueTokens(long userId, String email) {
-        return tokenService.issueTokens(userId, email);
+    private TokenPair issueTokens(long userId, Role role) {
+        return tokenService.issueTokens(userId, role);
     }
 
     public TokenPair refreshTokens(String refreshToken) {

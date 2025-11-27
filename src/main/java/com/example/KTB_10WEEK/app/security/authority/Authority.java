@@ -1,5 +1,8 @@
 package com.example.KTB_10WEEK.app.security.authority;
 
+import lombok.Getter;
+
+@Getter
 public enum Authority {
     // POST
     CREATE_POST("CREATE_POST"),

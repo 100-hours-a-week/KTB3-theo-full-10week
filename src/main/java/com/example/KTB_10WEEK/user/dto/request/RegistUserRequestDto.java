@@ -1,5 +1,6 @@
 package com.example.KTB_10WEEK.user.dto.request;
 
+import com.example.KTB_10WEEK.user.entity.Role;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -16,6 +17,9 @@ public class RegistUserRequestDto {
     @Email(message = "이메일 형식이 맞지 않습니다.")
     @Schema(description = "회원가입시 사용할 이메일", example = "test@test.com")
     private String email;
+
+    @Schema(description = "회원 권한(일반 회원, 관리자)", example = "USER, ADMIN")
+    private Role role;
 
     @NotBlank(message = "비밀번호는 필수 입력입니다.")
     @Size(min = 8, max = 20)

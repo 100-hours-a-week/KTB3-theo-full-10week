@@ -3,7 +3,8 @@ package com.example.KTB_10WEEK.app.security.role;
 import com.example.KTB_10WEEK.app.security.authority.Authority;
 
 public final class UserRole {
-    private UserRole() {}
+    private UserRole() {
+    }
 
     public final static String ROLE = "USER";
     public final static String AUTHORITY = "ROLE_USER";

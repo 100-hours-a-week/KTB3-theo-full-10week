@@ -1,17 +1,21 @@
 package com.example.KTB_10WEEK.app.security.filter;
 
 import com.example.KTB_10WEEK.app.security.exception.GlobalFilterCustomException;
+import com.example.KTB_10WEEK.app.security.role.RoleConfig;
 import com.example.KTB_10WEEK.auth.service.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -34,11 +38,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             Map<String, Object> payload = tokenService.verifyAndGetPayload(accessToken);
             Long userId = ((Number) payload.get("userId")).longValue();
+            String role = (String) payload.get("role");
+            List<SimpleGrantedAuthority> authorityList = RoleConfig.from(role).getSimpleGrantedAuthorityList();
 
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     userId, // 누가
                     null, // 토큰값
-                    Collections.emptyList() // 권한 목록
+                    authorityList // 권한 목록
             );
 
             SecurityContextHolder.getContext().setAuthentication(authentication);

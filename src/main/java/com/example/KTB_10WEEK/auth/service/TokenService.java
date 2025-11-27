@@ -1,6 +1,7 @@
 package com.example.KTB_10WEEK.auth.service;
 
 import com.example.KTB_10WEEK.app.security.exception.*;
+import com.example.KTB_10WEEK.app.security.role.RoleConfig;
 import com.example.KTB_10WEEK.auth.dto.response.TokenPair;
 import com.example.KTB_10WEEK.auth.entity.RefreshToken;
 import com.example.KTB_10WEEK.auth.repository.RefreshTokenRepository;
@@ -8,6 +9,7 @@ import com.example.KTB_10WEEK.auth.service.decoder.Decoder;
 import com.example.KTB_10WEEK.auth.service.encoder.Encoder;
 import com.example.KTB_10WEEK.auth.service.encryption.Encrypt;
 import com.example.KTB_10WEEK.auth.service.property.TokenProperty;
+import com.example.KTB_10WEEK.user.entity.Role;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
@@ -38,10 +40,12 @@ public class TokenService {
         this.tokenProperty = tokenProperty;
     }
 
-    public TokenPair issueTokens(Long userId, String email) {
+    public TokenPair issueTokens(long userId, Role role) {
+        String roleName = role.getRole();
+        RoleConfig roleConfig = RoleConfig.from(roleName);
 
-        String accessToken = issueAccessToken(userId, email);
-        String refreshToken = issueRefreshToken(userId, email);
+        String accessToken = issueAccessToken(userId, roleConfig);
+        String refreshToken = issueRefreshToken(userId, roleConfig);
 
         TokenPair tokenPair = new TokenPair(accessToken, refreshToken);
 
@@ -64,15 +68,17 @@ public class TokenService {
         Map<String, Object> payload = verifyAndGetPayload(refreshToken);
 
         long userId = ((Number) payload.get("userId")).longValue();
-        String email = (String) payload.get("email");
+        String roleName = (String) payload.get("role");
+
+        RoleConfig roleConfig = RoleConfig.from(roleName);
 
         RefreshToken saved = refreshTokenRepository.findByUserId(userId).orElseThrow(() -> new RefreshTokenNotFoundException());
         if (!saved.getToken().equals(refreshToken)) {
             throw new AlreadyRotatedTokenException();
         }
 
-        String newAccessToken = issueAccessToken(userId, email);
-        String newRefreshToken = issueRefreshToken(userId, email);
+        String newAccessToken = issueAccessToken(userId, roleConfig);
+        String newRefreshToken = issueRefreshToken(userId, roleConfig);
 
         saved.updateToken(newRefreshToken);
 
@@ -87,16 +93,16 @@ public class TokenService {
         }
     }
 
-    private String issueAccessToken(Long userId, String email) {
-        return issue(tokenProperty.accessTokenTtlMillis(), "ACCESS_TOKEN", userId, email);
+    private String issueAccessToken(long userId, RoleConfig roleConfig) {
+        return issue(tokenProperty.accessTokenTtlMillis(), "ACCESS_TOKEN", userId, roleConfig);
     }
 
-    private String issueRefreshToken(Long userId, String email) {
-        return issue(tokenProperty.refreshTokenTtlMillis(), "REFRESH_TOKEN", userId, email);
+    private String issueRefreshToken(long userId, RoleConfig roleConfig) {
+        return issue(tokenProperty.refreshTokenTtlMillis(), "REFRESH_TOKEN", userId, roleConfig);
     }
 
     // 토큰 발급
-    private String issue(long ttlMillis, String tokenType, Long userId, String email) {
+    private String issue(long ttlMillis, String tokenType, long userId, RoleConfig roleConfig) {
         long now = System.currentTimeMillis();
         long exp = now + ttlMillis;
         Map<String, Object> header = Map.of(
@@ -107,10 +113,11 @@ public class TokenService {
         Map<String, Object> payload = Map.of(
                 "iss", tokenProperty.issuer(), // 발급자
                 "sub", tokenType, // 제목
-                "userId", userId,
-                "email", email, // 유저 이메일
                 "exp", exp, // 만료 시간
-                "iat", now // 발급 시간
+                "iat", now, // 발급 시간
+                "userId", userId,
+                "role", roleConfig.getRole(),
+                "authorities", roleConfig.getAuthorityList()
         );
 
         String headerBase64 = encoder.encodeJson(header);
@@ -122,7 +129,7 @@ public class TokenService {
     }
 
     public void verify(String token) {
-       verifyAndGetPayload(token);
+        verifyAndGetPayload(token);
     }
 
     public Map<String, Object> verifyAndGetPayload(String token) {

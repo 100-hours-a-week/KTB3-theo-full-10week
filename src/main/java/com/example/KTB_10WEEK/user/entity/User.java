@@ -7,10 +7,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Getter
@@ -19,6 +16,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", nullable = false, unique = true)
     private Long id;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    private Role role = Role.USER;
 
     @Column(name = "email", nullable = false, unique = true)
     private String email;
@@ -57,6 +58,7 @@ public class User {
 
     public User(Builder builder) {
         this.id = builder.id;
+        this.role = builder.role;
         this.email = builder.email;
         this.password = builder.password;
         this.nickname = builder.nickname;
@@ -93,6 +95,7 @@ public class User {
 
     public static class Builder {
         private Long id;
+        private Role role;
         private String email;
         private String password;
         private String nickname;
@@ -100,6 +103,11 @@ public class User {
 
         public Builder id(Long id) {
             this.id = id;
+            return this;
+        }
+
+        public Builder role(Role role) {
+            this.role = role;
             return this;
         }
 

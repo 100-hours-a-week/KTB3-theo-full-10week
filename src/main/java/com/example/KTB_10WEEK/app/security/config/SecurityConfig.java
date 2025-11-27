@@ -31,18 +31,28 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults()) // CORS 설정 빈 주입
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers("/css/**", "/js/**", "/images/**", "/swagger-ui/**").permitAll()
+                        auth.requestMatchers(staticResourceUrl()).permitAll()
                                 .requestMatchers(AdminRole.PERMITTED_URL).hasRole(AdminRole.ROLE)
-                                .requestMatchers("/auth/access/token", "/auth/access/token/refresh").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/user").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/user/email/double-check").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/user/nickname/double-check").permitAll()
+                                .requestMatchers(HttpMethod.POST, postPermittedAllURL()).permitAll()
                                 .anyRequest().authenticated()
                 )
                 .addFilterBefore(globalFilterCustomExceptionFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+    private String[] postPermittedAllURL() {
+        return new String[]{
+                "/auth/access/token", "/auth/access/token/refresh",
+                "/user", "/user/email/double-check",
+                "/user/nickname/double-check"
+        };
+    }
+
+    private String[] staticResourceUrl() {
+        return new String[]{
+                "/css/**", "/js/**", "/images/**", "/swagger-ui/**"
+        };
     }
 
     @Bean
