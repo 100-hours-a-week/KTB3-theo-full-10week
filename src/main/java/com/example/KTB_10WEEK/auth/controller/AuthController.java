@@ -63,7 +63,9 @@ public class AuthController implements AuthApiDoc {
 
         ResponseCookie cookie = refreshTokenCookie.expire();
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.noContent()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .build();
     }
 
 }

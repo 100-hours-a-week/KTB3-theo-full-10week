@@ -17,9 +17,8 @@ public final class RefreshTokenCookie {
                 .from(cookieProperty.refreshTokenCookieName(), refreshToken)
                 .path(cookieProperty.refreshTokenCookiePath())
                 .httpOnly(true)
-//                .secure(true)
+                .secure(true)
                 .sameSite(cookieProperty.refreshTokenCookieSameSite())
-                .domain(cookieProperty.refreshTokenCookieDomain())
                 .maxAge(cookieProperty.refreshTokenCookieMaxAge())
                 .build();
     }
@@ -30,9 +29,8 @@ public final class RefreshTokenCookie {
                 .from(cookieProperty.refreshTokenCookieName(), "")
                 .path(cookieProperty.refreshTokenCookiePath())
                 .httpOnly(true)
-//                .secure(true)
+                .secure(true)
                 .sameSite(cookieProperty.refreshTokenCookieSameSite())
-                .domain(cookieProperty.refreshTokenCookieDomain())
                 .maxAge(0) // 만료 시간
                 .build();
     }

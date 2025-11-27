@@ -8,12 +8,11 @@ application:
       refresh-token-ttl-millis: 604800000 # 7일
     cookie:
       refresh-token-cookie-name: Refresh-Token
-      refresh-token-cookie-path: /auth/access/token/refresh
+      refresh-token-cookie-path: /auth/access/token/
       refresh-token-cookie-max-age: 604800 # 7일
-      refresh-token-cookie-same-site: Lax
-      refresh-token-cookie-domain: localhost
+      refresh-token-cookie-same-site: None
     cors:
-      allowed-origins: http://localhost:5500
+      allowed-origins: https://localhost:5500
       allowed-methods: GET,POST,PATCH,DELETE,OPTIONS
       allowed-headers: "*"
       exposed-headers: Authorization
@@ -62,10 +61,10 @@ file:
   logo: logo
 
 server:
-  port: 8080
+  port: 8443
   ssl:
     enabled: true
-    key-store: src/main/resources/bootsecurity.p12
+    key-store: classpath:bootsecurity.p12
     key-store-password: 123456
     key-store-type: PKCS12
     key-alias: bootsecurity

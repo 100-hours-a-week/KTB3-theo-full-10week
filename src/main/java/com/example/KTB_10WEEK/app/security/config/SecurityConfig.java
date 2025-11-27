@@ -30,8 +30,8 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults()) // CORS 설정 빈 주입
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
-                                .requestMatchers("/auth/access/token").permitAll()
+                        auth.requestMatchers("/css/**", "/js/**", "/images/**", "/swagger-ui/**").permitAll()
+                                .requestMatchers("/auth/access/token", "/auth/access/token/refresh").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/user").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/user/email/double-check").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/user/nickname/double-check").permitAll()
