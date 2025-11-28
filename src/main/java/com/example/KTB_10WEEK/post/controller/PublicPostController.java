@@ -1,5 +1,6 @@
 package com.example.KTB_10WEEK.post.controller;
 
+import com.example.KTB_10WEEK.app.security.principal.UserPrincipal;
 import com.example.KTB_10WEEK.post.dto.request.CancelLikePostRequestDto;
 import com.example.KTB_10WEEK.post.dto.request.LikePostRequestDto;
 import com.example.KTB_10WEEK.app.swagger.controller.post.PostApiDoc;
@@ -16,6 +17,7 @@ import jakarta.validation.constraints.Positive;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -58,8 +60,9 @@ public class PublicPostController implements PostApiDoc {
      **/
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE) // 게시글 생성
     public ResponseEntity<BaseResponse> createPublicPost(@Valid
-                                                         @ModelAttribute CreatePostRequestDto request) {
-        BaseResponse response = publicPostService.createPost(request);
+                                                         @ModelAttribute CreatePostRequestDto request,
+                                                         @AuthenticationPrincipal UserPrincipal principal) {
+        BaseResponse response = publicPostService.createPost(request, principal);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -76,9 +79,8 @@ public class PublicPostController implements PostApiDoc {
     public ResponseEntity<BaseResponse> likePost(@PathVariable("postId")
                                                  @NotNull
                                                  @Positive Long postId,
-                                                 @RequestBody
-                                                 @Valid LikePostRequestDto request) {
-        BaseResponse response = publicPostService.likePost(postId, request);
+                                                 @AuthenticationPrincipal UserPrincipal principal) {
+        BaseResponse response = publicPostService.likePost(postId, principal);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
@@ -86,9 +88,8 @@ public class PublicPostController implements PostApiDoc {
     public ResponseEntity<BaseResponse> cancelLikePost(@PathVariable("postId")
                                                        @NotNull
                                                        @Positive Long postId,
-                                                       @RequestBody
-                                                       @Valid CancelLikePostRequestDto request) {
-        BaseResponse response = publicPostService.cancelLikePost(postId, request);
+                                                       @AuthenticationPrincipal UserPrincipal principal) {
+        BaseResponse response = publicPostService.cancelLikePost(postId, principal);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
@@ -98,8 +99,9 @@ public class PublicPostController implements PostApiDoc {
                                                       @NotNull
                                                       @Positive Long postId,
                                                       @RequestBody
-                                                      @Valid CreateCommentRequestDto request) {
-        BaseResponse response = publicPostService.createComment(postId, request);
+                                                      @Valid CreateCommentRequestDto request,
+                                                      @AuthenticationPrincipal UserPrincipal principal) {
+        BaseResponse response = publicPostService.createComment(postId, request, principal);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -114,8 +116,9 @@ public class PublicPostController implements PostApiDoc {
                                                       @NotNull
                                                       @Positive Long commentId,
                                                       @RequestBody
-                                                      @Valid UpdateCommentRequestDto request) {
-        BaseResponse response = publicPostService.updateCommentById(postId, commentId, request);
+                                                      @Valid UpdateCommentRequestDto request,
+                                                      @AuthenticationPrincipal UserPrincipal principal) {
+        BaseResponse response = publicPostService.updateCommentById(postId, commentId, request, principal);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
@@ -124,8 +127,9 @@ public class PublicPostController implements PostApiDoc {
                                                          @NotNull
                                                          @Positive Long myPostId,
                                                          @Valid
-                                                         @ModelAttribute UpdateMyPostRequestDto request) {
-        BaseResponse response = publicPostService.updateMyPost(myPostId, request);
+                                                         @ModelAttribute UpdateMyPostRequestDto request,
+                                                         @AuthenticationPrincipal UserPrincipal principal) {
+        BaseResponse response = publicPostService.updateMyPost(myPostId, request, principal);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
@@ -135,9 +139,10 @@ public class PublicPostController implements PostApiDoc {
     @DeleteMapping("/{postId}") // 게시글 삭제
     public ResponseEntity<BaseResponse> deletePostById(@PathVariable("postId")
                                                        @NotNull
-                                                       @Positive Long postId) {
-        BaseResponse response = publicPostService.deletePostById(postId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+                                                       @Positive Long postId,
+                                                       @AuthenticationPrincipal UserPrincipal principal) {
+        BaseResponse response = publicPostService.deletePostById(postId, principal);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{postId}/comment/{commentId}") // 댓글 삭제
@@ -146,8 +151,9 @@ public class PublicPostController implements PostApiDoc {
                                                           @NotNull Long postId,
                                                           @PathVariable("commentId")
                                                           @NotNull
-                                                          @Positive Long commentId) {
-        BaseResponse response = publicPostService.deleteCommentById(postId, commentId);
+                                                          @Positive Long commentId,
+                                                          @AuthenticationPrincipal UserPrincipal principal) {
+        BaseResponse response = publicPostService.deleteCommentById(postId, commentId, principal);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

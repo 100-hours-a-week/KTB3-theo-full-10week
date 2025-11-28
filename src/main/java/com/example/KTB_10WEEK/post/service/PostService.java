@@ -1,6 +1,8 @@
 package com.example.KTB_10WEEK.post.service;
 
 import com.example.KTB_10WEEK.app.aop.aspect.log.Loggable;
+import com.example.KTB_10WEEK.app.security.principal.UserPrincipal;
+import com.example.KTB_10WEEK.app.security.role.AdminRole;
 import com.example.KTB_10WEEK.app.storage.ArticleImageStorage;
 import com.example.KTB_10WEEK.post.dto.request.CancelLikePostRequestDto;
 import com.example.KTB_10WEEK.post.dto.request.LikePostRequestDto;
@@ -32,7 +34,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.support.JpaRepositoryImplementation;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -68,8 +72,8 @@ public class PostService {
     // 게시글 생성
     @Loggable
     @PreAuthorize("hasAuthority('POST:CREATE')")
-    public BaseResponse<CreatePostResponseDto> createPost(CreatePostRequestDto req) {
-        User author = userRepository.getReferenceById(req.getAuthorId()); // User Proxy
+    public BaseResponse<CreatePostResponseDto> createPost(CreatePostRequestDto req, UserPrincipal principal) {
+        User author = userRepository.getReferenceById(principal.getUserId()); // User Proxy
         String articleImageUrl = articleImageStorage.saveArticleImage(req.getArticleImage());
 
         Post toSave = new Post.Builder() // Post for Save
@@ -110,15 +114,16 @@ public class PostService {
     // 게시글 조회
     @Loggable
     public BaseResponse<FindPostResponseDto> findPostById(long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException());
+        Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
         return new BaseResponse(ResponseMessage.POST_INFO_LOAD_SUCCESS, FindPostResponseDto.toDto(post));
     }
 
     // My Post 수정
     @Loggable
     @PreAuthorize("hasAuthority('POST:UPDATE')")
-    public BaseResponse<UpdateMyPostResponseDto> updateMyPost(long postId, UpdateMyPostRequestDto req) {
-        Post toUpdate = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException());
+    public BaseResponse<UpdateMyPostResponseDto> updateMyPost(long postId, UpdateMyPostRequestDto req, UserPrincipal principal) {
+        Long authorId = principal.getUserId();
+        Post toUpdate = postRepository.findByIdAndAuthorId(postId, authorId).orElseThrow(PostNotFoundException::new);
 
         String oldFileName = req.getOldFileName();
         String newArticleImageUrl = articleImageStorage.updateArticleImage(req.getArticleImage(), oldFileName);
@@ -136,11 +141,13 @@ public class PostService {
     // 게시글 삭제 By Id
     @Loggable
     @PreAuthorize("hasAuthority('POST:DELETE')")
-    public BaseResponse deletePostById(long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException());
+    public BaseResponse deletePostById(long postId, UserPrincipal principal) {
+        Long authorId = principal.getUserId();
+        Post post = postRepository.findByIdAndAuthorId(postId, authorId).orElseThrow(PostNotFoundException::new);
         String articleImage = post.getArticleImage();
+
         boolean isDelete = articleImageStorage.deleteArticleImage(articleImage);
-        if(!isDelete) {
+        if (!isDelete) {
             throw new DeleteArticleImageFailException();
         }
 
@@ -161,8 +168,8 @@ public class PostService {
 
     // 게시글 좋아요
     @Loggable
-    public BaseResponse<LikePostResponseDto> likePost(Long postId, LikePostRequestDto req) {
-        Long userId = req.getUserId();
+    public BaseResponse<LikePostResponseDto> likePost(Long postId, UserPrincipal principal) {
+        Long userId = principal.getUserId();
         PostLikeId postLikeId = new PostLikeId(userId, postId); // 복합키 생성
         if (postLikeRepository.existsById(postLikeId)) { // 이미 회원이 좋아요 활성화 했는지
             throw new AlreadyLikedPost();
@@ -179,20 +186,21 @@ public class PostService {
     }
 
     // 게시글 좋아요 비활성화
-    public BaseResponse cancelLikePost(Long postId, CancelLikePostRequestDto req) {
-        Long userId = req.getUserId();
+    public BaseResponse cancelLikePost(Long postId, UserPrincipal principal) {
+        Long userId = principal.getUserId();
         PostLikeId postLikeId = new PostLikeId(userId, postId); // 조회용 복합키 생성
         postLikeRepository.deleteById(postLikeId);
 
         return new BaseResponse(ResponseMessage.CANCEL_LIKE_POST_SUCCESS,
                 CancelLikePostResponseDto.toDto(postLikeId));
     }
+
     // 댓글 등록
     @Loggable
     @PreAuthorize("hasAuthority('COMMENT:CREATE')")
-    public BaseResponse<CreateCommentResponseDto> createComment(long postId, CreateCommentRequestDto req) {
+    public BaseResponse<CreateCommentResponseDto> createComment(long postId, CreateCommentRequestDto req, UserPrincipal principal) {
         Post findPost = postRepository.getReferenceById(postId); // Post Proxy
-        long userId = req.getUserId();
+        Long userId = principal.getUserId();
         User findUser = userRepository.getReferenceById(userId); // User Proxy
 
         Comment toSave = new Comment.Builder()
@@ -244,16 +252,10 @@ public class PostService {
     // 댓글 수정 By Comment Id
     @Loggable
     @PreAuthorize("hasAuthority('COMMENT:UPDATE')")
-    public BaseResponse<UpdateCommentResponseDto> updateCommentById(long postId, long commentId, UpdateCommentRequestDto req) {
-        if (!postRepository.existsById(postId)) {
-            throw new PostNotFoundException();
-        }
-
-        if (!commentRepository.existsById(commentId)) {
-            throw new CommentNotFoundException();
-        }
-
-        Comment toUpdate = commentRepository.findById(commentId).orElseThrow(() -> new CommentNotFoundException());
+    public BaseResponse<UpdateCommentResponseDto> updateCommentById(long postId, long commentId, UpdateCommentRequestDto req, UserPrincipal principal) {
+        Long authorId = principal.getUserId();
+        Comment toUpdate = commentRepository.findByIdAndPostIdAndAuthorId(commentId, postId, authorId)
+                .orElseThrow(() -> new CommentNotFoundException());
         // 변경 감지
         toUpdate.updateContent(req.getContent()); // 댓글 내용 수정
         toUpdate.updateNow(); // 업데이트 시간 최신화
@@ -265,8 +267,9 @@ public class PostService {
     // 댓글 삭제
     @Loggable
     @PreAuthorize("hasAuthority('COMMENT:DELETE')")
-    public BaseResponse deleteCommentById(long postId, long commentId) {
-        int row = commentRepository.deleteByIdAndPostId(commentId, postId);
+    public BaseResponse deleteCommentById(Long postId, Long commentId, UserPrincipal principal) {
+        Long authorId = principal.getUserId();
+        int row = commentRepository.deleteByIdAndPostIdAndAuthorId(commentId, postId, authorId);
         return new BaseResponse(ResponseMessage.COMMENT_DELETE_SUCCESS, new Comment());
     }
 

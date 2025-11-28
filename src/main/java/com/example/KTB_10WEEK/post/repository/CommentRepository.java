@@ -14,12 +14,18 @@ import java.util.Optional;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     @EntityGraph(attributePaths = "author")
-    Optional<Comment> findById(long commentId);
+    Optional<Comment> findById(Long commentId);
+
+    @EntityGraph(attributePaths = "author")
+    Optional<Comment> findByIdAndPostIdAndAuthorId(Long commentId, Long postId, Long authorId);
 
     Page<Comment> findAllByPostId(long postId, Pageable pageable);
 
     @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query("DELETE FROM Comment c WHERE c.id = :commentId AND c.post.id = :postId")
-    int deleteByIdAndPostId(@Param("commentId") long commentId, @Param("postId") long postId);
+    int deleteByIdAndPostId(@Param("commentId") Long commentId, @Param("postId") Long postId);
 
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query("DELETE FROM Comment c WHERE c.id = :commentId AND c.post.id = :postId AND c.author.id =:authorId")
+    int deleteByIdAndPostIdAndAuthorId(@Param("commentId") Long commentId, @Param("postId") Long postId, @Param("authorId") Long authorId);
 }
