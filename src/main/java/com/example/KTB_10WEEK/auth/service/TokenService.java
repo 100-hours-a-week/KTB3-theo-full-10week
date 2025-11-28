@@ -10,6 +10,8 @@ import com.example.KTB_10WEEK.auth.service.encoder.Encoder;
 import com.example.KTB_10WEEK.auth.service.encryption.Encrypt;
 import com.example.KTB_10WEEK.auth.service.property.TokenProperty;
 import com.example.KTB_10WEEK.user.entity.Role;
+import com.example.KTB_10WEEK.user.entity.User;
+import com.example.KTB_10WEEK.user.repository.user.UserRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,7 @@ import java.util.Map;
 public class TokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
+    private final UserRepository userRepository;
     private final TokenProperty tokenProperty;
 
     private final Encoder encoder;
@@ -31,9 +34,11 @@ public class TokenService {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public TokenService(RefreshTokenRepository refreshTokenRepository, Encoder encoder, Decoder decoder
+    public TokenService(RefreshTokenRepository refreshTokenRepository, UserRepository userRepository,
+                        Encoder encoder, Decoder decoder
             , Encrypt encryptor, TokenProperty tokenProperty) {
         this.refreshTokenRepository = refreshTokenRepository;
+        this.userRepository = userRepository;
         this.encoder = encoder;
         this.decoder = decoder;
         this.encryptor = encryptor;
@@ -48,13 +53,14 @@ public class TokenService {
         String refreshToken = issueRefreshToken(userId, roleConfig);
 
         TokenPair tokenPair = new TokenPair(accessToken, refreshToken);
+        User user = userRepository.getReferenceById(userId);
 
         refreshTokenRepository.findByUserId(userId).map(token -> {
             token.updateToken(refreshToken);
             return token;
         }).orElseGet(() -> {
             RefreshToken newRefreshToken = new RefreshToken.Builder()
-                    .userId(userId)
+                    .user(user)
                     .token(refreshToken)
                     .build();
             saveRefreshToken(newRefreshToken);

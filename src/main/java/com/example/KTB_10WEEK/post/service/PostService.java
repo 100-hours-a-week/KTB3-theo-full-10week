@@ -114,17 +114,28 @@ public class PostService {
         Long authorId = principal.getUserId();
         Post toUpdate = postRepository.findByIdAndAuthorId(postId, authorId).orElseThrow(PostNotFoundException::new);
 
-        String oldFileName = req.getOldFileName();
-        String newArticleImageUrl = articleImageStorage.updateArticleImage(req.getArticleImage(), oldFileName);
 
-        toUpdate.updateTitle(req.getTitle());
-        toUpdate.updateArticle(req.getArticle());
-        toUpdate.updateArticleImage(newArticleImageUrl);
-        toUpdate.updateCategory(req.getCategory());
+        if (req.getTitle() != null && !req.getTitle().trim().isEmpty()) {
+            toUpdate.updateTitle(req.getTitle());
+        }
+
+        if (req.getArticle() != null && !req.getArticle().trim().isEmpty()) {
+            toUpdate.updateArticle(req.getArticle());
+        }
+
+        if (req.getArticleImage() != null && !req.getArticleImage().isEmpty()) {
+            String oldFileName = req.getOldFileName();
+            String newArticleImageUrl = articleImageStorage.updateArticleImage(req.getArticleImage(), oldFileName);
+            toUpdate.updateArticleImage(newArticleImageUrl);
+        }
+
+        if (req.getCategory() != null) {
+            toUpdate.updateCategory(req.getCategory());
+
+        }
         toUpdate.updateNow();
 
-        return new BaseResponse(ResponseMessage.MY_POST_UPDATE_SUCCESS,
-                UpdateMyPostResponseDto.toDto(toUpdate));
+        return new BaseResponse(ResponseMessage.MY_POST_UPDATE_SUCCESS, UpdateMyPostResponseDto.toDto(toUpdate));
     }
 
 

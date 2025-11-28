@@ -1,5 +1,6 @@
 package com.example.KTB_10WEEK.user.entity;
 
+import com.example.KTB_10WEEK.auth.entity.RefreshToken;
 import com.example.KTB_10WEEK.post.entity.Comment;
 import com.example.KTB_10WEEK.post.entity.Post;
 import com.example.KTB_10WEEK.post.entity.PostLike;
@@ -43,6 +44,9 @@ public class User {
     // 회원이 좋아요 누른 게시글 목록, PostLike 삭제 전이
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<PostLike> likes = new HashSet<>();
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private RefreshToken refreshToken;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();

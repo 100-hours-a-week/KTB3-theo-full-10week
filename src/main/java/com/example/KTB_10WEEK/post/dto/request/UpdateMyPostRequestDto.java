@@ -25,7 +25,7 @@ public class UpdateMyPostRequestDto {
     private String oldFileName;
 
     @Schema(description = "기존 게시글 본문 이미지 교체", example = "https://www.NewImage.com")
-    private MultipartFile articleImage;
+    private MultipartFile articleImage = null;
 
     @Schema(description = "수정할 게시글 카테고리(소통방, 고민상담, 정보공유)", example = "COMMUNITY, COUNSELING, INFO_SHARE")
     private PostCategory category;

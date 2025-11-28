@@ -5,6 +5,7 @@ import com.example.KTB_10WEEK.app.aop.aspect.log.Loggable;
 import com.example.KTB_10WEEK.app.response.BaseResponse;
 import com.example.KTB_10WEEK.app.response.ResponseMessage;
 import com.example.KTB_10WEEK.app.storage.ProfileImageStorage;
+import com.example.KTB_10WEEK.user.entity.Role;
 import com.example.KTB_10WEEK.user.entity.User;
 import com.example.KTB_10WEEK.user.repository.user.UserRepository;
 import com.example.KTB_10WEEK.user.dto.request.*;
@@ -45,6 +46,7 @@ public class UserService {
                 .password(passwordEncoder.encode(req.getPassword()))
                 .nickname(req.getNickname())
                 .profileImage(profileImageUrl)
+                .role(Role.USER)
                 .build();
 
         User saved = userRepository.save(toSave);
@@ -55,15 +57,17 @@ public class UserService {
     @Loggable
     @PreAuthorize("hasRole('ADMIN') or #userId == principal.userId")
     public BaseResponse<FindUserResponseDto> findById(@P("userId") Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         return new BaseResponse(ResponseMessage.USERINFO_LOAD_SUCCESS, FindUserResponseDto.toDto(user));
     }
 
     @Loggable
     @PreAuthorize("hasRole('ADMIN') or #userId == principal.userId")
     public BaseResponse deleteById(@P("userId") Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         String profileImage = user.getProfileImage();
+        System.out.println(user.getId());
+        System.out.println(profileImage);
         boolean isDelete = profileImageStorage.deleteProfileImage(profileImage);
         if (!isDelete) {
             throw new DeleteProfileImageFailException();
@@ -100,14 +104,17 @@ public class UserService {
     public BaseResponse<EditProfileResponseDto> editProfile(@P("userId")Long userId, EditProfileRequestDto req) {
         User toUpdate = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
-        String newNickname = req.getNickname();
-        String oldFileName = req.getOldFileName();
-        String newProfileImageUrl = profileImageStorage.updateProfileImage(req.getProfileImage(), oldFileName);
+        if(req.getProfileImage() != null && !req.getProfileImage().isEmpty()) {
+            String oldFileName = req.getOldFileName();
+            String newProfileImageUrl = profileImageStorage.updateProfileImage(req.getProfileImage(), oldFileName);
+            toUpdate.updateProfileImage(newProfileImageUrl);
+        }
 
+        String newNickname = req.getNickname();
         if (!toUpdate.getNickname().equals(newNickname)) {
             toUpdate.updateNickname(newNickname);
         }
-        toUpdate.updateProfileImage(newProfileImageUrl);
+
         toUpdate.updateNowTime();
 
         return new BaseResponse(ResponseMessage.EDIT_PROFILE_SUCCESS, EditProfileResponseDto.toDto(toUpdate));

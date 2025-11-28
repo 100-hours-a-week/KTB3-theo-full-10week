@@ -1,5 +1,6 @@
 package com.example.KTB_10WEEK.auth.entity;
 
+import com.example.KTB_10WEEK.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -13,8 +14,9 @@ public class RefreshToken {
     @Column(name = "refresh_token_id", nullable = false, updatable = true)
     private Long id;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column(name = "token", nullable = false, unique = true, length = 512)
     private String token;
@@ -33,13 +35,13 @@ public class RefreshToken {
 
     public RefreshToken(Builder builder) {
         this.id = builder.id;
-        this.userId = builder.userId;
+        this.user = builder.user;
         this.token = builder.token;
     }
 
     public static class Builder {
         private Long id;
-        private Long userId;
+        private User user;
         private String token;
 
         public Builder id(Long id) {
@@ -47,8 +49,8 @@ public class RefreshToken {
             return this;
         }
 
-        public Builder userId(Long userId) {
-            this.userId = userId;
+        public Builder user(User user) {
+            this.user = user;
             return this;
         }
 
