@@ -23,7 +23,9 @@
 
 ## 🔗 DEMO / DOCS
 
-⚠️ 배포 전
+⚠️ 배포 전 초안 Demo 영상
+
+[https://github.com/user-attachments/assets/63cea51e-9d08-4fb4-9f92-7788cabb7e6a](https://github.com/user-attachments/assets/63cea51e-9d08-4fb4-9f92-7788cabb7e6a)
 
 ---
 
