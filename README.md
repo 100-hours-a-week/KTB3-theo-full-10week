@@ -1,4 +1,4 @@
-# 🐟 오늘의 수산 (Today’s Seafood)
+# 🐟 BE : 오늘의 수산 (Today’s Seafood)
 
 <p align="center">
   <img width="200" height="1024" alt="Image" src="https://github.com/user-attachments/assets/cce90705-8f49-48cf-9e9d-a783ef18305a" />
