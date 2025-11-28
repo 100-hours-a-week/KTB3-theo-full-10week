@@ -32,6 +32,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,7 +67,8 @@ public class PostService {
      **/
     // 게시글 생성
     @Loggable
-    public BaseResponse<CreateCommentResponseDto> createPost(CreatePostRequestDto req) {
+    @PreAuthorize("hasAuthority('POST:CREATE')")
+    public BaseResponse<CreatePostResponseDto> createPost(CreatePostRequestDto req) {
         User author = userRepository.getReferenceById(req.getAuthorId()); // User Proxy
         String articleImageUrl = articleImageStorage.saveArticleImage(req.getArticleImage());
 
@@ -114,6 +116,7 @@ public class PostService {
 
     // My Post 수정
     @Loggable
+    @PreAuthorize("hasAuthority('POST:UPDATE')")
     public BaseResponse<UpdateMyPostResponseDto> updateMyPost(long postId, UpdateMyPostRequestDto req) {
         Post toUpdate = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException());
 
@@ -132,6 +135,7 @@ public class PostService {
 
     // 게시글 삭제 By Id
     @Loggable
+    @PreAuthorize("hasAuthority('POST:DELETE')")
     public BaseResponse deletePostById(long postId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException());
         String articleImage = post.getArticleImage();
@@ -185,6 +189,7 @@ public class PostService {
     }
     // 댓글 등록
     @Loggable
+    @PreAuthorize("hasAuthority('COMMENT:CREATE')")
     public BaseResponse<CreateCommentResponseDto> createComment(long postId, CreateCommentRequestDto req) {
         Post findPost = postRepository.getReferenceById(postId); // Post Proxy
         long userId = req.getUserId();
@@ -238,6 +243,7 @@ public class PostService {
 
     // 댓글 수정 By Comment Id
     @Loggable
+    @PreAuthorize("hasAuthority('COMMENT:UPDATE')")
     public BaseResponse<UpdateCommentResponseDto> updateCommentById(long postId, long commentId, UpdateCommentRequestDto req) {
         if (!postRepository.existsById(postId)) {
             throw new PostNotFoundException();
@@ -258,6 +264,7 @@ public class PostService {
 
     // 댓글 삭제
     @Loggable
+    @PreAuthorize("hasAuthority('COMMENT:DELETE')")
     public BaseResponse deleteCommentById(long postId, long commentId) {
         int row = commentRepository.deleteByIdAndPostId(commentId, postId);
         return new BaseResponse(ResponseMessage.COMMENT_DELETE_SUCCESS, new Comment());

@@ -10,6 +10,7 @@ import com.example.KTB_10WEEK.user.repository.user.UserRepository;
 import com.example.KTB_10WEEK.user.dto.request.*;
 import com.example.KTB_10WEEK.user.dto.response.*;
 import com.example.KTB_10WEEK.user.exception.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -57,6 +58,7 @@ public class UserService {
 
     // 회원정보 조회
     @Loggable
+    @PreAuthorize("hasRole('ADMIN') or #userId == principal.userId")
     public BaseResponse<FindUserResponseDto> findById(long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
         return new BaseResponse(ResponseMessage.USERINFO_LOAD_SUCCESS, FindUserResponseDto.toDto(user));
@@ -64,6 +66,7 @@ public class UserService {
 
     // 회원정보 삭제
     @Loggable
+    @PreAuthorize("hasRole('ADMIN') or #userId == principal.userId")
     public BaseResponse deleteById(long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
         String profileImage = user.getProfileImage();
@@ -102,6 +105,7 @@ public class UserService {
 
     // 유저 프로필 수정(닉네임, 프로필 이미지)
     @Loggable
+    @PreAuthorize("#userId == principal.userId")
     public BaseResponse<EditProfileResponseDto> editProfile(Long userId, EditProfileRequestDto req) {
         User toUpdate = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
 
@@ -120,6 +124,7 @@ public class UserService {
 
     // 닉네임 수정
     @Loggable
+    @PreAuthorize("#userId == principal.userId")
     public BaseResponse<UpdateNicknameResponseDto> editNickname(long userId, NicknameEditRequestDto req) {
         String nickname = req.getNickname();
 
@@ -136,13 +141,14 @@ public class UserService {
 
     // 비밀번호 변경
     @Loggable
+    @PreAuthorize("#userId == principal.userId")
     public BaseResponse changePassword(long userId, PasswordChangeRequestDto req) {
         String password = req.getPassword();
 
         User toUpdate = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
 
         // 변경감지
-        toUpdate.updatePassword(password); // 비밀번호 수정
+        toUpdate.updatePassword(passwordEncoder.encode(password)); // 비밀번호 수정
         toUpdate.updateNowTime(); // 업데이트 시간 최신화
 
         return new BaseResponse(ResponseMessage.PASSWORD_CHANGE_SUCCESS, UpdatePasswordResponseDto.toDto(toUpdate.getId()));

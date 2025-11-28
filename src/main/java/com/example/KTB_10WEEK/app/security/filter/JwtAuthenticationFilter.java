@@ -1,6 +1,7 @@
 package com.example.KTB_10WEEK.app.security.filter;
 
 import com.example.KTB_10WEEK.app.security.exception.GlobalFilterCustomException;
+import com.example.KTB_10WEEK.app.security.principal.UserPrincipal;
 import com.example.KTB_10WEEK.app.security.role.RoleConfig;
 import com.example.KTB_10WEEK.auth.service.TokenService;
 import jakarta.servlet.FilterChain;
@@ -41,8 +42,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String role = (String) payload.get("role");
             List<SimpleGrantedAuthority> authorityList = RoleConfig.from(role).getAllAuthorityList();
 
+            UserPrincipal principal = new UserPrincipal(userId, role);
+
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                    userId, // 누가
+                    principal, // 누가
                     null, // 토큰값
                     authorityList // 권한 목록
             );
