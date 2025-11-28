@@ -1,11 +1,8 @@
 package com.example.KTB_10WEEK.post.service;
 
 import com.example.KTB_10WEEK.app.aop.aspect.log.Loggable;
-import com.example.KTB_10WEEK.app.security.principal.UserPrincipal;
-import com.example.KTB_10WEEK.app.security.role.AdminRole;
+import com.example.KTB_10WEEK.security.principal.UserPrincipal;
 import com.example.KTB_10WEEK.app.storage.ArticleImageStorage;
-import com.example.KTB_10WEEK.post.dto.request.CancelLikePostRequestDto;
-import com.example.KTB_10WEEK.post.dto.request.LikePostRequestDto;
 import com.example.KTB_10WEEK.post.dto.request.UpdateMyPostRequestDto;
 import com.example.KTB_10WEEK.post.dto.request.comment.CreateCommentRequestDto;
 import com.example.KTB_10WEEK.post.dto.request.comment.UpdateCommentRequestDto;
@@ -34,9 +31,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.support.JpaRepositoryImplementation;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

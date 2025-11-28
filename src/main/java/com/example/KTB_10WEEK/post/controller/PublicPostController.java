@@ -1,9 +1,7 @@
 package com.example.KTB_10WEEK.post.controller;
 
-import com.example.KTB_10WEEK.app.security.principal.UserPrincipal;
-import com.example.KTB_10WEEK.post.dto.request.CancelLikePostRequestDto;
-import com.example.KTB_10WEEK.post.dto.request.LikePostRequestDto;
-import com.example.KTB_10WEEK.app.swagger.controller.post.PostApiDoc;
+import com.example.KTB_10WEEK.security.principal.UserPrincipal;
+import com.example.KTB_10WEEK.swagger.controller.post.PostApiDoc;
 import com.example.KTB_10WEEK.post.dto.request.CreatePostRequestDto;
 import com.example.KTB_10WEEK.post.dto.request.comment.UpdateCommentRequestDto;
 import com.example.KTB_10WEEK.app.response.BaseResponse;
