@@ -31,7 +31,7 @@ public class PublicPostController implements PostApiDoc {
     }
 
     /**
-     * Get Mapping
+     * POST
      **/
     @GetMapping // 전체 게시글 목록 조회
     public ResponseEntity<BaseResponse> findPublicPosts(@RequestParam(name = "page", defaultValue = "0") int page,
@@ -47,7 +47,7 @@ public class PublicPostController implements PostApiDoc {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping("/{postId}/comment") // 게시글에 대한 댓글 조회
+    @GetMapping("/{postId}/comment") // 게시글에 대한 전체 댓글 조회
     public ResponseEntity<BaseResponse> findCommentByPostId(@PathVariable("postId")
                                                             @NotNull @Positive Long postId,
                                                             @RequestParam(name = "page", defaultValue = "0") int page) {
@@ -55,11 +55,8 @@ public class PublicPostController implements PostApiDoc {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    /**
-     * Post Mapping
-     **/
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE) // 게시글 생성
-    public ResponseEntity<BaseResponse> createPublicPost(@Valid
+    public ResponseEntity<BaseResponse> createPost(@Valid
                                                          @ModelAttribute CreatePostRequestDto request,
                                                          @AuthenticationPrincipal UserPrincipal principal) {
         BaseResponse response = publicPostService.createPost(request, principal);
@@ -75,7 +72,7 @@ public class PublicPostController implements PostApiDoc {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PostMapping("/{postId}/like") // 좋아요 활성화
+    @PostMapping("/{postId}/like") // 게시글 좋아요 활성화
     public ResponseEntity<BaseResponse> likePost(@PathVariable("postId")
                                                  @NotNull
                                                  @Positive Long postId,
@@ -84,7 +81,7 @@ public class PublicPostController implements PostApiDoc {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PostMapping("/{postId}/like/cancel") // 좋아요 비 활성화
+    @PostMapping("/{postId}/like/cancel") // 게시글 좋아요 비 활성화
     public ResponseEntity<BaseResponse> cancelLikePost(@PathVariable("postId")
                                                        @NotNull
                                                        @Positive Long postId,
@@ -93,7 +90,30 @@ public class PublicPostController implements PostApiDoc {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @PatchMapping("/{postId}") // 나의 게시글 수정
+    public ResponseEntity<BaseResponse> updatePost(@PathVariable("postId")
+                                                         @NotNull
+                                                         @Positive Long myPostId,
+                                                         @Valid
+                                                         @ModelAttribute UpdateMyPostRequestDto request,
+                                                         @AuthenticationPrincipal UserPrincipal principal) {
+        BaseResponse response = publicPostService.updateMyPost(myPostId, request, principal);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 
+
+    @DeleteMapping("/{postId}") // 게시글 삭제
+    public ResponseEntity<BaseResponse> deletePostById(@PathVariable("postId")
+                                                       @NotNull
+                                                       @Positive Long postId,
+                                                       @AuthenticationPrincipal UserPrincipal principal) {
+        BaseResponse response = publicPostService.deletePostById(postId, principal);
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * COMMENT
+     **/
     @PostMapping("/{postId}/comment") // 댓글 등록
     public ResponseEntity<BaseResponse> createComment(@PathVariable("postId")
                                                       @NotNull
@@ -105,9 +125,6 @@ public class PublicPostController implements PostApiDoc {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    /**
-     * Patch Mapping
-     **/
     @PatchMapping("/{postId}/comment/{commentId}") // 댓글 수정
     public ResponseEntity<BaseResponse> updateComment(@PathVariable("postId")
                                                       @NotNull
@@ -122,28 +139,7 @@ public class PublicPostController implements PostApiDoc {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PatchMapping("/{postId}") // 나의 게시글 수정
-    public ResponseEntity<BaseResponse> updatePublicPost(@PathVariable("postId")
-                                                         @NotNull
-                                                         @Positive Long myPostId,
-                                                         @Valid
-                                                         @ModelAttribute UpdateMyPostRequestDto request,
-                                                         @AuthenticationPrincipal UserPrincipal principal) {
-        BaseResponse response = publicPostService.updateMyPost(myPostId, request, principal);
-        return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
 
-    /**
-     * Delete Mapping
-     **/
-    @DeleteMapping("/{postId}") // 게시글 삭제
-    public ResponseEntity<BaseResponse> deletePostById(@PathVariable("postId")
-                                                       @NotNull
-                                                       @Positive Long postId,
-                                                       @AuthenticationPrincipal UserPrincipal principal) {
-        BaseResponse response = publicPostService.deletePostById(postId, principal);
-        return ResponseEntity.noContent().build();
-    }
 
     @DeleteMapping("/{postId}/comment/{commentId}") // 댓글 삭제
     public ResponseEntity<BaseResponse> deleteCommentById(@PathVariable("postId")
