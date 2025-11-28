@@ -4,8 +4,6 @@ import com.example.KTB_10WEEK.app.exception.common.BusinessException;
 import com.example.KTB_10WEEK.app.exception.handler.ErrorCode;
 
 public class SaveProfileImageFailException extends BusinessException {
-    private ErrorCode errorCode;
-
     public SaveProfileImageFailException() {
         super(ErrorCode.SAVE_PROFILE_IMAGE_FAIL);
     }

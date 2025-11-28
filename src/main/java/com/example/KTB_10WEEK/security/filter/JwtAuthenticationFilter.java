@@ -25,15 +25,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.tokenService = tokenService;
     }
 
-    @Override // 이 필터 들어왔을 때 어떤 로직을 수행할 것인가? -> Jwt 토큰 인증해야지
+    @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authorizationHeader = request.getHeader("Authorization");
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) { // JWT 토큰 없으면 필터로직 필요없음 다음 필터 동작
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
         try {
-            String accessToken = authorizationHeader.substring(7); // "Bearer " 이후 토큰 문자열
+            String accessToken = authorizationHeader.substring(7);
 
             Map<String, Object> payload = tokenService.verifyAndGetPayload(accessToken);
             Long userId = ((Number) payload.get("userId")).longValue();
@@ -43,9 +43,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             UserPrincipal principal = new UserPrincipal(userId, role);
 
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                    principal, // 누가
-                    null, // 토큰값
-                    authorityList // 권한 목록
+                    principal,
+                    null,
+                    authorityList
             );
 
             SecurityContextHolder.getContext().setAuthentication(authentication);

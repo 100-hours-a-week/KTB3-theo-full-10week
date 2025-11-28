@@ -10,7 +10,7 @@ public class Ktb10WeekApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(Ktb10WeekApplication.class, args);
-        System.out.println("Swagger API Docs : http://localhost:8080/swagger-ui/index.html");
+        System.out.println("Swagger API Docs : https://localhost:8443/swagger-ui/index.html");
     }
 
 

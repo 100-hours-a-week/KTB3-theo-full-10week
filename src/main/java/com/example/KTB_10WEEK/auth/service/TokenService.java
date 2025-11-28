@@ -49,7 +49,7 @@ public class TokenService {
 
         TokenPair tokenPair = new TokenPair(accessToken, refreshToken);
 
-        RefreshToken rt = refreshTokenRepository.findByUserId(userId).map(token -> {
+        refreshTokenRepository.findByUserId(userId).map(token -> {
             token.updateToken(refreshToken);
             return token;
         }).orElseGet(() -> {
@@ -72,7 +72,7 @@ public class TokenService {
 
         RoleConfig roleConfig = RoleConfig.from(roleName);
 
-        RefreshToken saved = refreshTokenRepository.findByUserId(userId).orElseThrow(() -> new RefreshTokenNotFoundException());
+        RefreshToken saved = refreshTokenRepository.findByUserId(userId).orElseThrow(RefreshTokenNotFoundException::new);
         if (!saved.getToken().equals(refreshToken)) {
             throw new AlreadyRotatedTokenException();
         }
@@ -123,9 +123,8 @@ public class TokenService {
         String headerBase64 = encoder.encodeJson(header);
         String payloadBase64 = encoder.encodeJson(payload);
         String signature = encoder.encodeToString(encryptor.encrypt(headerBase64 + "." + payloadBase64, tokenProperty.secretkey()));
-        String token = headerBase64 + "." + payloadBase64 + "." + signature;
 
-        return token;
+        return headerBase64 + "." + payloadBase64 + "." + signature;
     }
 
     public void verify(String token) {

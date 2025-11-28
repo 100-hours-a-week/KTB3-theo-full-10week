@@ -45,24 +45,12 @@ public class Comment {
         this.content = builder.content;
     }
 
-    public Comment(String content) {
-        this.content = content;
-    }
-
-    public void identify(long id) {
-        this.id = id;
-    }
-
     public void updateContent(String content) {
         this.content = content;
     }
 
     public void updateNow() {
         this.updatedAt = LocalDateTime.now();
-    }
-
-    public void softDelete() {
-        this.isDeleted = true;
     }
 
     public static class Builder {

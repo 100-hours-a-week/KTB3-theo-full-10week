@@ -33,11 +33,9 @@ public class Post {
     @JoinColumn(name = "category", nullable = false)
     private PostCategory category = PostCategory.NONE;
 
-    // 조회 수 테이블 생성 대신 반정규화
     @Column(name = "view_count")
     private Long view_count = 0L;
 
-    // 게시글에 대한 좋아요 조회용 목록, Comment 삭제전이
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<PostLike> likes = new HashSet<>();
 
@@ -87,10 +85,6 @@ public class Post {
 
     public void updateNow() {
         this.updatedAt = LocalDateTime.now();
-    }
-
-    public void delete() {
-        this.isDeleted = true;
     }
 
     public static class Builder {

@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Getter
 public class PostLike {
 
-    @EmbeddedId // 복합키(userId, postId)
+    @EmbeddedId
     private PostLikeId likeId;
 
     @ManyToOne(fetch = FetchType.LAZY)

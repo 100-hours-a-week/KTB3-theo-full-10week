@@ -20,11 +20,11 @@ public interface PostApiDoc {
     // POST
     @GetMapping
     @Operation(summary = "전체 게시글 목록 조회", description = "페이지 단위 전체 게시글 목록을 조회합니다.")
-    public ResponseEntity<BaseResponse> findPublicPosts(@RequestParam(name = "page", defaultValue = "0") int page,
+    public ResponseEntity<BaseResponse> findPosts(@RequestParam(name = "page", defaultValue = "0") int page,
                                                         @RequestParam(name = "size", defaultValue = "10") int size);
 
     @Operation(summary = "게시글 조회", description = "게시글 PK를 통해 특정 게시글을 조회합니다.")
-    public ResponseEntity<BaseResponse> findPublicPostById(@PathVariable("postId")
+    public ResponseEntity<BaseResponse> findPostById(@PathVariable("postId")
                                                            @NotNull
                                                            @Positive Long postId);
 

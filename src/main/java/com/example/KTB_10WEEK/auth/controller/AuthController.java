@@ -27,7 +27,7 @@ public class AuthController implements AuthApiDoc {
         this.refreshTokenCookie = refreshTokenCookie;
     }
 
-    @PostMapping("/access/token") // 로그인
+    @PostMapping("/access/token")
     public ResponseEntity<BaseResponse> login(@RequestBody
                                               @Valid LoginRequestDto request) {
         LoginWithTokenResponseDto result = authService.login(request);
@@ -55,10 +55,9 @@ public class AuthController implements AuthApiDoc {
                 .build();
     }
 
-    @PostMapping("/logout") // 로그아웃
+    @PostMapping("/logout")
     public ResponseEntity<BaseResponse> logout(HttpServletRequest request) {
-        String authorization = request.getHeader("Authorization");
-        BaseResponse response = authService.logout();
+        authService.logout();
 
         ResponseCookie cookie = refreshTokenCookie.expire();
 

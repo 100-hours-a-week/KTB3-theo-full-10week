@@ -1,6 +1,6 @@
 package com.example.KTB_10WEEK.security.role;
 
-import com.example.KTB_10WEEK.security.authority.Authority;
+import com.example.KTB_10WEEK.security.role.authority.Authority;
 
 public final class UserRole {
     private UserRole() {

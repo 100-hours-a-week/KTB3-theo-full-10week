@@ -11,7 +11,6 @@ public class P6spyPrettySqlFormatter implements MessageFormattingStrategy {
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
 
         for (StackTraceElement element : stackTrace) {
-            // 예: "com.example.service" 패키지의 클래스를 서비스로 가정
             if (element.getClassName().contains("service")) {
                 return element.getClassName() + "." + element.getMethodName();
             }
@@ -24,10 +23,6 @@ public class P6spyPrettySqlFormatter implements MessageFormattingStrategy {
         String serviceInfo = getServiceNameFromStackTrace();
 
         sql = formatSql(category, sql);
-//    Date currentDate = new Date();
-//    SimpleDateFormat format1 = new SimpleDateFormat("yy.MM.dd HH:mm:ss");
-//    return now + "|" + elapsed + "ms|" + category + "|connection " + connectionId + "|" + P6Util.singleLine(prepared) + sql;
-//    return format1.format(currentDate) + " | " + "OperationTime : " + elapsed + "ms" + sql;
         return String.format("%s | took %dms | category: %s | connection: %d | %s | SQL: %s",
                 serviceInfo, elapsed, category, connectionId, now, sql);
     }

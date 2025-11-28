@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ErrorResponseEntity {
-    private int code;
-    private HttpStatus status;
-    private String message;
-    private String path;
+    private final int code;
+    private final HttpStatus status;
+    private final String message;
+    private final String path;
 
     public ErrorResponseEntity(int code, HttpStatus status, String message, String path) {
         this.code = code;

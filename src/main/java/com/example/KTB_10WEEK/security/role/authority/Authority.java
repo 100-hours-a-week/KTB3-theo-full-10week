@@ -1,4 +1,4 @@
-package com.example.KTB_10WEEK.security.authority;
+package com.example.KTB_10WEEK.security.role.authority;
 
 import lombok.Getter;
 

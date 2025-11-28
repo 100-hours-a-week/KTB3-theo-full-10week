@@ -26,16 +26,14 @@ public class ProfileImageStorage extends ImageStorage {
 
     public String saveProfileImage(MultipartFile multipartFile) {
         try {
-            String newFilename = super.saveImage(multipartFile, uploadDir);
-            return newFilename;
+            return super.saveImage(multipartFile, uploadDir);
         } catch (SaveImageFailException e) {
             throw new SaveProfileImageFailException();
         }
     }
 
     public String updateProfileImage(MultipartFile multipartFile, String oldFileName) {
-        String updatedFileName = super.updateImage(multipartFile, uploadDir, oldFileName);
-        return updatedFileName;
+        return super.updateImage(multipartFile, uploadDir, oldFileName);
     }
 
     public boolean deleteProfileImage(String fileName) {
