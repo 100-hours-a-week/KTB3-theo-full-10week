@@ -39,11 +39,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             Long userId = ((Number) payload.get("userId")).longValue();
             String role = (String) payload.get("role");
             List<SimpleGrantedAuthority> authorityList = RoleConfig.from(role).getAllAuthorityList();
-
-            UserPrincipal principal = new UserPrincipal(userId, role);
+            System.out.println(userId + "//////" + role);
 
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                    principal,
+                    new UserPrincipal(userId, role),
                     null,
                     authorityList
             );
@@ -60,6 +59,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
-        return path.startsWith("/auth");
+        return path.startsWith("/auth/access/token") || path.startsWith("/auth/access/token/refresh");
     }
 }

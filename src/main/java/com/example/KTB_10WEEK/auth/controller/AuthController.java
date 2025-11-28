@@ -56,11 +56,10 @@ public class AuthController implements AuthApiDoc {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<BaseResponse> logout(HttpServletRequest request) {
+    public ResponseEntity<BaseResponse> logout() {
         authService.logout();
-
         ResponseCookie cookie = refreshTokenCookie.expire();
-
+        System.out.println("ð"+cookie.toString());
         return ResponseEntity.noContent()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
                 .build();

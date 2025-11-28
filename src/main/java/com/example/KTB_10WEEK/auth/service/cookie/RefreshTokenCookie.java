@@ -23,7 +23,6 @@ public final class RefreshTokenCookie {
                 .build();
     }
 
-    // 리프레시 토큰 쿠키 제거용
     public ResponseCookie expire() {
         return ResponseCookie
                 .from(cookieProperty.refreshTokenCookieName(), "")

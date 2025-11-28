@@ -43,7 +43,7 @@ public class AuthService {
         boolean isLoginSuccess = false;
         BaseResponse<LoginResponseDto> loginResponse;
 
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException());
+        User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
         Set<Long> likedPostIds = postLikeRepository.findLikePostIdsByUserId(user.getId());
 
         if (passwordEncoder.matches(rawPassword, user.getPassword())) {
@@ -66,6 +66,7 @@ public class AuthService {
     }
 
     public BaseResponse logout() {
+
         return new BaseResponse(ResponseMessage.LOGOUT_SUCCESS, new User());
     }
 

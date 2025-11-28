@@ -11,6 +11,7 @@ import com.example.KTB_10WEEK.user.dto.request.*;
 import com.example.KTB_10WEEK.user.dto.response.*;
 import com.example.KTB_10WEEK.user.exception.*;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -53,14 +54,14 @@ public class UserService {
 
     @Loggable
     @PreAuthorize("hasRole('ADMIN') or #userId == principal.userId")
-    public BaseResponse<FindUserResponseDto> findById(long userId) {
+    public BaseResponse<FindUserResponseDto> findById(@P("userId") Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
         return new BaseResponse(ResponseMessage.USERINFO_LOAD_SUCCESS, FindUserResponseDto.toDto(user));
     }
 
     @Loggable
     @PreAuthorize("hasRole('ADMIN') or #userId == principal.userId")
-    public BaseResponse deleteById(long userId) {
+    public BaseResponse deleteById(@P("userId") Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
         String profileImage = user.getProfileImage();
         boolean isDelete = profileImageStorage.deleteProfileImage(profileImage);
@@ -96,7 +97,7 @@ public class UserService {
 
     @Loggable
     @PreAuthorize("#userId == principal.userId")
-    public BaseResponse<EditProfileResponseDto> editProfile(Long userId, EditProfileRequestDto req) {
+    public BaseResponse<EditProfileResponseDto> editProfile(@P("userId")Long userId, EditProfileRequestDto req) {
         User toUpdate = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
         String newNickname = req.getNickname();
@@ -114,7 +115,7 @@ public class UserService {
 
     @Loggable
     @PreAuthorize("#userId == principal.userId")
-    public BaseResponse<UpdateNicknameResponseDto> editNickname(long userId, NicknameEditRequestDto req) {
+    public BaseResponse<UpdateNicknameResponseDto> editNickname(@P("userId") Long userId, NicknameEditRequestDto req) {
         String nickname = req.getNickname();
 
         if (userRepository.existsByNickname(nickname)) throw new NicknameAlreadyRegisteredException();
@@ -129,7 +130,7 @@ public class UserService {
 
     @Loggable
     @PreAuthorize("#userId == principal.userId")
-    public BaseResponse changePassword(long userId, PasswordChangeRequestDto req) {
+    public BaseResponse changePassword(@P("userId") Long userId, PasswordChangeRequestDto req) {
         String password = req.getPassword();
 
         User toUpdate = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);

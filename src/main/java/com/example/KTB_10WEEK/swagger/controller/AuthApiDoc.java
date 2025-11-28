@@ -23,5 +23,5 @@ public interface AuthApiDoc {
     public ResponseEntity<BaseResponse> refreshAccessToken(@CookieValue(name = "Refresh-Token") String refreshToken);
 
     @Operation(summary = "로그아웃", description = "회원의 접속상태를 로그아웃으로 변경합니다.")
-    public ResponseEntity<BaseResponse> logout(HttpServletRequest request);
+    public ResponseEntity<BaseResponse> logout();
 }
