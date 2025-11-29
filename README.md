@@ -19,7 +19,7 @@
 > 직접 수산 시장에 갔을 때, 1kg 기준 적정가를 몰라 헤맸던 경험에서 출발한 프로젝트입니다.
 > <br>(25년 11월 꽃게… 기억이 선명합니다 🦀)
 
----
+<br>
 
 ## 🔗 DEMO / DOCS
 
@@ -27,14 +27,17 @@
 
 [https://github.com/user-attachments/assets/63cea51e-9d08-4fb4-9f92-7788cabb7e6a](https://github.com/user-attachments/assets/63cea51e-9d08-4fb4-9f92-7788cabb7e6a)
 
----
+
+<br>
+
 
 ## 👥 개발인원 및 기간
 
 -   개발 기간 : 2025.9.22 ~ ing
 -   개발 인원 : 1인 개발(Fullstack)
 
----
+<br>
+
 ## 🎯 Features
 
 ### 📈 수산물 시세 조회(예정)
@@ -62,7 +65,8 @@
 -   닉네임 변경
 -   사용자 작성 글 관리
 
-----
+<br>
+
 
 ## 🌐 Deployment URL (Production)
 
@@ -94,7 +98,8 @@ https://api.your-domain.com
 📄 https://api.your-domain.com/swagger-ui.html
 ```
 
----
+<br>
+
 
 ## 🖥 개발환경 / Quick Start(예정)
 
@@ -143,7 +148,8 @@ https://api.your-domain.com
 
 - `MySQL 9.5.0`
 
----
+<br>
+
 
 ## Configuration Step(dev.yml 예시)
 
@@ -201,7 +207,8 @@ ssl:
     key-alias: # 인증키 이름
 ```
 
----
+<br>
+
 
 ## 아키텍처 개요
 
@@ -251,7 +258,9 @@ flowchart LR
     Domain --> ExternalAPI
 
 ```
----
+
+<br>
+
 
 ## 📊 DataSet
 
