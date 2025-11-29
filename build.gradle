@@ -2,6 +2,11 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.5.6'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'jacoco'
+}
+
+jacoco {
+	toolVersion = '0.8.14'
 }
 
 group = 'com.example'
@@ -19,6 +24,10 @@ repositories {
 }
 
 dependencies {
+	// --- Lombok 설정 ---
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-aop'
@@ -31,11 +40,68 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 
 	runtimeOnly 'com.mysql:mysql-connector-j'
+
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testCompileOnly 'org.projectlombok:lombok'
+	testAnnotationProcessor 'org.projectlombok:lombok'
 
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+jacocoTestReport {
+	dependsOn test
+
+	reports {
+		html.required = true
+		xml.required = true
+		csv.required = false
+	}
+
+	doLast {
+		def reportPath = "${buildDir}/reports/jacoco/test/html/index.html"
+		println "\nJaCoco Report Generated : "
+		println "file:://${reportPath}\n"
+	}
+}
+
+tasks.register('openJacocoReport', Exec) {
+	dependsOn jacocoTestReport
+	commandLine 'open', "${buildDir}/reports/jacoco/test/html/index.html"
+}
+
+tasks.register('jacocoUserReport', JacocoReport) {
+	dependsOn test // 테스트 먼저 실행
+
+	reports {
+		html.required = true   // 브라우저로 보는 HTML 리포트
+		xml.required = true    // 필요하면 CI에서 사용
+		csv.required = false
+	}
+	classDirectories.setFrom(
+			fileTree(
+					dir: "$buildDir/classes/java/main",
+					include: [
+							'**/user/**' // user 패키지만 포함
+					]
+			)
+	)
+	sourceDirectories.setFrom(files('src/main/java'))
+
+			fileTree(
+					dir: buildDir,
+					include: [
+							'jacoco/test.exec',
+							'jacoco/test.exec*',
+							'jacoco/test/*.exec'
+					]
+			)
+}
+
+tasks.register('openJacocoUserReport', Exec) {
+	dependsOn jacocoUserReport
+	commandLine 'open', "${buildDir}/reports/jacoco/jacocoUserReport/html/index.html"
 }
