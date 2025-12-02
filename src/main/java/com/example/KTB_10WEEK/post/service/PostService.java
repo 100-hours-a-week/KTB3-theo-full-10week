@@ -26,7 +26,7 @@ import com.example.KTB_10WEEK.app.util.paginationPolicy.PostPaginationPolicy;
 import com.example.KTB_10WEEK.post.repository.PostLikeRepository;
 import com.example.KTB_10WEEK.post.repository.PostRepository;
 import com.example.KTB_10WEEK.user.entity.User;
-import com.example.KTB_10WEEK.user.repository.user.UserRepository;
+import com.example.KTB_10WEEK.user.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

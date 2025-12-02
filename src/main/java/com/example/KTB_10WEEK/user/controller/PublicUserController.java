@@ -67,7 +67,7 @@ public class PublicUserController implements UserApiDoc {
                                                        @NotNull
                                                        @Positive Long userId,
                                                        @RequestBody
-                                                       @Valid PasswordChangeRequestDto request) {
+                                                       @Valid UpdatePasswordRequestDto request) {
         BaseResponse response = publicUserService.changePassword(userId, request);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
@@ -77,7 +77,7 @@ public class PublicUserController implements UserApiDoc {
                                                      @NotNull
                                                      @Positive Long userId,
                                                      @RequestBody
-                                                     @Valid NicknameEditRequestDto request) {
+                                                     @Valid UpdateNicknameRequestDto request) {
         BaseResponse response = publicUserService.editNickname(userId, request);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

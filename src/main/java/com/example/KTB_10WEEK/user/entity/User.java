@@ -5,6 +5,7 @@ import com.example.KTB_10WEEK.post.entity.Comment;
 import com.example.KTB_10WEEK.post.entity.Post;
 import com.example.KTB_10WEEK.post.entity.PostLike;
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -69,20 +70,8 @@ public class User {
         this.profileImage = builder.profileImage;
     }
 
-    public boolean isDeleted() {
-        return this.isDeleted;
-    }
-
-    public void identify(long id) {
-        this.id = id;
-    }
-
     public void updateNowTime() {
         this.updatedAt = LocalDateTime.now();
-    }
-
-    public void softDelete() {
-        this.isDeleted = true;
     }
 
     public void updateNickname(String nickname) {
@@ -99,7 +88,7 @@ public class User {
 
     public static class Builder {
         private Long id;
-        private Role role;
+        private Role role = Role.USER;
         private String email;
         private String password;
         private String nickname;
@@ -138,5 +127,19 @@ public class User {
         public User build() {
             return new User(this);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id) && Objects.equals(email, user.email) &&
+                Objects.equals(password, user.password);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, email, password);
     }
 }

@@ -2,12 +2,14 @@ package com.example.KTB_10WEEK.user.dto.response;
 
 import com.example.KTB_10WEEK.app.util.DateTimePattern;
 import com.example.KTB_10WEEK.user.entity.User;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import java.time.format.DateTimeFormatter;
 
 
 @Getter
+@EqualsAndHashCode
 public class FindUserResponseDto {
     private long id;
     private String email;

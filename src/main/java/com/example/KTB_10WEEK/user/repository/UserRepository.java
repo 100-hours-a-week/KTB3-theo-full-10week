@@ -1,4 +1,4 @@
-package com.example.KTB_10WEEK.user.repository.user;
+package com.example.KTB_10WEEK.user.repository;
 
 import com.example.KTB_10WEEK.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;

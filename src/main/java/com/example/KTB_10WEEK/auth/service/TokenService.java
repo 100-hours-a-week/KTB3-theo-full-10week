@@ -11,7 +11,7 @@ import com.example.KTB_10WEEK.auth.service.encryption.Encrypt;
 import com.example.KTB_10WEEK.auth.service.property.TokenProperty;
 import com.example.KTB_10WEEK.user.entity.Role;
 import com.example.KTB_10WEEK.user.entity.User;
-import com.example.KTB_10WEEK.user.repository.user.UserRepository;
+import com.example.KTB_10WEEK.user.repository.UserRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;

@@ -3,10 +3,6 @@ package com.example.KTB_10WEEK.swagger.controller.user;
 import com.example.KTB_10WEEK.app.response.BaseResponse;
 import com.example.KTB_10WEEK.user.dto.request.*;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -46,7 +42,7 @@ public interface UserApiDoc {
                                                        @NotNull
                                                        @Positive Long userId,
                                                        @RequestBody
-                                                       @Valid PasswordChangeRequestDto request);
+                                                       @Valid UpdatePasswordRequestDto request);
 
 
     @Operation(summary = "닉네임 수정", description = "특정 회원의 PK 닉네임을 수정합니다.")
@@ -54,7 +50,7 @@ public interface UserApiDoc {
                                                      @NotNull
                                                      @Positive Long userId,
                                                      @RequestBody
-                                                     @Valid NicknameEditRequestDto request);
+                                                     @Valid UpdateNicknameRequestDto request);
 
 
     @Operation(summary = "회원 삭제", description = "특정 회원 PK를 통해 회원을 삭제합니다.")

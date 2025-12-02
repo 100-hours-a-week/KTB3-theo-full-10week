@@ -7,13 +7,12 @@ import com.example.KTB_10WEEK.app.response.ResponseMessage;
 import com.example.KTB_10WEEK.app.storage.ProfileImageStorage;
 import com.example.KTB_10WEEK.user.entity.Role;
 import com.example.KTB_10WEEK.user.entity.User;
-import com.example.KTB_10WEEK.user.repository.user.UserRepository;
 import com.example.KTB_10WEEK.user.dto.request.*;
 import com.example.KTB_10WEEK.user.dto.response.*;
 import com.example.KTB_10WEEK.user.exception.*;
+import com.example.KTB_10WEEK.user.repository.UserRepository;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.parameters.P;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,7 +35,7 @@ public class UserService {
     public BaseResponse<RegistUserResponseDto> register(RegistUserRequestDto req) {
         String email = req.getEmail();
         String nickname = req.getNickname();
-        String profileImageUrl = profileImageStorage.saveProfileImage(req.getProfileImage());
+        String profileImageName = profileImageStorage.saveProfileImage(req.getProfileImage());
 
         if (userRepository.existsByEmail(email)) throw new EmailAlreadyRegisteredException();
         if (userRepository.existsByNickname(nickname)) throw new NicknameAlreadyRegisteredException();
@@ -45,7 +44,7 @@ public class UserService {
                 .email(email)
                 .password(passwordEncoder.encode(req.getPassword()))
                 .nickname(req.getNickname())
-                .profileImage(profileImageUrl)
+                .profileImage(profileImageName)
                 .role(Role.USER)
                 .build();
 
@@ -66,15 +65,14 @@ public class UserService {
     public BaseResponse deleteById(@P("userId") Long userId) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         String profileImage = user.getProfileImage();
-        System.out.println(user.getId());
-        System.out.println(profileImage);
+
         boolean isDelete = profileImageStorage.deleteProfileImage(profileImage);
         if (!isDelete) {
             throw new DeleteProfileImageFailException();
         }
         userRepository.deleteById(userId);
 
-        return new BaseResponse(ResponseMessage.USER_DELETE_SUCCESS, new User());
+        return new BaseResponse(ResponseMessage.USER_DELETE_SUCCESS, user);
     }
 
     @Loggable
@@ -122,7 +120,7 @@ public class UserService {
 
     @Loggable
     @PreAuthorize("#userId == principal.userId")
-    public BaseResponse<UpdateNicknameResponseDto> editNickname(@P("userId") Long userId, NicknameEditRequestDto req) {
+    public BaseResponse<UpdateNicknameResponseDto> editNickname(@P("userId") Long userId, UpdateNicknameRequestDto req) {
         String nickname = req.getNickname();
 
         if (userRepository.existsByNickname(nickname)) throw new NicknameAlreadyRegisteredException();
@@ -137,7 +135,7 @@ public class UserService {
 
     @Loggable
     @PreAuthorize("#userId == principal.userId")
-    public BaseResponse changePassword(@P("userId") Long userId, PasswordChangeRequestDto req) {
+    public BaseResponse<UpdatePasswordResponseDto> changePassword(@P("userId") Long userId, UpdatePasswordRequestDto req) {
         String password = req.getPassword();
 
         User toUpdate = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
