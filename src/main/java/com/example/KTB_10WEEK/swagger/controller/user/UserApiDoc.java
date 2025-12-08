@@ -54,7 +54,7 @@ public interface UserApiDoc {
 
 
     @Operation(summary = "회원 삭제", description = "특정 회원 PK를 통해 회원을 삭제합니다.")
-    public ResponseEntity<BaseResponse> deletePublicUser(@PathVariable("userId")
+    public ResponseEntity<BaseResponse> deleteUserById(@PathVariable("userId")
                                                          @NotNull
                                                          @Positive Long userId);
 }
