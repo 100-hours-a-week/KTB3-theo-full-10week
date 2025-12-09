@@ -1,12 +1,10 @@
 package com.example.KTB_10WEEK.user.entity;
 
-import com.example.KTB_10WEEK.auth.entity.RefreshToken;
 import com.example.KTB_10WEEK.post.entity.Comment;
 import com.example.KTB_10WEEK.post.entity.Post;
 import com.example.KTB_10WEEK.post.entity.PostLike;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -57,8 +55,8 @@ public class User {
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted = false;
 
-    public void updateNowTime() {
-        this.updatedAt = LocalDateTime.now();
+    public void updateNowTime(LocalDateTime now) {
+        this.updatedAt = now;
     }
 
     public void updateNickname(String nickname) {
@@ -85,17 +83,17 @@ public class User {
         this.updatedAt = createdAt;
         this.isDeleted = false;
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(email, user.email) &&
-                Objects.equals(password, user.password);
+        if (!(o instanceof User u)) return false;
+        if (this.id == null || u.id == null) return false;
+        return Objects.equals(id, u.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, email, password);
+        return Objects.hash(id);
     }
 }
