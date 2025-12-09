@@ -74,7 +74,7 @@ public class UserService {
         }
         userRepository.deleteById(userId);
 
-        return new BaseResponse(ResponseMessage.USER_DELETE_SUCCESS, user);
+        return new BaseResponse(ResponseMessage.USER_DELETE_SUCCESS);
     }
 
     @Loggable

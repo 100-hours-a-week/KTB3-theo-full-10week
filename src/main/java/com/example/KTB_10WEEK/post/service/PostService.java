@@ -154,7 +154,7 @@ public class PostService {
 
         postRepository.deleteById(postId);
 
-        return new BaseResponse(ResponseMessage.POST_DELETE_SUCCESS, Post.builder().build());
+        return new BaseResponse(ResponseMessage.POST_DELETE_SUCCESS);
     }
 
     @Loggable
@@ -262,7 +262,7 @@ public class PostService {
     public BaseResponse deleteCommentById(Long postId, Long commentId, UserPrincipal principal) {
         Long authorId = principal.getUserId();
         int row = commentRepository.deleteByIdAndPostIdAndAuthorId(commentId, postId, authorId);
-        return new BaseResponse(ResponseMessage.COMMENT_DELETE_SUCCESS, Comment.builder().build());
+        return new BaseResponse(ResponseMessage.COMMENT_DELETE_SUCCESS);
     }
 
 }
