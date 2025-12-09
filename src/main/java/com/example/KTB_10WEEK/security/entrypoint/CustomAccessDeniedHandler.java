@@ -1,42 +1,33 @@
-package com.example.KTB_10WEEK.security.filter;
+package com.example.KTB_10WEEK.security.entrypoint;
 
 import com.example.KTB_10WEEK.app.exception.handler.ErrorCode;
 import com.example.KTB_10WEEK.app.exception.handler.ErrorResponseEntity;
-import com.example.KTB_10WEEK.security.exception.GlobalFilterCustomException;
+import com.example.KTB_10WEEK.security.exception.authentication.JwtFilterCustomException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.web.access.AccessDeniedHandler;
 
 import java.io.IOException;
 
-@Order(Ordered.HIGHEST_PRECEDENCE)
-public class GlobalFilterCustomExceptionFilter extends OncePerRequestFilter {
+public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
     private final ObjectMapper objectMapper;
 
-    public GlobalFilterCustomExceptionFilter(ObjectMapper objectMapper) {
+    public CustomAccessDeniedHandler(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        try {
-            filterChain.doFilter(request, response);
-        } catch (GlobalFilterCustomException e) {
-            processException(request, response, e.getErrorCode());
-        }
-    }
-
-    private void processException(HttpServletRequest request, HttpServletResponse response, ErrorCode errorCode) throws IOException {
-        if (response.isCommitted()) {
+    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
+        if(response.isCommitted()) {
             return;
         }
+
+        ErrorCode errorCode = ErrorCode.FORBIDDEN;
 
         int code = errorCode.getCode();
         HttpStatus status = errorCode.getStatus();
@@ -51,5 +42,4 @@ public class GlobalFilterCustomExceptionFilter extends OncePerRequestFilter {
         String json = objectMapper.writeValueAsString(body);
         response.getWriter().write(json);
     }
-
 }

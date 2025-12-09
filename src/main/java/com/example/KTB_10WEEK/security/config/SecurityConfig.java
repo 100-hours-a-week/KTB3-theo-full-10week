@@ -1,6 +1,7 @@
 package com.example.KTB_10WEEK.security.config;
 
-import com.example.KTB_10WEEK.security.filter.GlobalFilterCustomExceptionFilter;
+import com.example.KTB_10WEEK.security.entrypoint.CustomAccessDeniedHandler;
+import com.example.KTB_10WEEK.security.entrypoint.JwtAuthenticationEntryPoint;
 import com.example.KTB_10WEEK.security.filter.JwtAuthenticationFilter;
 import com.example.KTB_10WEEK.security.role.AdminRole;
 import com.example.KTB_10WEEK.auth.service.TokenService;
@@ -29,7 +30,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, TokenService tokenService, ObjectMapper objectMapper) throws Exception {
         JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(tokenService);
-        GlobalFilterCustomExceptionFilter globalFilterCustomExceptionFilter = new GlobalFilterCustomExceptionFilter(objectMapper);
+        JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint = new JwtAuthenticationEntryPoint(objectMapper);
+        CustomAccessDeniedHandler jwtAccessDeniedHandler = new CustomAccessDeniedHandler(objectMapper);
 
         http
                 .csrf(AbstractHttpConfigurer::disable)
@@ -41,7 +43,9 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.POST, PERMITTED_ALL_URL.get(HttpMethod.POST)).permitAll()
                                 .anyRequest().authenticated()
                 )
-                .addFilterBefore(globalFilterCustomExceptionFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(ex ->
+                        ex.authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                                .accessDeniedHandler(jwtAccessDeniedHandler))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

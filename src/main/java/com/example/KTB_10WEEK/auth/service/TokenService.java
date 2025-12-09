@@ -1,6 +1,6 @@
 package com.example.KTB_10WEEK.auth.service;
 
-import com.example.KTB_10WEEK.security.exception.*;
+import com.example.KTB_10WEEK.security.exception.authentication.*;
 import com.example.KTB_10WEEK.security.role.RoleConfig;
 import com.example.KTB_10WEEK.auth.dto.response.TokenPair;
 import com.example.KTB_10WEEK.auth.entity.RefreshToken;

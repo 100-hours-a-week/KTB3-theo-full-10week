@@ -1,6 +1,6 @@
 package com.example.KTB_10WEEK.security.filter;
 
-import com.example.KTB_10WEEK.security.exception.GlobalFilterCustomException;
+import com.example.KTB_10WEEK.security.exception.authentication.JwtFilterCustomException;
 import com.example.KTB_10WEEK.security.principal.UserPrincipal;
 import com.example.KTB_10WEEK.security.role.RoleConfig;
 import com.example.KTB_10WEEK.auth.service.TokenService;
@@ -49,7 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
             filterChain.doFilter(request, response);
-        } catch (GlobalFilterCustomException e) {
+        } catch (JwtFilterCustomException e) {
             SecurityContextHolder.clearContext();
             throw e;
         }
