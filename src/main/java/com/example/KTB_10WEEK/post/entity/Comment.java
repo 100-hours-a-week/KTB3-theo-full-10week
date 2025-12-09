@@ -4,6 +4,7 @@ package com.example.KTB_10WEEK.post.entity;
 import com.example.KTB_10WEEK.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
+import org.hibernate.annotations.BatchSize;
 
 import java.time.LocalDateTime;
 

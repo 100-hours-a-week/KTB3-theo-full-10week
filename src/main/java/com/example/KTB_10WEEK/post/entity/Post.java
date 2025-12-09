@@ -4,6 +4,7 @@ package com.example.KTB_10WEEK.post.entity;
 import com.example.KTB_10WEEK.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
+import org.hibernate.annotations.BatchSize;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ public class Post {
     private Long view_count = 0L;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @BatchSize(size = 10)
     private Set<PostLike> likes = new HashSet<>();
 
     @Column(name = "created_at", nullable = false)
@@ -53,6 +55,7 @@ public class Post {
     private User author;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @BatchSize(size = 10)
     private List<Comment> comments = new ArrayList<>();
 
     public Post() {
