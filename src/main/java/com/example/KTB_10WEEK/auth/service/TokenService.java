@@ -59,7 +59,7 @@ public class TokenService {
             token.updateToken(refreshToken);
             return token;
         }).orElseGet(() -> {
-            RefreshToken newRefreshToken = new RefreshToken.Builder()
+            RefreshToken newRefreshToken = RefreshToken.builder()
                     .user(user)
                     .token(refreshToken)
                     .build();

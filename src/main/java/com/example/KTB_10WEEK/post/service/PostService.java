@@ -36,6 +36,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -67,7 +68,7 @@ public class PostService {
         User author = userRepository.getReferenceById(principal.getUserId());
         String articleImageUrl = articleImageStorage.saveArticleImage(req.getArticleImage());
 
-        Post toSave = new Post.Builder()
+        Post toSave = Post.builder()
                 .author(author)
                 .title(req.getTitle())
                 .article(req.getArticle())
@@ -153,7 +154,7 @@ public class PostService {
 
         postRepository.deleteById(postId);
 
-        return new BaseResponse(ResponseMessage.POST_DELETE_SUCCESS, new Post());
+        return new BaseResponse(ResponseMessage.POST_DELETE_SUCCESS, Post.builder().build());
     }
 
     @Loggable
@@ -199,7 +200,7 @@ public class PostService {
         Long userId = principal.getUserId();
         User findUser = userRepository.getReferenceById(userId);
 
-        Comment toSave = new Comment.Builder()
+        Comment toSave = Comment.builder()
                 .author(findUser)
                 .post(findPost)
                 .content(req.getContent())
@@ -261,7 +262,7 @@ public class PostService {
     public BaseResponse deleteCommentById(Long postId, Long commentId, UserPrincipal principal) {
         Long authorId = principal.getUserId();
         int row = commentRepository.deleteByIdAndPostIdAndAuthorId(commentId, postId, authorId);
-        return new BaseResponse(ResponseMessage.COMMENT_DELETE_SUCCESS, new Comment());
+        return new BaseResponse(ResponseMessage.COMMENT_DELETE_SUCCESS, Comment.builder().build());
     }
 
 }
