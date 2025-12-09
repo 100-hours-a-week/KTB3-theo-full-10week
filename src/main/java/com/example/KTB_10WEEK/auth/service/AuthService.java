@@ -62,7 +62,7 @@ public class AuthService {
 
     public BaseResponse logout() {
 
-        return new BaseResponse(ResponseMessage.LOGOUT_SUCCESS, new User());
+        return new BaseResponse(ResponseMessage.LOGOUT_SUCCESS, User.builder().build());
     }
 
 }

@@ -17,6 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 
 @Service
 @Transactional
@@ -40,7 +42,7 @@ public class UserService {
         if (userRepository.existsByEmail(email)) throw new EmailAlreadyRegisteredException();
         if (userRepository.existsByNickname(nickname)) throw new NicknameAlreadyRegisteredException();
 
-        User toSave = new User.Builder()
+        User toSave = User.builder()
                 .email(email)
                 .password(passwordEncoder.encode(req.getPassword()))
                 .nickname(req.getNickname())
@@ -72,7 +74,7 @@ public class UserService {
         }
         userRepository.deleteById(userId);
 
-        return new BaseResponse(ResponseMessage.USER_DELETE_SUCCESS, user);
+        return new BaseResponse(ResponseMessage.USER_DELETE_SUCCESS);
     }
 
     @Loggable

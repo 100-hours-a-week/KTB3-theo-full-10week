@@ -17,6 +17,13 @@ public class BaseResponse<T> {
     public BaseResponse() {
     }
 
+    public BaseResponse(ResponseMessage message) {
+        this.message = message.getMessage();
+        this.data = null;
+        this.timestamp = LocalDateTime.now().format(DateTimeFormatter
+                .ofPattern(DateTimePattern.DEFAULT_DATE_TIME));
+    }
+
     public BaseResponse(ResponseMessage message, T data) {
         this.message = message.getMessage();
         this.data = data;

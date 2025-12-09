@@ -1,6 +1,6 @@
 package com.example.KTB_10WEEK.auth.service;
 
-import com.example.KTB_10WEEK.security.exception.*;
+import com.example.KTB_10WEEK.security.exception.authentication.*;
 import com.example.KTB_10WEEK.security.role.RoleConfig;
 import com.example.KTB_10WEEK.auth.dto.response.TokenPair;
 import com.example.KTB_10WEEK.auth.entity.RefreshToken;
@@ -59,7 +59,7 @@ public class TokenService {
             token.updateToken(refreshToken);
             return token;
         }).orElseGet(() -> {
-            RefreshToken newRefreshToken = new RefreshToken.Builder()
+            RefreshToken newRefreshToken = RefreshToken.builder()
                     .user(user)
                     .token(refreshToken)
                     .build();

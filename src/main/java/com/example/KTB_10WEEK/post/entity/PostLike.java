@@ -2,13 +2,18 @@ package com.example.KTB_10WEEK.post.entity;
 
 import com.example.KTB_10WEEK.user.entity.User;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class PostLike {
 
     @EmbeddedId
@@ -26,9 +31,6 @@ public class PostLike {
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
-
-    protected PostLike() {
-    }
 
     public PostLike(User user, Post post) {
         this.likeId = new PostLikeId(user.getId(), post.getId());

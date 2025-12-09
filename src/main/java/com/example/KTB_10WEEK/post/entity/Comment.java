@@ -3,13 +3,17 @@ package com.example.KTB_10WEEK.post.entity;
 
 import com.example.KTB_10WEEK.user.entity.User;
 import jakarta.persistence.*;
-import lombok.Getter;
+import lombok.*;
 import org.hibernate.annotations.BatchSize;
+import org.springframework.cglib.core.Local;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,16 +40,6 @@ public class Comment {
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted = false;
 
-    public Comment() {
-    }
-
-    public Comment(Builder builder) {
-        this.id = builder.id;
-        this.post = builder.post;
-        this.author = builder.author;
-        this.content = builder.content;
-    }
-
     public void updateContent(String content) {
         this.content = content;
     }
@@ -54,34 +48,14 @@ public class Comment {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public static class Builder {
-        private Long id;
-        private Post post;
-        private User author;
-        private String content;
+    @Builder
+    public Comment(User author, Post post, String content) {
+        this.author = author;
+        this.post = post;
+        this.content = content;
 
-        public Builder id(long id) {
-            this.id = id;
-            return this;
-        }
-
-        public Builder post(Post post) {
-            this.post = post;
-            return this;
-        }
-
-        public Builder author(User author) {
-            this.author = author;
-            return this;
-        }
-
-        public Builder content(String content) {
-            this.content = content;
-            return this;
-        }
-
-        public Comment build() {
-            return new Comment(this);
-        }
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = createdAt;
+        this.isDeleted = false;
     }
 }

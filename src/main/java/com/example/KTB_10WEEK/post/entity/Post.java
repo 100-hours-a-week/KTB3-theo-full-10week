@@ -3,7 +3,8 @@ package com.example.KTB_10WEEK.post.entity;
 
 import com.example.KTB_10WEEK.user.entity.User;
 import jakarta.persistence.*;
-import lombok.Getter;
+import jdk.jfr.Category;
+import lombok.*;
 import org.hibernate.annotations.BatchSize;
 
 import java.time.LocalDateTime;
@@ -14,6 +15,8 @@ import java.util.Set;
 
 @Entity
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Post {
 
     @Id
@@ -58,18 +61,6 @@ public class Post {
     @BatchSize(size = 10)
     private List<Comment> comments = new ArrayList<>();
 
-    public Post() {
-    }
-
-    public Post(Builder builder) {
-        this.id = builder.id;
-        this.author = builder.author;
-        this.title = builder.title;
-        this.article = builder.article;
-        this.articleImage = builder.articleImage;
-        this.category = builder.category;
-    }
-
     public void updateTitle(String title) {
         this.title = title;
     }
@@ -90,46 +81,17 @@ public class Post {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public static class Builder {
-        private Long id;
-        private User author;
-        private String title;
-        private String article;
-        private String articleImage;
-        private PostCategory category = PostCategory.NONE;
+    @Builder
+    public Post(User author, String title, String article, String articleImage, PostCategory category) {
+        this.author = author;
+        this.title = title;
+        this.article = article;
+        this.articleImage = articleImage;
+        this.category = category;
 
-        public Builder id(long id) {
-            this.id = id;
-            return this;
-        }
-
-        public Builder author(User author) {
-            this.author = author;
-            return this;
-        }
-
-        public Builder title(String title) {
-            this.title = title;
-            return this;
-        }
-
-        public Builder article(String article) {
-            this.article = article;
-            return this;
-        }
-
-        public Builder articleImage(String articleImage) {
-            this.articleImage = articleImage;
-            return this;
-        }
-
-        public Builder category(PostCategory category) {
-            this.category = category;
-            return this;
-        }
-
-        public Post build() {
-            return new Post(this);
-        }
+        this.view_count = 0L;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = createdAt;
+        this.isDeleted = false;
     }
 }

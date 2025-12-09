@@ -5,14 +5,16 @@ import com.example.KTB_10WEEK.post.entity.Comment;
 import com.example.KTB_10WEEK.post.entity.Post;
 import com.example.KTB_10WEEK.post.entity.PostLike;
 import jakarta.persistence.*;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.*;
+import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,7 +48,6 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<PostLike> likes = new HashSet<>();
 
-
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
@@ -55,18 +56,6 @@ public class User {
 
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted = false;
-
-    public User() {
-    }
-
-    public User(Builder builder) {
-        this.id = builder.id;
-        this.role = builder.role;
-        this.email = builder.email;
-        this.password = builder.password;
-        this.nickname = builder.nickname;
-        this.profileImage = builder.profileImage;
-    }
 
     public void updateNowTime() {
         this.updatedAt = LocalDateTime.now();
@@ -84,49 +73,18 @@ public class User {
         this.profileImage = profileImage;
     }
 
-    public static class Builder {
-        private Long id;
-        private Role role = Role.USER;
-        private String email;
-        private String password;
-        private String nickname;
-        private String profileImage;
 
-        public Builder id(Long id) {
-            this.id = id;
-            return this;
-        }
-
-        public Builder role(Role role) {
-            this.role = role;
-            return this;
-        }
-
-        public Builder email(String email) {
-            this.email = email;
-            return this;
-        }
-
-        public Builder password(String password) {
-            this.password = password;
-            return this;
-        }
-
-        public Builder nickname(String nickname) {
-            this.nickname = nickname;
-            return this;
-        }
-
-        public Builder profileImage(String profileImage) {
-            this.profileImage = profileImage;
-            return this;
-        }
-
-        public User build() {
-            return new User(this);
-        }
+    @Builder
+    public User(String email, String password, String nickname, String profileImage, Role role) {
+        this.email = email;
+        this.password = password;
+        this.nickname = nickname;
+        this.profileImage = profileImage;
+        this.role = role;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = createdAt;
+        this.isDeleted = false;
     }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

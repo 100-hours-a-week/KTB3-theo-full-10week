@@ -2,7 +2,10 @@ package com.example.KTB_10WEEK.post.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -10,6 +13,8 @@ import java.util.Objects;
 
 @Embeddable
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class PostLikeId implements Serializable {
 
     @Column(name = "user_id")
@@ -17,14 +22,6 @@ public class PostLikeId implements Serializable {
 
     @Column(name = "post_id")
     private Long postId;
-
-    protected PostLikeId() {
-    }
-
-    public PostLikeId(Long userId, Long postId) {
-        this.userId = userId;
-        this.postId = postId;
-    }
 
     @Override
     public boolean equals(Object o) {
