@@ -1,17 +1,10 @@
+
+
 plugins {
-    id 'java'
-    id 'org.springframework.boot' version '3.5.6'
-    id 'io.spring.dependency-management' version '1.1.7'
-    id 'jacoco'
+    id "java"
+    id "org.springframework.boot" version "3.5.8"
+    id "io.spring.dependency-management" version "1.1.7"
 }
-
-jacoco {
-    toolVersion = '0.8.14'
-}
-
-group = 'com.example'
-version = '0.0.1-SNAPSHOT'
-description = 'Demo project for Spring Boot'
 
 java {
     toolchain {
@@ -19,92 +12,36 @@ java {
     }
 }
 
-repositories {
-    mavenCentral()
-}
+subprojects {
+    group = "com.example"
+    version = "0.0.1-SNAPSHOT"
+    description = "Today SeaFood project for Spring Boot"
 
-dependencies {
-    // --- Lombok 설정 ---
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
 
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-aop'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
-    implementation 'org.projectlombok:lombok'
-    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.12.0'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
+    apply plugin: "java"
+    apply plugin: "io.spring.dependency-management"
 
-    runtimeOnly 'com.mysql:mysql-connector-j'
-
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.12.0'
-    testCompileOnly 'org.projectlombok:lombok'
-    testAnnotationProcessor 'org.projectlombok:lombok'
-
-}
-
-tasks.named('test') {
-    useJUnitPlatform()
-}
-
-jacocoTestReport {
-    dependsOn test
-
-    reports {
-        html.required = true
-        xml.required = true
-        csv.required = false
+    repositories {
+        mavenCentral()
     }
 
-    doLast {
-        def reportPath = "${buildDir}/reports/jacoco/test/html/index.html"
-        println "\nJaCoco Report Generated : "
-        println "file:://${reportPath}\n"
+    ext["springCloudVersion"] = "2025.0.0"
+
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+        }
     }
-}
 
-tasks.register('openJacocoReport', Exec) {
-    dependsOn jacocoTestReport
-    commandLine 'open', "${buildDir}/reports/jacoco/test/html/index.html"
-}
+    dependencies {
+        compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
+        implementation 'org.projectlombok:lombok'
 
-tasks.register('jacocoUserReport', JacocoReport) {
-    dependsOn test // 테스트 먼저 실행
-
-    reports {
-        html.required = true   // 브라우저로 보는 HTML 리포트
-        xml.required = true    // 필요하면 CI에서 사용
-        csv.required = false
+        testImplementation "org.springframework.boot:spring-boot-starter-test"
     }
-    classDirectories.setFrom(
-            fileTree(
-                    dir: "$buildDir/classes/java/main",
-                    include: [
-                            '**/user/**' // user 패키지만 포함
-                    ]
-            )
-    )
-    sourceDirectories.setFrom(files('src/main/java'))
 
-    executionData.setFrom(
-            fileTree(
-                    dir: buildDir,
-                    include: [
-                            'jacoco/test.exec',
-                            'jacoco/test.exec*',
-                            'jacoco/test/*.exec'
-                    ]
-            )
-    )
-}
-
-tasks.register('openJacocoUserReport', Exec) {
-    dependsOn jacocoUserReport
-    commandLine 'open', "${buildDir}/reports/jacoco/jacocoUserReport/html/index.html"
+    tasks.withType(Test).configureEach {
+        useJUnitPlatform()
+    }
 }

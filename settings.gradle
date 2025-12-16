@@ -1,1 +1,4 @@
-rootProject.name = 'KTB_10WEEK'
+rootProject.name = "today-seafood-backend"
+
+include("api-service")
+include("gateway-service")
