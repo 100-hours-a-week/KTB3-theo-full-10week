@@ -2,6 +2,7 @@ package com.example.KTB_10WEEK.user.repository.user;
 
 import com.example.KTB_10WEEK.user.entity.Role;
 import com.example.KTB_10WEEK.user.entity.User;
+import com.example.KTB_10WEEK.user.fixture.UserFixture;
 import com.example.KTB_10WEEK.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -22,35 +23,16 @@ class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
-    private User createUserWithEmailPassword(String email, String password) {
-        return new User.Builder()
-                .role(Role.USER)
-                .email(email)
-                .password(password)
-                .nickname("nickname")
-                .profileImage("profileImage.png")
-                .build();
-    }
 
-    private User createUserWithNickname(String nickname) {
-        return new User.Builder()
-                .role(Role.USER)
-                .email("test@test.com")
-                .password("1q2w3e4r!Q")
-                .nickname(nickname)
-                .profileImage("profileImage.png")
-                .build();
-    }
     @Nested
     @DisplayName("Unique 제약 조건 테스트")
     class UniqueConstraint {
         @Test
         void email필드는_unique하다() {
-            User newUser = createUserWithEmailPassword("test@test.com", "1q2w3e4r!Q");
-            userRepository.save(newUser);
-            userRepository.flush();
+            User newUser = UserFixture.createUserWithEmailPassword("test@test.com", "1q2w3e4r!Q");
+            userRepository.saveAndFlush(newUser);
 
-            User sameEmailUser = createUserWithEmailPassword("test@test.com", "1q2w3e4r!Q");
+            User sameEmailUser = UserFixture.createUserWithEmailPassword("test@test.com", "1q2w3e4r!Q");
             assertThrows(DataIntegrityViolationException.class, () -> {
                 userRepository.save(sameEmailUser);
                 userRepository.flush();
@@ -59,11 +41,11 @@ class UserRepositoryTest {
 
         @Test
         void nickname필드는_uniqe하다() {
-            User newUser = createUserWithNickname("nickname");
+            User newUser = UserFixture.createUserWithNickname("nickname");
             userRepository.save(newUser);
             userRepository.flush();
 
-            User sameNicknameUser = createUserWithNickname("nickname");
+            User sameNicknameUser = UserFixture.createUserWithNickname("nickname");
             assertThrows(DataIntegrityViolationException.class, () -> {
                 userRepository.save(sameNicknameUser);
                 userRepository.flush();
@@ -76,7 +58,7 @@ class UserRepositoryTest {
     class FindByEmail {
         @Test
         void findByEmail을_호출하면_이메일_값을_통해서_유저를_가져온다() {
-            User newUser = createUserWithEmailPassword("test@test.com", "1q2w3e4r!Q");
+            User newUser = UserFixture.createUserWithEmailPassword("test@test.com", "1q2w3e4r!Q");
             userRepository.save(newUser);
 
             Optional<User> findUser = userRepository.findByEmail("test@test.com");
@@ -99,7 +81,7 @@ class UserRepositoryTest {
     class FindByNickname {
         @Test
         void findByNickname을_호출하면_닉네임_값을_통해서_유저를_가져온다() {
-            User newUser = createUserWithNickname("nickname");
+            User newUser = UserFixture.createUserWithNickname("nickname");
             userRepository.save(newUser);
 
             Optional<User> findUser = userRepository.findByNickname("nickname");
@@ -122,7 +104,7 @@ class UserRepositoryTest {
     class ExistsByEmail {
         @Test
         void 유저가_존재할_때_이메일_값을_통해서_existsByEmail을_호출하면_true를_반환한다() {
-            User newUser = createUserWithEmailPassword("test@test.com", "1q2w3e4r!Q");
+            User newUser = UserFixture.createUserWithEmailPassword("test@test.com", "1q2w3e4r!Q");
             userRepository.save(newUser);
 
             boolean isExist = userRepository.existsByEmail("test@test.com");
@@ -143,7 +125,7 @@ class UserRepositoryTest {
     class ExistsByNickname {
         @Test
         void 유저가_존재할_떄_닉네임_값을_통해서_existsByNickname을_호출하면_true를_반환한다() {
-            User newUser = createUserWithNickname("nickname");
+            User newUser = UserFixture.createUserWithNickname("nickname");
             userRepository.save(newUser);
 
             boolean isExist = userRepository.existsByNickname("nickname");

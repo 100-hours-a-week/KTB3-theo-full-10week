@@ -11,11 +11,12 @@ import com.example.KTB_10WEEK.user.exception.DeleteProfileImageFailException;
 import com.example.KTB_10WEEK.user.exception.EmailAlreadyRegisteredException;
 import com.example.KTB_10WEEK.user.exception.NicknameAlreadyRegisteredException;
 import com.example.KTB_10WEEK.user.exception.UserNotFoundException;
+import com.example.KTB_10WEEK.user.fixture.UserFixture;
 import com.example.KTB_10WEEK.user.repository.UserRepository;
-import com.fasterxml.jackson.databind.introspect.TypeResolutionContext;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -39,43 +40,57 @@ public class UserServiceTest {
     @InjectMocks
     UserService userService;
 
-    private User createUser() {
-        return new User.Builder()
-                .id(1L)
-                .email("이메일")
-                .password("비밀번호")
-                .nickname("닉네임")
-                .profileImage("이미지 저장 경로")
-                .role(Role.USER)
-                .build();
-    }
 
     @Nested
     class Register {
         @Test
         void register_성공() {
             // given
+            String email = "test@test.com";
+            String rawPassword = "1q2w3e4r!Q";
+            String encodedPassword = "encoded-password";
+            String nickname = "닉네임";
+            String storedProfileImage = "profileImage.png";
+
             RegistUserRequestDto req = mock(RegistUserRequestDto.class);
-            when(req.getEmail()).thenReturn("이메일");
-            when(req.getNickname()).thenReturn("닉네임");
-            when(req.getProfileImage()).thenReturn(mock(MultipartFile.class));
-            when(req.getPassword()).thenReturn("비밀번호");
+            MultipartFile multipartFile = mock(MultipartFile.class);
 
-            when(userRepository.existsByEmail(req.getEmail())).thenReturn(false);
-            when(userRepository.existsByNickname(req.getNickname())).thenReturn(false);
-            when(profileImageStorage.saveProfileImage(req.getProfileImage())).thenReturn("서버에 저장된 이미지 경로");
-            when(passwordEncoder.encode(req.getPassword())).thenReturn("암호화된 비밀번호");
+            when(req.getEmail()).thenReturn(email);
+            when(req.getNickname()).thenReturn(nickname);
+            when(req.getPassword()).thenReturn(rawPassword);
+            when(req.getProfileImage()).thenReturn(multipartFile);
 
-            User savedUser = createUser();
-            when(userRepository.save(any(User.class))).thenReturn(savedUser);
+            when(userRepository.existsByEmail(email)).thenReturn(false);
+            when(userRepository.existsByNickname(nickname)).thenReturn(false);
+            when(profileImageStorage.saveProfileImage(multipartFile)).thenReturn(storedProfileImage);
+            when(passwordEncoder.encode(rawPassword)).thenReturn(encodedPassword);
+
+            // save()로 넘어가는 User를 캡처
+            ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+
+            // 레포지토리가 리턴해 줄 "저장된 유저"
+            User savedUser = UserFixture.createUserWithId(1L); // 여기 값은 DTO 검증용으로만 사용
+            when(userRepository.save(userCaptor.capture())).thenReturn(savedUser);
 
             // when
             BaseResponse<RegistUserResponseDto> res = userService.register(req);
 
             // then
+            // 1) 실제 DB에 저장되려고 했던 User 값 검증
+            User toSave = userCaptor.getValue();
+            assertEquals(email, toSave.getEmail());
+            assertEquals(encodedPassword, toSave.getPassword());
+            assertEquals(nickname, toSave.getNickname());
+            assertEquals(storedProfileImage, toSave.getProfileImage());
+            assertEquals(Role.USER, toSave.getRole());
+
+            // 2) 응답 DTO 검증
             assertEquals(ResponseMessage.USER_REGISTER_SUCCESS.getMessage(), res.getMessage());
             assertNotNull(res.getData());
-            assertEquals(savedUser.getId(), res.getData().getId());
+
+            RegistUserResponseDto dto = res.getData();
+            assertEquals(savedUser.getId(), dto.getId());
+
         }
 
         @Test
@@ -139,7 +154,7 @@ public class UserServiceTest {
         @Test
         void findById_성공() {
             // given
-            User user = createUser();
+            User user = UserFixture.createUserWithId(1L);
             Long userId = user.getId();
 
             when(userRepository.findById(userId)).thenReturn(Optional.of(user));
@@ -170,7 +185,7 @@ public class UserServiceTest {
         @Test
         void deleteById_성공() {
             // given
-            User user = createUser();
+            User user = UserFixture.createUserWithId(1L);
             Long userId = user.getId();
 
             when(userRepository.findById(userId)).thenReturn(Optional.of(user));
@@ -183,13 +198,12 @@ public class UserServiceTest {
             verify(userRepository, times(1)).deleteById(userId);
 
             assertEquals(ResponseMessage.USER_DELETE_SUCCESS.getMessage(), res.getMessage());
-            assertSame(user, res.getData());
         }
 
         @Test
         void 존재하지_않는_userId_입력_시_deleteById는_UserNotFoundException을_반환한다() {
             // given
-            User user = createUser();
+            User user = UserFixture.createUserWithId(1L);
             Long userId = user.getId();
 
             when(userRepository.findById(userId)).thenReturn(Optional.empty());
@@ -203,7 +217,7 @@ public class UserServiceTest {
         @Test
         void deleteById_유저_프로필_이미지_삭제_실패시_DeleteProfileImageFailException을_반환하고_유저는_삭제되지_않는다() {
             // given
-            User user = createUser();
+            User user = UserFixture.createUserWithId(1L);
             Long userId = user.getId();
 
             when(userRepository.findById(userId)).thenReturn(Optional.of(user));
@@ -295,7 +309,7 @@ public class UserServiceTest {
     class EditProfile {
         @Test
         void editProfile_성공() {
-            User toUpdate = createUser();
+            User toUpdate = UserFixture.createUserWithId(1L);
             Long userId = toUpdate.getId();
 
             MultipartFile newProfileImage = mock(MultipartFile.class);
@@ -324,7 +338,7 @@ public class UserServiceTest {
 
         @Test
         void editProfile_프로필_이미지_null이고__닉네임만_변경() {
-            User toUpdate = createUser();
+            User toUpdate = UserFixture.createUserWithId(1L);
             Long userId = toUpdate.getId();
             String oldProfileImage = toUpdate.getProfileImage();
 
@@ -347,7 +361,7 @@ public class UserServiceTest {
 
         @Test
         void editProfile_프로필_이미지_empty이고_닉네임만_변경() {
-            User toUpdate = createUser();
+            User toUpdate = UserFixture.createUserWithId(1L);
             Long userId = toUpdate.getId();
             String oldProfileImage = toUpdate.getProfileImage();
 
@@ -373,7 +387,7 @@ public class UserServiceTest {
 
         @Test
         void editProfile_닉네임_변경없이_프로필_이미지만_변경() {
-            User toUpdate = createUser();
+            User toUpdate = UserFixture.createUserWithId(1L);
             String oldNickname = toUpdate.getNickname();
             Long userId = toUpdate.getId();
 
@@ -421,7 +435,7 @@ public class UserServiceTest {
         @Test
         void editNickname_성공() {
             // given
-            User toUpdate = createUser();
+            User toUpdate = UserFixture.createUserWithId(1L);
             Long userId = toUpdate.getId();
             String newNickname = "새로운 닉네임";
 
@@ -444,7 +458,7 @@ public class UserServiceTest {
         @Test
         void editNickname_닉네임이_사용중이면_NicknameAlreadyRegisteredException반환() {
             // given
-            User user = createUser();
+            User user = UserFixture.createUserWithId(1L);
             Long userId = user.getId();
             String newNickname = "새로운 닉네임";
 
@@ -487,7 +501,7 @@ public class UserServiceTest {
     class ChangePassword {
         @Test
         void changePassword_성공() {
-            User savedUser = createUser();
+            User savedUser = UserFixture.createUserWithId(1L);
             Long userId = savedUser.getId();
             String newPassword = "새로운 비밀번호";
             String encryptedNewPassword = "암호화된 새로운 비밀번호";

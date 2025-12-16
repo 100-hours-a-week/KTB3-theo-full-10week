@@ -1,5 +1,6 @@
 package com.example.KTB_10WEEK.auth.controller;
 
+import com.example.KTB_10WEEK.app.response.ResponseMessage;
 import com.example.KTB_10WEEK.auth.dto.response.LoginWithTokenResponseDto;
 import com.example.KTB_10WEEK.auth.dto.response.TokenPair;
 import com.example.KTB_10WEEK.auth.service.AuthService;
@@ -52,7 +53,7 @@ public class AuthController implements AuthApiDoc {
         return ResponseEntity.ok()
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenPair.getAccessToken())
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                .build();
+                .body(new BaseResponse<>(ResponseMessage.TOKEN_REFRESH_SUCCESS));
     }
 
     @PostMapping("/logout")

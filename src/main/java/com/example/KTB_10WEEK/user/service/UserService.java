@@ -115,7 +115,7 @@ public class UserService {
             toUpdate.updateNickname(newNickname);
         }
 
-        toUpdate.updateNowTime();
+        toUpdate.updateNowTime(LocalDateTime.now());
 
         return new BaseResponse(ResponseMessage.EDIT_PROFILE_SUCCESS, EditProfileResponseDto.toDto(toUpdate));
     }
@@ -130,7 +130,7 @@ public class UserService {
         User toUpdate = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
         toUpdate.updateNickname(nickname);
-        toUpdate.updateNowTime();
+        toUpdate.updateNowTime(LocalDateTime.now());
 
         return new BaseResponse(ResponseMessage.NICKNAME_EDIT_SUCCESS, UpdateNicknameResponseDto.toDto(toUpdate));
     }
@@ -143,7 +143,7 @@ public class UserService {
         User toUpdate = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
         toUpdate.updatePassword(passwordEncoder.encode(password));
-        toUpdate.updateNowTime();
+        toUpdate.updateNowTime(LocalDateTime.now());
 
         return new BaseResponse(ResponseMessage.PASSWORD_CHANGE_SUCCESS, UpdatePasswordResponseDto.toDto(toUpdate.getId()));
     }
