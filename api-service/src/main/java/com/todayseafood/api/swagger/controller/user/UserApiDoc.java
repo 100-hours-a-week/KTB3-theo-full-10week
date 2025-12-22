@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@Tag(name = "Public User", description = "회원 API")
+@Tag(name = "User", description = "회원 API")
 public interface UserApiDoc {
     @Operation(summary = "회원정보 조회", description = "회원 PK를 통해 특정 회원을 조회합니다.")
     public ResponseEntity<BaseResponse> findByPublicUserId(@PathVariable

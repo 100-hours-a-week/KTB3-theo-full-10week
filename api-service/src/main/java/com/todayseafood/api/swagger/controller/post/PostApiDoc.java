@@ -15,7 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "Public Post", description = "게시글 API")
+@Tag(name = "Post", description = "게시글 API")
 public interface PostApiDoc {
     // POST
     @GetMapping
