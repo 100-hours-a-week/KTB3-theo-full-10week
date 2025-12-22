@@ -9,9 +9,9 @@ import org.springframework.context.annotation.Configuration;
 
 @OpenAPIDefinition(
         info = @Info(
-                title = "아무말 대잔치 커뮤니티 API 명세서",
+                title = "오늘의 수산 API 명세서",
                 version = "v1.0.0",
-                description = "이 문서는 아무말 대잔치 커뮤니티에서 제공하는 API를 설명합니다."
+                description = "이 문서는 오늘의 수산에서 제공하는 API를 설명합니다."
         ),
         security = @SecurityRequirement(name = "bearerAuth")
 )
