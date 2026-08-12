@@ -1,31 +1,28 @@
-
-
 plugins {
-    id "java"
-    id "org.springframework.boot" version "3.5.8"
-    id "io.spring.dependency-management" version "1.1.7"
-}
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
-    }
+    id "org.springframework.boot" version "3.5.8" apply false
+    id "io.spring.dependency-management" version "1.1.7" apply false
 }
 
 subprojects {
-    group = "com.example"
+    group = "com.todayseafood"
     version = "0.0.1-SNAPSHOT"
-    description = "Today SeaFood project for Spring Boot"
-
 
     apply plugin: "java"
     apply plugin: "io.spring.dependency-management"
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(21)
+        }
+    }
 
     repositories {
         mavenCentral()
     }
 
-    ext["springCloudVersion"] = "2025.0.0"
+    ext {
+        springCloudVersion = "2025.0.0"
+    }
 
     dependencyManagement {
         imports {
@@ -34,11 +31,14 @@ subprojects {
     }
 
     dependencies {
-        compileOnly 'org.projectlombok:lombok'
-        annotationProcessor 'org.projectlombok:lombok'
-        implementation 'org.projectlombok:lombok'
+        compileOnly "org.projectlombok:lombok"
+        annotationProcessor "org.projectlombok:lombok"
 
         testImplementation "org.springframework.boot:spring-boot-starter-test"
+        testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+
+        testCompileOnly "org.projectlombok:lombok"
+        testAnnotationProcessor "org.projectlombok:lombok"
     }
 
     tasks.withType(Test).configureEach {
